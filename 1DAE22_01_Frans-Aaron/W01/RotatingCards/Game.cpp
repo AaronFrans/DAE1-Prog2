@@ -21,6 +21,7 @@ void Game::Initialize( )
 
 void Game::Cleanup( )
 {
+	DeleteRotatingCards();
 }
 
 void Game::Update( float elapsedSec )
@@ -41,9 +42,7 @@ void Game::Update( float elapsedSec )
 void Game::Draw( ) const
 {
 	ClearBackground( );
-	utils::FillEllipse(m_Circle.center, m_Circle.radius, m_Circle.radius);
 	DrawRotatingCards();
-	utils::FillEllipse(m_Circle.center, 5, 5);
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
@@ -127,12 +126,6 @@ void Game::InitRotatingCards()
 			m_Circle
 			});
 	}
-	//m_RotatingCards.push_back(new Card{
-	//	Card::Suit::diamonds,
-	//	1,
-	//	baseAngle * 1,
-	//	m_Circle
-	//	});
 }
 
 void Game::DrawRotatingCards() const
@@ -149,5 +142,14 @@ void Game::UpdateRotatingCards(float elapsedSec)
 	for (Card* card : m_RotatingCards)
 	{
 		card->Update(elapsedSec);
+	}
+}
+
+void Game::DeleteRotatingCards()
+{
+	for (Card* card : m_RotatingCards)
+	{
+		delete card;
+		card = nullptr;
 	}
 }

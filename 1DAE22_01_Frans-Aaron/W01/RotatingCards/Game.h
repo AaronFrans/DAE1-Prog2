@@ -27,7 +27,7 @@ private:
 	// DATA MEMBERS
 	const Window m_Window;
 
-	const Circlef m_Circle{ m_Window.width / 2, m_Window.height / 2, 130 };
+	const Circlef m_Circle{ m_Window.width / 2, m_Window.height / 2, 100 };
 
 	std::vector<Card*> m_RotatingCards{ };
 
