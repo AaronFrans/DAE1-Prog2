@@ -41,7 +41,9 @@ void Card::Draw(const Rectf& destRect) const
 	//glRotatef(m_AngleDegree , 0, 0, 1);
 	//glTranslatef(-(destRect.width / 2), -(destRect.height / 2), 0);
 	glTranslatef(m_Circle.center.x, m_Circle.center.y, 0);
+	glTranslatef((destRect.width / 2), (destRect.height / 2), 0);
 	glRotatef(-m_AngleDegree, 0, 0, 1);
+	glTranslatef(-(destRect.width / 2), -(destRect.height / 2), 0);
 	glTranslatef(
 		m_Circle.radius,
 		0,

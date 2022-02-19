@@ -41,7 +41,9 @@ void Game::Update( float elapsedSec )
 void Game::Draw( ) const
 {
 	ClearBackground( );
+	utils::FillEllipse(m_Circle.center, m_Circle.radius, m_Circle.radius);
 	DrawRotatingCards();
+	utils::FillEllipse(m_Circle.center, 5, 5);
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
