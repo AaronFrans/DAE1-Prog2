@@ -31,7 +31,7 @@ private:
 	const Texture *m_pTexture;
 	const Suit m_Suit;
 	const int m_Rank;
-	float m_Angle;
+	float m_AngleDegree;
 	Circlef m_Circle;
 	
 };

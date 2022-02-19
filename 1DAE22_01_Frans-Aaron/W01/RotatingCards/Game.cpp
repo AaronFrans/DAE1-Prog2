@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "Card.h"
+#include "utils.h"
 
 Game::Game( const Window& window ) 
 	:m_Window{ window }
@@ -113,16 +114,23 @@ void Game::ClearBackground( ) const
 
 void Game::InitRotatingCards()
 {
+	float baseAngle = 360.0f / Card::m_MaxRank;
+
 	for (int i = Card::m_MinRank; i <= Card::m_MaxRank; i++)
 	{
-
 		m_RotatingCards.push_back(new Card{
 			Card::Suit::diamonds,
 			i,
-			360.0f / Card::m_MaxRank * i,
+			baseAngle * i,
 			m_Circle
 			});
 	}
+	//m_RotatingCards.push_back(new Card{
+	//	Card::Suit::diamonds,
+	//	1,
+	//	baseAngle * 1,
+	//	m_Circle
+	//	});
 }
 
 void Game::DrawRotatingCards() const
