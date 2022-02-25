@@ -48,6 +48,9 @@
     <ClInclude Include="Game.h">
       <Filter>Game Files</Filter>
     </ClInclude>
+    <ClInclude Include="PowerUpManager.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
     <ClInclude Include="PowerUp.h">
       <Filter>Game Files</Filter>
     </ClInclude>
@@ -86,10 +89,13 @@
     <ClCompile Include="Vector2f.cpp">
       <Filter>Framework Files</Filter>
     </ClCompile>
-    <ClCompile Include="PowerUp.cpp">
+    <ClCompile Include="Game.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="PowerUpManager.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerUp.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
   </ItemGroup>
