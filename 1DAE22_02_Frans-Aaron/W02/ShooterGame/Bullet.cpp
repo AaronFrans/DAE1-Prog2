@@ -24,13 +24,13 @@ void Bullet::Draw() const
 	}
 }
 
-void Bullet::Update(float elapsedSec, Enemy* pEnemies, int numEnemies)
+void Bullet::Update(float elapsedSec, Enemy** pEnemies, int numEnemies)
 {
 	if (m_IsActivated)
 	{
-		m_Center.y += m_Velocity.y;
-		CheckBoundaries();
+		m_Center.y += m_Velocity.y * elapsedSec;
 		CheckEnemiesHit(pEnemies, numEnemies);
+		CheckBoundaries();
 	}
 }
 
@@ -61,13 +61,14 @@ void Bullet::CheckBoundaries()
 		m_IsActivated = false;
 }
 
-void Bullet::CheckEnemiesHit(Enemy* pEnemies, int numEnemies)
+void Bullet::CheckEnemiesHit(Enemy** pEnemies, int numEnemies)
 {
 	for (int i = 0; i < numEnemies; i++)
 	{
-		if (!pEnemies[i].IsDead())
+
+		if (!pEnemies[i]->IsDead())
 		{
-			if (pEnemies[i].DoHitTest(Rectf{
+			if (pEnemies[i]->DoHitTest(Rectf{
 				m_Center.x - m_Width / 2.0f,
 				m_Center.y - m_Height / 2.0f,
 				m_Width,

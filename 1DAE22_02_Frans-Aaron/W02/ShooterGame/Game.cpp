@@ -61,6 +61,10 @@ void Game::ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e)
 
 void Game::ProcessMouseDownEvent(const SDL_MouseButtonEvent& e)
 {
+	for (Enemy* enemy : m_pEnemies)
+	{
+
+	}
 }
 
 void Game::ProcessMouseUpEvent(const SDL_MouseButtonEvent& e)
@@ -101,15 +105,17 @@ void Game::InitGameParams()
 
 void Game::InitEnemies()
 {
-	for (int i = 1; i <= m_NrOfColumns; i++)
+	for (int j = 0; j < m_NrOfRows; j++)
 	{
-		for (int j = 1; j <= m_NrOfRows; j++)
+		for (int i = 0; i < m_NrOfColumns; i++)
 		{
-			m_pEnemies.push_back(new Enemy{ Point2f{
-			m_EnemiesBoundary.left + m_EnemyBorder + (m_EnemySize * (i - 1)) + (m_EnemyBorder * (i - 1)) + (m_EnemySize / 2.0f),
-			m_EnemiesBoundary.bottom + m_EnemyBorder + (m_EnemySize * (j - 1)) + (m_EnemyBorder * (j - 1)) + m_EnemySize / 2},
+			int index{ j * m_NrOfColumns + i };
+
+			m_pEnemies[index] = new Enemy{ Point2f{
+			m_EnemiesBoundary.left + m_EnemyBorder + (m_EnemySize * (i)) + (m_EnemyBorder * (i)) + (m_EnemySize / 2.0f),
+			m_EnemiesBoundary.bottom + m_EnemyBorder + (m_EnemySize * (j)) + (m_EnemyBorder * (j)) + m_EnemySize / 2},
 			m_EnemySize,
-			m_EnemySize });
+			m_EnemySize };
 		}
 
 	}
@@ -117,7 +123,7 @@ void Game::InitEnemies()
 
 void Game::DeleteEnemies()
 {
-	for (int i = 0; i < m_pEnemies.size(); i++)
+	for (int i = 0; i < m_MaxNrEnemies; i++)
 	{
 		delete m_pEnemies[i];
 		m_pEnemies[i] = nullptr;
@@ -129,8 +135,9 @@ void Game::DrawEnemies() const
 {
 	for (Enemy* enemy : m_pEnemies)
 	{
-		enemy->Draw();
-		
+		if (!enemy->IsDead())
+			enemy->Draw();
+
 	}
 }
 
@@ -153,5 +160,5 @@ void Game::DrawPlayer() const
 
 void Game::UpdatePlayer(float elapsedSec)
 {
-	m_pPlayer->Update(elapsedSec, m_pEnemies[0], m_MaxNrEnemies);
+	m_pPlayer->Update(elapsedSec, m_pEnemies, m_MaxNrEnemies);
 }

@@ -24,7 +24,7 @@ void Avatar::Draw() const
 	utils::DrawRect(m_Center.x - m_Width / 2.0f, m_Center.y - m_Height / 2.0f, m_Width, m_Height, 3.0f);
 }
 
-void Avatar::Update(float elapsedSec, Enemy* pEnemies, int numEnemies)
+void Avatar::Update(float elapsedSec, Enemy** pEnemies, int numEnemies)
 {
 	m_Bullet.Update(elapsedSec, pEnemies, numEnemies);
 	HandleMoveKeysState(elapsedSec);
@@ -58,7 +58,7 @@ void Avatar::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
 			m_Center,
 			Vector2f{
 				0.0f,
-				10.0f
+				500.0f
 			}
 		);
 		break;

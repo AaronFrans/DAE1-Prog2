@@ -10,7 +10,7 @@ public:
 	Avatar(const Point2f& center, float width, float height);
 
 	void Draw() const;
-	void Update(float elapsedSec, Enemy* pEnemies, int numEnemies);
+	void Update(float elapsedSec, Enemy** pEnemies, int numEnemies);
 
 	void SetCenter(const Point2f& center);
 	void SetDimensions(float width, float height);

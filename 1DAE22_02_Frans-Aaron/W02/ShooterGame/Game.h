@@ -42,7 +42,7 @@ private:
 	Rectf m_EnemiesBoundary{};
 
 
-	std::vector<Enemy*> m_pEnemies;
+	Enemy* m_pEnemies[m_MaxNrEnemies];
 
 	Avatar* m_pPlayer;
 
