@@ -1,4 +1,5 @@
 #pragma once
+#include "TextureManager.h"
 
 class Isaac;
 
@@ -25,6 +26,7 @@ public:
 private:
 	// DATA MEMBERS
 	const Window m_Window;
+	TextureManager m_TextureManager;
 
 	Isaac* m_pPlayer;
 

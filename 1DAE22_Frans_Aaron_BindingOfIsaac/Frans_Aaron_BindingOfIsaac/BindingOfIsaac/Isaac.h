@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector2f.h"
 class Sprite;
+class TextureManager;
 
 class Isaac
 {
@@ -15,8 +16,8 @@ class Isaac
 
 public:
 
-	Isaac();
-	Isaac(const Point2f& centerPosition);
+	Isaac(const TextureManager& textureManager);
+	Isaac(const TextureManager& textureManager, const Point2f& centerPosition);
 	~Isaac();
 
 	void Draw() const;
@@ -28,9 +29,9 @@ public:
 
 private:
 
-	static Sprite* m_pHeadSprite;
-	static Sprite* m_pWalkSpriteUD;
-	static Sprite* m_pWalkSpriteLR;
+	Sprite* m_pHeadSprite;
+	Sprite* m_pWalkSpriteUD;
+	Sprite* m_pWalkSpriteLR;
 
 	Point2f m_CenterPosition;
 	Vector2f m_Velocity;

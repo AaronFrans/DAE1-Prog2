@@ -4,9 +4,9 @@
 #include <iostream>
 
 
-Sprite::Sprite(const std::string& filename, int nrCols, int nrRows, float frameSec, float scale, int nrFrames)
-	: m_pSpriteSheet{ new Texture{ filename } }
-	, m_Frames{nrFrames}
+Sprite::Sprite(Texture* texture, int nrCols, int nrRows, float frameSec, float scale, int nrFrames)
+	: m_pSpriteSheet{ texture }
+	, m_Frames{ nrFrames }
 	, m_Cols{ nrCols }
 	, m_Rows{ nrRows }
 	, m_FrameSec{ frameSec }
@@ -20,8 +20,6 @@ Sprite::Sprite(const std::string& filename, int nrCols, int nrRows, float frameS
 
 Sprite::~Sprite()
 {
-	delete m_pSpriteSheet;
-	m_pSpriteSheet = nullptr;
 }
 
 void Sprite::Update(float elapsedSec)

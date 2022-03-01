@@ -3,7 +3,8 @@
 #include "Isaac.h"
 
 Game::Game(const Window& window)
-	:m_Window{ window }
+	: m_Window{ window }
+	, m_TextureManager{}
 {
 	Initialize();
 }
@@ -91,7 +92,7 @@ void Game::ClearBackground() const
 
 void Game::InitPlayer()
 {
-	m_pPlayer = new Isaac(Point2f{ m_Window.width / 2.0f, m_Window.height / 2.0f });
+	m_pPlayer = new Isaac(m_TextureManager, Point2f{ m_Window.width / 2.0f, m_Window.height / 2.0f });
 }
 
 void Game::DrawPlayer() const

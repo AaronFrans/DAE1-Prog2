@@ -5,7 +5,7 @@ class Texture;
 class Sprite
 {
 public:
-	Sprite(const std::string& filename, int nrCols, int nrRows, float frameSec, float scale, int nrFrames = 0);
+	Sprite(Texture* texture, int nrCols, int nrRows, float frameSec, float scale, int nrFrames = 0);
 	~Sprite();
 
 	void Update(float elapsedSec);

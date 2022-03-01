@@ -2,25 +2,26 @@
 #include "Isaac.h"
 #include "Texture.h"
 #include "Sprite.h"
+#include "TextureManager.h"
 
-Sprite* Isaac::m_pHeadSprite{ nullptr };
-Sprite* Isaac::m_pWalkSpriteUD{ nullptr };
-Sprite* Isaac::m_pWalkSpriteLR{ nullptr };
 
-Isaac::Isaac()
-	: Isaac(Point2f{ 0,0 })
+
+
+
+Isaac::Isaac(const TextureManager& textureManager)
+	: Isaac(textureManager, Point2f{ 0,0 })
 {
 }
 
-Isaac::Isaac(const Point2f& centerPosition)
+Isaac::Isaac(const TextureManager& textureManager, const Point2f& centerPosition)
 	: m_CenterPosition{ centerPosition }
 	, m_BodyState{ Isaac::Direction::down }
 	, m_HeadState{ Isaac::Direction::down }
 	, m_Velocity{ 150, 150 }
 {
-	m_pHeadSprite = new Sprite{ "Resources/Images/Isaac/Isaac-Head.png", 8, 1, 1 / 10.0f, 1 , 2};
-	m_pWalkSpriteUD = new Sprite{ "Resources/Images/Isaac/Isaac-Walk-UD.png", 10, 1, 1 / 10.0f, 1 };
-	m_pWalkSpriteLR = new Sprite{ "Resources/Images/Isaac/Isaac-Walk-LR.png", 10, 1, 1 / 10.0f, 1 };
+	m_pHeadSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacHead) , 8, 1, 1 / 10.0f, 1 , 2};
+	m_pWalkSpriteUD = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacBodyUD), 10, 1, 1 / 10.0f, 1 };
+	m_pWalkSpriteLR = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacBodyLR), 10, 1, 1 / 10.0f, 1 };
 
 }
 
