@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PowerUps", "PowerUps\PowerU
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PowerUpManager", "PowerUpManager\PowerUpManager.vcxproj", "{9B143183-CA73-46C8-8DDB-CFE65010FD27}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniGame", "MiniGame\MiniGame.vcxproj", "{863C49AA-FAE5-4E18-804D-233CB7D72BDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{9B143183-CA73-46C8-8DDB-CFE65010FD27}.Release|x64.Build.0 = Release|x64
 		{9B143183-CA73-46C8-8DDB-CFE65010FD27}.Release|x86.ActiveCfg = Release|Win32
 		{9B143183-CA73-46C8-8DDB-CFE65010FD27}.Release|x86.Build.0 = Release|Win32
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Debug|x64.ActiveCfg = Debug|x64
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Debug|x64.Build.0 = Debug|x64
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Debug|x86.ActiveCfg = Debug|Win32
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Debug|x86.Build.0 = Debug|Win32
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Release|x64.ActiveCfg = Release|x64
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Release|x64.Build.0 = Release|x64
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Release|x86.ActiveCfg = Release|Win32
+		{863C49AA-FAE5-4E18-804D-233CB7D72BDD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
