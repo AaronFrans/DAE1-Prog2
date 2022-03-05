@@ -1,5 +1,7 @@
 #pragma once
 #include "TextureManager.h"
+#include "TearManager.h"
+#include "Sprite.h"
 
 class Isaac;
 

@@ -57,6 +57,12 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Game Files</Filter>
     </ClInclude>
+    <ClInclude Include="TearManager.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tear.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -102,6 +108,12 @@
       <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TearManager.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tear.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
   </ItemGroup>

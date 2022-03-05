@@ -29,6 +29,7 @@ Texture* TextureManager::GetTexture(TextureLookup lookup) const
 void TextureManager::InitTextures()
 {
 	InitIsaacTextures();
+	InitTearTextures();
 }
 
 void TextureManager::InitIsaacTextures()
@@ -36,4 +37,10 @@ void TextureManager::InitIsaacTextures()
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Head.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Walk-LR.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Walk-UD.png" });
+}
+
+void TextureManager::InitTearTextures()
+{
+	m_pTextures.push_back(new Texture{ "Resources/Images/Tears/Tear-Hit.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Tears/Tears.png" });
 }

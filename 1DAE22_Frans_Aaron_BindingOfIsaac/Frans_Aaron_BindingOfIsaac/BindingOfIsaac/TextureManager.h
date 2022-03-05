@@ -12,7 +12,9 @@ public:
 	{
 		IsaacHead = 0,
 		IsaacBodyLR = 1,
-		IsaacBodyUD = 2
+		IsaacBodyUD = 2,
+		TearHit = 3,
+		Tears = 4,
 
 	};
 
@@ -28,6 +30,7 @@ private:
 
 	void InitTextures();
 	void InitIsaacTextures();
+	void InitTearTextures();
 
 };
 

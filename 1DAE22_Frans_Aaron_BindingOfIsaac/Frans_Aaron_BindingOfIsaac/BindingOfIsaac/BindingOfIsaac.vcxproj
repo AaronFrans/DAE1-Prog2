@@ -167,6 +167,8 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="structs.cpp" />
     <ClCompile Include="SVGParser.cpp" />
+    <ClCompile Include="Tear.cpp" />
+    <ClCompile Include="TearManager.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -183,6 +185,8 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="structs.h" />
     <ClInclude Include="SVGParser.h" />
+    <ClInclude Include="Tear.h" />
+    <ClInclude Include="TearManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="utils.h" />

@@ -5,14 +5,15 @@ class Texture;
 class Sprite
 {
 public:
+	Sprite();
 	Sprite(Texture* texture, int nrCols, int nrRows, float frameSec, float scale, int nrFrames = 0);
 	~Sprite();
 
 	void Update(float elapsedSec);
-	void Draw(const Point2f& pos, const Point2f& srcBottomLeft = Point2f{ 0,0 });
+	void Draw(const Point2f& pos, const Point2f& srcBottomLeft = Point2f{ 0,0 }) const;
 
-	float GetFrameWidth();
-	float GetFrameHeight();
+	float GetFrameWidth() const;
+	float GetFrameHeight() const;
 
 	void SetActFrame(int actFrame);
 	void SetAccuSec(float accuSec);

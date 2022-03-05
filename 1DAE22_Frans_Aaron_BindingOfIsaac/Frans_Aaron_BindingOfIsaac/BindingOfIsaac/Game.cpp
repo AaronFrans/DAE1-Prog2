@@ -7,6 +7,8 @@ Game::Game(const Window& window)
 	, m_TextureManager{}
 {
 	Initialize();
+
+	
 }
 
 Game::~Game()

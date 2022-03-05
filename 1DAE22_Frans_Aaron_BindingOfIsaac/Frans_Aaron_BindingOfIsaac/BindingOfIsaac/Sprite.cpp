@@ -4,6 +4,11 @@
 #include <iostream>
 
 
+Sprite::Sprite()
+	: Sprite(nullptr, 0, 0, 0, 0, 0)
+{
+}
+
 Sprite::Sprite(Texture* texture, int nrCols, int nrRows, float frameSec, float scale, int nrFrames)
 	: m_pSpriteSheet{ texture }
 	, m_Frames{ nrFrames }
@@ -36,7 +41,7 @@ void Sprite::Update(float elapsedSec)
 	}
 }
 
-void Sprite::Draw(const Point2f& pos, const Point2f& srcBottomLeft)
+void Sprite::Draw(const Point2f& pos, const Point2f& srcBottomLeft) const
 {
 	const float frameWidth{ GetFrameWidth() },
 		frameHeight{ GetFrameHeight() };
@@ -53,13 +58,13 @@ void Sprite::Draw(const Point2f& pos, const Point2f& srcBottomLeft)
 
 	m_pSpriteSheet->Draw(dstRect, srcRect);
 }
-
-float Sprite::GetFrameWidth()
+ 
+float Sprite::GetFrameWidth() const
 {
 	return this->m_pSpriteSheet->GetWidth() / m_Cols;
 }
 
-float Sprite::GetFrameHeight()
+float Sprite::GetFrameHeight() const
 {
 	return this->m_pSpriteSheet->GetHeight() / m_Rows;
 }
