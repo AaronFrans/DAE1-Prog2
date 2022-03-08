@@ -22,7 +22,7 @@ private:
 	Texture* m_pFenceTexture;
 
 
-	std::vector<Point2f> m_Vertices;
+	std::vector < std::vector<Point2f>> m_Vertices;
 	Point2f m_fenceBottomLeft;
 };
 

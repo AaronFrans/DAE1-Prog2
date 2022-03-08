@@ -2,17 +2,18 @@
 #include "Tear.h"
 #include <vector>
 
+class Texture;
 
 class TearManager
 {
 public:
-	TearManager();
+	TearManager(Texture* texture);
 	~TearManager();
 
 	void DrawTears() const;
 	void UpdateTears(float elapsedSec);
 
-	void ShootTear(const Point2f& tearPos, const float& tearRadius, const Vector2f& tearVelocity, const float& tearHeight);
+	Tear* ShootTear();
 private:
 
 	const static int m_NrTears{ 100 };

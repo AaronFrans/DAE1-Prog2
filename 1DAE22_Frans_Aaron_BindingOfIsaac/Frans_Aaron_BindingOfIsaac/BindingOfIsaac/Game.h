@@ -29,6 +29,7 @@ private:
 	// DATA MEMBERS
 	const Window m_Window;
 	TextureManager m_TextureManager;
+	TearManager* m_pTearManager;
 
 	Isaac* m_pPlayer;
 
@@ -40,6 +41,11 @@ private:
 
 	void InitPlayer();
 	void DrawPlayer() const;
-	void UpdatePlayer(float elaspedSec);
+	void UpdatePlayer(float elapsedSec);
 	void DeletePlayer();
+
+	void InitTearManager();
+	void DrawTearManager() const;
+	void UpdateTearManager(float elapsedSec);
+	void DeleteTearManager();
 };

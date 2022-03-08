@@ -2,6 +2,7 @@
 #include "Vector2f.h"
 class Sprite;
 class TextureManager;
+class TearManager;
 
 class Isaac
 {
@@ -22,7 +23,7 @@ public:
 
 	void Draw() const;
 
-	void Update(float elapsedSec);
+	void Update(float elapsedSec, TearManager* tearManager);
 
 	void ProcessKeyUpEvent(const SDL_KeyboardEvent& e);
 	//void SetState(BodyState bodyState);
@@ -39,10 +40,17 @@ private:
 	Direction m_BodyState;
 	Direction m_HeadState;
 
+	float m_TearFireRate;
+	float m_TearFireAccuSec;
+
 	void DrawBody() const;
 	void UpdateBody(float elapsedSec);
 
 	void DrawHead() const;
-	void UpdateHead(float elapsedSec);
+	void UpdateHead(float elapsedSec, TearManager* tearManager);
+
+	void Shoot(TearManager* tearManager);
+
+	bool CanShoot();
 };
 

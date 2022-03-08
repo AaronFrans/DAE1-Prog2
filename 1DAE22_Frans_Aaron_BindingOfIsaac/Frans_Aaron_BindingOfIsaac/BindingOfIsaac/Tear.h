@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector2f.h"
 class Sprite;
-
+class Texture;
 class Tear
 {
 
@@ -12,7 +12,7 @@ public:
 		inactive
 	};
 
-	Tear();
+	Tear(Texture* texture);
 	~Tear();
 
 	void Draw() const;
@@ -32,6 +32,8 @@ private:
 	Circlef m_TearShape;
 	Vector2f m_Velocity;
 	TearState m_State;
+
+	Point2f mTearSpriteLeftBottom;
 
 	float m_Height;
 };

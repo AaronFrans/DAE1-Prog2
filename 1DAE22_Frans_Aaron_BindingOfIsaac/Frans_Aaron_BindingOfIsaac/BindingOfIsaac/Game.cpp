@@ -6,9 +6,8 @@ Game::Game(const Window& window)
 	: m_Window{ window }
 	, m_TextureManager{}
 {
+	;
 	Initialize();
-
-	
 }
 
 Game::~Game()
@@ -19,21 +18,26 @@ Game::~Game()
 void Game::Initialize()
 {
 	InitPlayer();
+	InitTearManager();
 }
 
 void Game::Cleanup()
 {
+	DeleteTearManager();
 	DeletePlayer();
 }
 
 void Game::Update(float elapsedSec)
 {
+	UpdateTearManager(elapsedSec);
 	UpdatePlayer(elapsedSec);
+
 }
 
 void Game::Draw() const
 {
 	ClearBackground();
+	DrawTearManager();
 	DrawPlayer();
 }
 
@@ -102,13 +106,34 @@ void Game::DrawPlayer() const
 	m_pPlayer->Draw();
 }
 
-void Game::UpdatePlayer(float elaspedSec)
+void Game::UpdatePlayer(float elapsedSec)
 {
-	m_pPlayer->Update(elaspedSec);
+	m_pPlayer->Update(elapsedSec, m_pTearManager);
 }
 
 void Game::DeletePlayer()
 {
 	delete m_pPlayer;
 	m_pPlayer = nullptr;
+}
+
+void Game::InitTearManager()
+{
+	m_pTearManager = new TearManager{ m_TextureManager.GetTexture(TextureManager::TextureLookup::Tears) };
+}
+
+void Game::DrawTearManager() const
+{
+	m_pTearManager->DrawTears();
+}
+
+void Game::UpdateTearManager(float elapsedSec)
+{
+	m_pTearManager->UpdateTears(elapsedSec);
+}
+
+void Game::DeleteTearManager()
+{
+	delete m_pTearManager;
+	m_pTearManager = nullptr;
 }

@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "Sprite.h"
 #include "TextureManager.h"
+#include "TearManager.h"
 
 
 
@@ -18,8 +19,10 @@ Isaac::Isaac(const TextureManager& textureManager, const Point2f& centerPosition
 	, m_BodyState{ Isaac::Direction::down }
 	, m_HeadState{ Isaac::Direction::down }
 	, m_Velocity{ 150, 150 }
+	, m_TearFireRate{ 1 / 2.0f }
+	, m_TearFireAccuSec{ 0 }
 {
-	m_pHeadSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacHead) , 8, 1, 1 / 10.0f, 1 , 2};
+	m_pHeadSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacHead) , 8, 1, m_TearFireRate / 2.0f, 1 , 2 };
 	m_pWalkSpriteUD = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacBodyUD), 10, 1, 1 / 10.0f, 1 };
 	m_pWalkSpriteLR = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::IsaacBodyLR), 10, 1, 1 / 10.0f, 1 };
 
@@ -41,10 +44,10 @@ void Isaac::Draw() const
 	DrawHead();
 }
 
-void Isaac::Update(float elapsedSec)
+void Isaac::Update(float elapsedSec, TearManager* tearManager)
 {
 	UpdateBody(elapsedSec);
-	UpdateHead(elapsedSec);
+	UpdateHead(elapsedSec, tearManager);
 }
 
 void Isaac::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
@@ -70,6 +73,7 @@ void Isaac::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
 		m_pHeadSprite->SetActFrame(0);
 		m_pHeadSprite->SetAccuSec(0);
 		m_HeadState = Isaac::Direction::down;
+		m_TearFireAccuSec = 0;
 		break;
 	}
 }
@@ -161,7 +165,7 @@ void Isaac::DrawHead() const
 	case Isaac::Direction::up:
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
-			m_CenterPosition.y},
+			m_CenterPosition.y },
 
 			Point2f{
 				m_pHeadSprite->GetFrameWidth() * 4,
@@ -171,7 +175,7 @@ void Isaac::DrawHead() const
 	case Isaac::Direction::down:
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
-			m_CenterPosition.y},
+			m_CenterPosition.y },
 
 			Point2f{
 				0,
@@ -181,7 +185,7 @@ void Isaac::DrawHead() const
 	case Isaac::Direction::left:
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
-			m_CenterPosition.y},
+			m_CenterPosition.y },
 
 			Point2f{
 				m_pHeadSprite->GetFrameWidth() * 6,
@@ -203,33 +207,65 @@ void Isaac::DrawHead() const
 	}
 }
 
-void Isaac::UpdateHead(float elapsedSec)
+void Isaac::UpdateHead(float elapsedSec, TearManager* tearManager)
 {
 	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
 
 	if (pStates[SDL_SCANCODE_RIGHT])
 	{
+		m_TearFireAccuSec += elapsedSec;
 		m_HeadState = Direction::right;
 		m_pHeadSprite->Update(elapsedSec);
+		Shoot(tearManager);
 
 	}
 	else if (pStates[SDL_SCANCODE_LEFT])
 	{
+		m_TearFireAccuSec += elapsedSec;
 		m_HeadState = Direction::left;
 		m_pHeadSprite->Update(elapsedSec);
+		Shoot(tearManager);
 	}
 
 	if (pStates[SDL_SCANCODE_UP])
 	{
+		m_TearFireAccuSec += elapsedSec;
 		m_HeadState = Direction::up;
 		m_pHeadSprite->Update(elapsedSec);
+		Shoot(tearManager);
 	}
 	else if (pStates[SDL_SCANCODE_DOWN])
 	{
+		m_TearFireAccuSec += elapsedSec;
 		m_HeadState = Direction::down;
 		m_pHeadSprite->Update(elapsedSec);
+		Shoot(tearManager);
 	}
 }
+
+void Isaac::Shoot(TearManager* tearManager)
+{
+	if (CanShoot())
+	{
+		m_TearFireAccuSec = 0;
+		Tear* pShotTear = tearManager->ShootTear();
+
+
+		Point2f tearCenterPos = Point2f{
+				m_CenterPosition.x,
+				m_CenterPosition.y };
+
+		pShotTear->SetTearShape(Circlef{ tearCenterPos, 10 });
+		pShotTear->SetVelocity(Vector2f{ 50,50 });
+		pShotTear->SetHeight(m_CenterPosition.y);
+	}
+}
+
+bool Isaac::CanShoot()
+{
+	return m_TearFireAccuSec > m_TearFireRate;
+}
+
 
 //void Isaac::SetState(BodyState bodyState)
 //{

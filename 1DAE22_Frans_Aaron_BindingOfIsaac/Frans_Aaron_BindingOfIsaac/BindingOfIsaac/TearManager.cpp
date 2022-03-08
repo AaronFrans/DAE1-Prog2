@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "TearManager.h"
+#include "Texture.h"
 
-TearManager::TearManager()
+TearManager::TearManager(Texture* texture)
 	: m_NrShotTears{ 0 }
 {
 	for (int i = 0; i < m_NrTears; i++)
 	{
-		m_pTears.push_back(new Tear{});
+		m_pTears.push_back(new Tear{ texture });
 	}
 }
 
@@ -39,10 +40,16 @@ void TearManager::UpdateTears(float elapsedSec)
 	}
 }
 
-void TearManager::ShootTear(const Point2f& tearPos, const float& tearRadius, const Vector2f& tearVelocity, const float& tearHeight)
+Tear* TearManager::ShootTear()
 {
-	m_pTears[m_NrShotTears]->SetState(Tear::TearState::active);
-	m_pTears[m_NrShotTears]->SetHeight(tearHeight);
-	m_pTears[m_NrShotTears]->SetTearShape(Circlef{ tearPos, tearRadius });
-	m_pTears[m_NrShotTears]->SetVelocity(tearVelocity);
+	int i{ -1 };
+	bool foundFreeBullet{ false };
+	do {
+		i++;
+		if (m_pTears[i]->GetState() == Tear::TearState::inactive)
+			foundFreeBullet = true;
+	} while (foundFreeBullet != true);
+
+	m_pTears[i]->SetState(Tear::TearState::active);
+	return m_pTears[i];
 }
