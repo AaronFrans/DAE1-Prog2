@@ -10,6 +10,7 @@ Enemy::Enemy( )
 {
 	std::cout << ">Enemy constructor<\n";
 	++m_InstanceCounter;
+	m_Id = 10;
 }
 
 Enemy::~Enemy()

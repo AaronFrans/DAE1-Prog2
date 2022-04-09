@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "TearManager.h"
 #include "Texture.h"
+#include "GameObject.h"
 
-TearManager::TearManager(Texture* texture)
-	: m_NrShotTears{ 0 }
+TearManager::TearManager()
 {
 	for (int i = 0; i < m_NrTears; i++)
 	{
-		m_pTears.push_back(new Tear{ texture });
+		m_pTears.push_back(new Tear{});
 	}
 }
 
@@ -22,21 +22,35 @@ TearManager::~TearManager()
 	}
 }
 
-void TearManager::DrawTears() const
+void TearManager::DrawFrontTears() const
 {
 	for (Tear* tear : m_pTears)
 	{
-		if (tear->GetState() == Tear::TearState::active)
+		if (tear->GetState() != Tear::TearState::inactive && tear->GetIsFront())
 			tear->Draw();
 	}
 }
 
-void TearManager::UpdateTears(float elapsedSec)
+void TearManager::DrawBackTears() const
 {
 	for (Tear* tear : m_pTears)
 	{
-		if (tear->GetState() == Tear::TearState::active)
-			tear->Update(elapsedSec);
+		if (tear->GetState() != Tear::TearState::inactive && !tear->GetIsFront())
+			tear->Draw();
+	}
+}
+
+
+
+void TearManager::UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects)
+{
+	for (Tear* tear : m_pTears)
+	{
+		if (tear->GetState() != Tear::TearState::inactive)
+		{
+			tear->Update(elapsedSec, gameObjects);
+
+		}
 	}
 }
 

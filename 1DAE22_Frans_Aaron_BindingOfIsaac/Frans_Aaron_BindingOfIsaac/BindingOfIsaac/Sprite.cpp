@@ -56,9 +56,24 @@ void Sprite::Draw(const Point2f& pos, const Point2f& srcBottomLeft) const
 				   srcRect.width,
 				   srcRect.height };
 
+
 	m_pSpriteSheet->Draw(dstRect, srcRect);
 }
- 
+
+void Sprite::Draw(const Rectf& dstRect, const Point2f& srcBottomLeft) const
+{
+	const float frameWidth{ GetFrameWidth() },
+		frameHeight{ GetFrameHeight() };
+
+
+	Rectf srcRect{ srcBottomLeft.x + m_ActFrame % m_Cols * frameWidth,
+				   srcBottomLeft.y + (m_ActFrame / m_Rows + 1) * frameHeight,
+				   frameWidth,
+				   frameHeight };
+
+	m_pSpriteSheet->Draw(dstRect, srcRect);
+}
+
 float Sprite::GetFrameWidth() const
 {
 	return this->m_pSpriteSheet->GetWidth() / m_Cols;
@@ -69,6 +84,11 @@ float Sprite::GetFrameHeight() const
 	return this->m_pSpriteSheet->GetHeight() / m_Rows;
 }
 
+int Sprite::GetNrFrames() const
+{
+	return m_Frames;
+}
+
 void Sprite::SetActFrame(int actFrame)
 {
 	m_ActFrame = actFrame;
@@ -77,4 +97,9 @@ void Sprite::SetActFrame(int actFrame)
 void Sprite::SetAccuSec(float accuSec)
 {
 	m_AccuSec = accuSec;
+}
+
+float Sprite::GetTotalLoopTime()
+{
+	return m_FrameSec * m_Frames;
 }

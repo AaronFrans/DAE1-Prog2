@@ -1,5 +1,6 @@
 #pragma once
 
+
 class Texture;
 
 class Sprite
@@ -11,12 +12,16 @@ public:
 
 	void Update(float elapsedSec);
 	void Draw(const Point2f& pos, const Point2f& srcBottomLeft = Point2f{ 0,0 }) const;
+	void Draw(const Rectf& dstRect, const Point2f& srcBottomLeft = Point2f{ 0,0 }) const;
 
 	float GetFrameWidth() const;
 	float GetFrameHeight() const;
+	int GetNrFrames() const;
 
 	void SetActFrame(int actFrame);
 	void SetAccuSec(float accuSec);
+
+	float GetTotalLoopTime();
 
 private:
 

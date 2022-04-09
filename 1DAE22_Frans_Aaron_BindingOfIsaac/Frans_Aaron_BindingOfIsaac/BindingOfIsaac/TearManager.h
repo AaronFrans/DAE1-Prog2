@@ -7,18 +7,17 @@ class Texture;
 class TearManager
 {
 public:
-	TearManager(Texture* texture);
+	TearManager();
 	~TearManager();
 
-	void DrawTears() const;
-	void UpdateTears(float elapsedSec);
+	void DrawFrontTears() const;
+	void DrawBackTears() const;
+	void UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects);
 
 	Tear* ShootTear();
 private:
 
 	const static int m_NrTears{ 100 };
-
-	int m_NrShotTears;
 
 	std::vector<Tear* > m_pTears;
 

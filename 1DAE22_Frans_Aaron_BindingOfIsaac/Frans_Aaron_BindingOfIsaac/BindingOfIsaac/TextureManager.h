@@ -10,11 +10,23 @@ public:
 
 	enum class TextureLookup
 	{
-		IsaacHead = 0,
-		IsaacBodyLR = 1,
-		IsaacBodyUD = 2,
-		TearHit = 3,
-		Tears = 4,
+		//Isaac Textures
+		isaacHead = 0,
+		isaacBodyLR,
+		isaacBodyUD,
+		//Tear Textures
+		isaacTearHit,
+		isaacTear ,
+		//GameObject Textures
+		poop,
+		//Room Textures
+		roomBig,
+		roomSmall,
+		//Ui Textures
+		hearths,
+		//Enemy Textures
+		smallSpiderMovement,
+		smallSpiderDeath,
 
 	};
 
@@ -31,6 +43,10 @@ private:
 	void InitTextures();
 	void InitIsaacTextures();
 	void InitTearTextures();
+	void InitGameObjectTextures();
+	void InitRoomTextures();
+	void InitUi();
+	void InitEnemyTextures();
 
 };
 

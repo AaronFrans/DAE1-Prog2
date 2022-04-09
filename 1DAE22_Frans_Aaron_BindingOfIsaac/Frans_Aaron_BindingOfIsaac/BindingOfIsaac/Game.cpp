@@ -1,13 +1,20 @@
 #include "pch.h"
 #include "Game.h"
 #include "Isaac.h"
+#include "Poop.h"
+#include "Room.h"
+#include "RoomManager.h"
+#include "TearManager.h"
+#include "IsaacHealthBar.h"
+#include "SmallSpider.h"
 
 Game::Game(const Window& window)
 	: m_Window{ window }
 	, m_TextureManager{}
+	, m_Camera{ m_Window.width, m_Window.height }
 {
-	;
 	Initialize();
+
 }
 
 Game::~Game()
@@ -19,10 +26,23 @@ void Game::Initialize()
 {
 	InitPlayer();
 	InitTearManager();
+	healthTest = new IsaacHealthBar(m_TextureManager.GetTexture(TextureManager::TextureLookup::hearths),
+		3, Point2f{ 0, m_Window.height - 20 });
+
+	m_pRoomManager = new RoomManager{ m_TextureManager };
+	m_Camera.SetLevelBoundaries(m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2)->GetBoundaries());
+	testSpider = new SmallSpider{
+		m_TextureManager.GetTexture(TextureManager::TextureLookup::smallSpiderMovement),
+		m_TextureManager.GetTexture(TextureManager::TextureLookup::smallSpiderDeath),
+		 m_pPlayer->GetCenter(), 1,150 };
+
 }
 
 void Game::Cleanup()
 {
+	delete m_pRoomManager;
+	delete healthTest;
+	delete testSpider;
 	DeleteTearManager();
 	DeletePlayer();
 }
@@ -31,14 +51,22 @@ void Game::Update(float elapsedSec)
 {
 	UpdateTearManager(elapsedSec);
 	UpdatePlayer(elapsedSec);
-
+	testSpider->Update(elapsedSec, m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2));
 }
 
 void Game::Draw() const
 {
+
 	ClearBackground();
-	DrawTearManager();
+	glPushMatrix();
+	m_Camera.Transform(m_pPlayer->GetCenter());
+	m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2)->Draw();
+	m_pTearManager->DrawBackTears();
+	testSpider->Draw();
 	DrawPlayer();
+	m_pTearManager->DrawFrontTears();
+	healthTest->DrawHealtBar(m_Camera.GetCameraView(m_pPlayer->GetCenter()));
+	glPopMatrix();
 }
 
 void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
@@ -108,7 +136,7 @@ void Game::DrawPlayer() const
 
 void Game::UpdatePlayer(float elapsedSec)
 {
-	m_pPlayer->Update(elapsedSec, m_pTearManager);
+	m_pPlayer->Update(elapsedSec, m_pTearManager, m_TextureManager, m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2));
 }
 
 void Game::DeletePlayer()
@@ -119,17 +147,12 @@ void Game::DeletePlayer()
 
 void Game::InitTearManager()
 {
-	m_pTearManager = new TearManager{ m_TextureManager.GetTexture(TextureManager::TextureLookup::Tears) };
-}
-
-void Game::DrawTearManager() const
-{
-	m_pTearManager->DrawTears();
+	m_pTearManager = new TearManager{};
 }
 
 void Game::UpdateTearManager(float elapsedSec)
 {
-	m_pTearManager->UpdateTears(elapsedSec);
+	m_pTearManager->UpdateTears(elapsedSec, m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2)->GetGameObjects());
 }
 
 void Game::DeleteTearManager()
