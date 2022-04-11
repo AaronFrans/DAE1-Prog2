@@ -3,7 +3,7 @@
 
 class Hearth;
 class Texture;
-class IsaacHealthBar
+class IsaacHealthBar final
 {
 
 public:
@@ -12,6 +12,8 @@ public:
 	~IsaacHealthBar();
 
 	void DrawHealtBar(const Rectf& Camera) const;
+
+	void TakeDamage(float damage);
 
 private:
 

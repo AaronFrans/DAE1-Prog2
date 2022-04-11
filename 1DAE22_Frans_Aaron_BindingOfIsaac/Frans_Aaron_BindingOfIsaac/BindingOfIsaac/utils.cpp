@@ -688,4 +688,8 @@ float  utils::GetRand(float min, float max, int precision)
 
 	return float(result / pow(10.0f, precision));
 }
+bool utils::IsEqual(float a, float b, float epsilon)
+{
+	return fabs(a - b) < epsilon;
+}
 #pragma endregion

@@ -7,11 +7,12 @@ class TextureManager;
 class TearManager;
 class Room;
 class GameObject;
+class IsaacHealthBar;
 
 //TODO: 0. 1-13 before vaction over
 //TODO: 17. make function for fire rate
 
-class Isaac
+class Isaac final
 {
 
 	enum class Direction
@@ -34,19 +35,28 @@ class Isaac
 		walking = 2
 	};
 
+	enum class DamageState
+	{
+		undamaged,
+		damaged,
+		dead
+	};
+
 public:
 
-	Isaac(const TextureManager& textureManager);
-	Isaac(const TextureManager& textureManager, const Point2f& centerPosition);
+	Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition);
 	~Isaac();
 
 	void Draw() const;
-
 	void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom);
+
+	void TakeDamage(float damage);
 
 	void ProcessKeyUpEvent(const SDL_KeyboardEvent& e);
 
 	Point2f GetCenter();
+	Rectf GetHitBox();
+
 	//void SetState(BodyState bodyState);
 
 private:
@@ -56,8 +66,12 @@ private:
 	Sprite* m_pHeadSprite;
 	Sprite* m_pWalkSpriteUD;
 	Sprite* m_pWalkSpriteLR;
+	IsaacHealthBar* m_pHealth;
 
 	Point2f m_CenterPosition;
+	float m_Width;
+	float m_Height;
+
 	Point2f m_TearSrcBottomLeft;
 
 	Direction m_BodyDirection;
@@ -66,9 +80,14 @@ private:
 	BodyState m_BodyState;
 	HeadState m_HeadState;
 
+	DamageState m_DamageState;
+
 	float m_TearFireRate;
 	float m_TearFireAccuSec;
 	float m_IdleAccuSec;
+
+	float m_InvisAccuSec;
+	float m_InvisMaxSec;
 
 
 	//Character Changeable Stats
@@ -92,7 +111,12 @@ private:
 
 	void Shoot(TearManager* tearManager, const TextureManager& textureManager, Vector2f tearVelocity);
 
+
+	void DrawDamaged() const;
+	void UpdateDamaged(float elapsedSec, Room* currentRoom);
+
 	bool CanShoot();
+	bool IsInvis();
 
 };
 

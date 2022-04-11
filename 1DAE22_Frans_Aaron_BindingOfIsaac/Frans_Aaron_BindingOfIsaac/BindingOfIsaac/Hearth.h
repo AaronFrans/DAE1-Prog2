@@ -1,6 +1,6 @@
 #pragma once
 class Texture;
-class Hearth
+class Hearth final
 {
 public:
 	enum class HearthState
@@ -13,6 +13,9 @@ public:
 	Hearth(Texture* heartSheet, HearthState state, float dstHeartSize);
 
 	void Draw(const Point2f& centerPos) const;
+	HearthState GetState() const;
+
+	void TakeDamage(float damage);
 
 private:
 	Texture* m_pHeartSheet;
@@ -23,6 +26,6 @@ private:
 	const float m_DstHeartSize;
 	float m_SrcHeartSize;
 
-	
+
 };
 

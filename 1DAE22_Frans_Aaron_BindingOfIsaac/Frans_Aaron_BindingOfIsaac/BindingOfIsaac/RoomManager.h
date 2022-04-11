@@ -3,7 +3,7 @@
 #include "TextureManager.h"
 
 class Room;
-class RoomManager
+class RoomManager final
 {
 
 public:
@@ -21,6 +21,7 @@ public:
 
 	RoomManager(const TextureManager& textureManager);
 	~RoomManager();
+
 
 	Room* GetRoom(RoomLookup lookup) const;
 

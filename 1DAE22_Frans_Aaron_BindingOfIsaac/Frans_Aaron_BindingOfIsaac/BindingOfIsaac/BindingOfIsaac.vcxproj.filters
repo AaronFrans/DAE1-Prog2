@@ -31,6 +31,9 @@
     <Filter Include="Game Files\Room\Enemies">
       <UniqueIdentifier>{bccf22b1-d682-492f-be1a-ade9fca579f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\Isaac\UI">
+      <UniqueIdentifier>{c41d0495-7c19-49c9-b3ae-51d1aa0b0910}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -96,12 +99,6 @@
     <ClInclude Include="Sprite.h">
       <Filter>Game Files\Game Basic Files</Filter>
     </ClInclude>
-    <ClInclude Include="IsaacHealthBar.h">
-      <Filter>Game Files\Isaac</Filter>
-    </ClInclude>
-    <ClInclude Include="Hearth.h">
-      <Filter>Game Files\Isaac</Filter>
-    </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>Game Files\Room\Enemies</Filter>
     </ClInclude>
@@ -110,6 +107,15 @@
     </ClInclude>
     <ClInclude Include="SmallSpider.h">
       <Filter>Game Files\Room\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Hearth.h">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="IsaacHealthBar.h">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>Game Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,12 +182,6 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Game Files\Game Basic Files</Filter>
     </ClCompile>
-    <ClCompile Include="IsaacHealthBar.cpp">
-      <Filter>Game Files\Isaac</Filter>
-    </ClCompile>
-    <ClCompile Include="Hearth.cpp">
-      <Filter>Game Files\Isaac</Filter>
-    </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Game Files\Room\Enemies</Filter>
     </ClCompile>
@@ -190,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="SmallSpider.cpp">
       <Filter>Game Files\Room\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Hearth.cpp">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="IsaacHealthBar.cpp">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>Game Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

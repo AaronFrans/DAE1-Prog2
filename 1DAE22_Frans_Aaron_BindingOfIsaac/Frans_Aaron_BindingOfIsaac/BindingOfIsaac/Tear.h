@@ -7,7 +7,7 @@
 class Sprite;
 class Texture;
 class GameObject;
-class Tear
+class Tear final
 {
 
 public:

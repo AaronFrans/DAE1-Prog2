@@ -4,7 +4,7 @@
 
 class Texture;
 
-class TearManager
+class TearManager final
 {
 public:
 	TearManager();

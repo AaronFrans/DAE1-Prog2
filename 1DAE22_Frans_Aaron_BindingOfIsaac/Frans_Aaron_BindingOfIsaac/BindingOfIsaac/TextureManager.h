@@ -3,7 +3,7 @@
 
 class Texture;
 
-class TextureManager
+class TextureManager final
 {
 
 public:

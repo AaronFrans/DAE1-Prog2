@@ -92,4 +92,8 @@ namespace utils
 	float GetRand(float min, float max, int precision);
 #pragma endregion
 
+
+#pragma region CompareFunctionality
+	bool IsEqual(float a, float b, float epsilon);
+#pragma endregion
 }

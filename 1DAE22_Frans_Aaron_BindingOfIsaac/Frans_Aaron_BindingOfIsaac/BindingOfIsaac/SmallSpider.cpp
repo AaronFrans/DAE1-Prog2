@@ -5,6 +5,7 @@
 #include "Room.h"
 #include "GameObject.h"
 #include "utils.h"
+#include "Isaac.h"
 
 SmallSpider::SmallSpider(Texture* movementSpriteSheet, Texture* deathSpriteSheet, Point2f centerPoint, float damage, float speed)
 	: Enemy{ centerPoint, damage, speed }
@@ -56,7 +57,7 @@ void SmallSpider::Draw() const
 
 }
 
-void SmallSpider::Update(float elapsedSec, const Room* currentRoom)
+void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac)
 {
 	switch (m_State)
 	{
@@ -74,6 +75,7 @@ void SmallSpider::Update(float elapsedSec, const Room* currentRoom)
 			m_Velocity.y += utils::GetRand(-m_Speed, m_Speed, 2);
 		}
 		UpdatePos(elapsedSec, currentRoom);
+		DoIsaacCollisionCheck(isaac);
 		break;
 	case SmallSpider::SmallSpiderState::dying:
 		break;
@@ -188,6 +190,15 @@ void SmallSpider::DoGameObjectCollision(const std::vector<GameObject*>& objects)
 			}
 		}
 
+	}
+}
+
+void SmallSpider::DoIsaacCollisionCheck(Isaac* isaac)
+{
+	Rectf hitBox{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f, m_MovementWidth, m_MovementHeight };
+	if (utils::IsOverlapping(hitBox, isaac->GetHitBox()))
+	{
+		isaac->TakeDamage(m_Damage);
 	}
 }
 

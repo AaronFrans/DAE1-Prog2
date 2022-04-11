@@ -1,6 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include <vector>
+
 class Texture;
 class Sprite;
 class Room;
@@ -20,7 +21,7 @@ public:
 	~SmallSpider();
 
 	virtual void Draw() const override;
-	virtual void Update(float elapsedSec, const Room* currentRoom) override;
+	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac) override;
 
 	virtual bool IsDead() const override;
 
@@ -44,8 +45,10 @@ private:
 	virtual void UpdatePos(float elapsedSec, const Room* currentRoom) override;
 
 	void DoIdle(float elapsedSec);
+
 	void DoRoomCollision(const Room* currentRoom);
 	void DoGameObjectCollision(const std::vector<GameObject*>& objects);
 
+	void DoIsaacCollisionCheck(Isaac* isaac);
 };
 

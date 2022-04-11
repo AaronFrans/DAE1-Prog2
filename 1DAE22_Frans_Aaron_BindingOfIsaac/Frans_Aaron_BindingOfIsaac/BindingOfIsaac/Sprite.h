@@ -3,7 +3,7 @@
 
 class Texture;
 
-class Sprite
+class Sprite final
 {
 public:
 	Sprite();

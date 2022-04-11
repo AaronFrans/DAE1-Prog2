@@ -6,6 +6,7 @@
 #include "RoomManager.h"
 #include "TearManager.h"
 #include "IsaacHealthBar.h"
+#include "UIManager.h"
 #include "SmallSpider.h"
 
 Game::Game(const Window& window)
@@ -24,34 +25,35 @@ Game::~Game()
 
 void Game::Initialize()
 {
-	InitPlayer();
-	InitTearManager();
-	healthTest = new IsaacHealthBar(m_TextureManager.GetTexture(TextureManager::TextureLookup::hearths),
+	IsaacHealthBar* isaacHealthBar = new IsaacHealthBar(m_TextureManager.GetTexture(TextureManager::TextureLookup::hearths),
 		3, Point2f{ 0, m_Window.height - 20 });
-
+	InitPlayer(isaacHealthBar);
+	InitTearManager();
+	InitUIManager(isaacHealthBar);
+	isaacHealthBar = nullptr;
 	m_pRoomManager = new RoomManager{ m_TextureManager };
 	m_Camera.SetLevelBoundaries(m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2)->GetBoundaries());
 	testSpider = new SmallSpider{
 		m_TextureManager.GetTexture(TextureManager::TextureLookup::smallSpiderMovement),
 		m_TextureManager.GetTexture(TextureManager::TextureLookup::smallSpiderDeath),
-		 m_pPlayer->GetCenter(), 1,150 };
+		 m_pPlayer->GetCenter(), 0.5f,150 };
 
 }
 
 void Game::Cleanup()
 {
 	delete m_pRoomManager;
-	delete healthTest;
 	delete testSpider;
 	DeleteTearManager();
 	DeletePlayer();
+	DeleteUIManager();
 }
 
 void Game::Update(float elapsedSec)
 {
 	UpdateTearManager(elapsedSec);
 	UpdatePlayer(elapsedSec);
-	testSpider->Update(elapsedSec, m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2));
+	testSpider->Update(elapsedSec, m_pRoomManager->GetRoom(RoomManager::RoomLookup::bigRoom2), m_pPlayer);
 }
 
 void Game::Draw() const
@@ -65,13 +67,21 @@ void Game::Draw() const
 	testSpider->Draw();
 	DrawPlayer();
 	m_pTearManager->DrawFrontTears();
-	healthTest->DrawHealtBar(m_Camera.GetCameraView(m_pPlayer->GetCenter()));
+	DrawUIManager();
 	glPopMatrix();
 }
 
 void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
 {
-	//std::cout << "KEYDOWN event: " << e.keysym.sym << std::endl;
+	switch (e.keysym.scancode)
+	{
+	case SDL_SCANCODE_KP_2:
+		m_pPlayer->TakeDamage(0.5f);
+		break;
+	case SDL_SCANCODE_KP_3:
+		m_pPlayer->TakeDamage(1.0f);
+		break;
+	}
 }
 
 void Game::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
@@ -124,9 +134,9 @@ void Game::ClearBackground() const
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Game::InitPlayer()
+void Game::InitPlayer(IsaacHealthBar* isaacHealthBar)
 {
-	m_pPlayer = new Isaac(m_TextureManager, Point2f{ m_Window.width / 2.0f, m_Window.height / 2.0f });
+	m_pPlayer = new Isaac(m_TextureManager, isaacHealthBar, Point2f{ m_Window.width / 2.0f, m_Window.height / 2.0f });
 }
 
 void Game::DrawPlayer() const
@@ -159,4 +169,19 @@ void Game::DeleteTearManager()
 {
 	delete m_pTearManager;
 	m_pTearManager = nullptr;
+}
+
+void Game::InitUIManager(IsaacHealthBar* isaacHealthBar)
+{
+	m_pUIManager = new UIManager(isaacHealthBar);
+}
+
+void Game::DrawUIManager() const
+{
+	m_pUIManager->Draw(m_Camera.GetCameraView(m_pPlayer->GetCenter()));
+}
+
+void Game::DeleteUIManager()
+{
+	delete m_pUIManager;
 }

@@ -19,9 +19,9 @@
 class Isaac;
 class RoomManager;
 class TearManager;
+class UIManager;
 class IsaacHealthBar;
 class SmallSpider;
-
 class Game final
 {
 public:
@@ -49,12 +49,11 @@ private:
 	TextureManager m_TextureManager;
 	RoomManager* m_pRoomManager;
 	TearManager* m_pTearManager;
+	UIManager* m_pUIManager;
 
 	SmallSpider* testSpider;
 
 	Isaac* m_pPlayer;
-
-	IsaacHealthBar* healthTest;
 
 
 	// FUNCTIONS
@@ -63,7 +62,7 @@ private:
 	void ClearBackground() const;
 
 
-	void InitPlayer();
+	void InitPlayer(IsaacHealthBar* isaacHealthBar);
 	void DrawPlayer() const;
 	void UpdatePlayer(float elapsedSec);
 	void DeletePlayer();
@@ -71,4 +70,8 @@ private:
 	void InitTearManager();
 	void UpdateTearManager(float elapsedSec);
 	void DeleteTearManager();
+
+	void InitUIManager(IsaacHealthBar* isaacHealthBar);
+	void DrawUIManager() const;
+	void DeleteUIManager();
 };

@@ -34,3 +34,15 @@ void IsaacHealthBar::DrawHealtBar(const Rectf& Camera) const
 }
 
 
+void IsaacHealthBar::TakeDamage(float damage)
+{
+	size_t index{ m_pHearts.size() - 1 };
+	while (m_pHearts[index]->GetState() == Hearth::HearthState::empty)
+	{
+		index--;
+	}
+	m_pHearts[index]->TakeDamage(damage);
+	m_Health -= damage;
+}
+
+
