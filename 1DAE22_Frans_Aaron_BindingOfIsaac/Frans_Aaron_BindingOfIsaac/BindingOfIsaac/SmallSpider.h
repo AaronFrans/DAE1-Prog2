@@ -1,6 +1,5 @@
 #pragma once
 #include "Enemy.h"
-#include <vector>
 
 class Texture;
 class Sprite;
@@ -8,7 +7,9 @@ class Room;
 class GameObject;
 class SmallSpider : public Enemy
 {
+
 public:
+
 	enum class SmallSpiderState
 	{
 		idle,
@@ -17,38 +18,54 @@ public:
 		dead
 	};
 
-	SmallSpider(Texture* movementSpriteSheet, Texture* deathSpriteSheet, Point2f centerPoint, float damage, float speed);
+	SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint);
+
+	SmallSpider(const SmallSpider& rhs);
+	SmallSpider(SmallSpider && rhs) = default;
+	SmallSpider& operator=(const SmallSpider & rhs);
+	SmallSpider& operator=(SmallSpider && rhs) = default;
 	~SmallSpider();
 
+
+
 	virtual void Draw() const override;
-	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac) override;
+	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
 
 	virtual bool IsDead() const override;
+	virtual Rectf GetHitBox() const override;
+
+	virtual void TakeDamage(float damage) override;
+
+	virtual Enemy* clone() const;
 
 private:
 	Sprite* m_pMovementSprite;
-	Sprite* m_pDeathSprite;
+	Sprite* m_pDyingSprite;
 
 	float m_MovementWidth;
 	float m_MovementHeight;
-	float m_DeathWidth;
-	float m_DeathHeight;
+	float m_DyingWidth;
+	float m_DyingHeight;
 
 	float m_MovementAccuSec;
 	float m_MovementMaxSec;
+
+	float m_DyingAccuSec;
+	float m_DyingMaxSec;
 
 	float m_IdleAccuSec;
 	float m_IdleMinSec;
 
 	SmallSpiderState m_State;
 
-	virtual void UpdatePos(float elapsedSec, const Room* currentRoom) override;
+	void UpdatePos(float elapsedSec, const Room* currentRoom);
 
 	void DoIdle(float elapsedSec);
 
-	void DoRoomCollision(const Room* currentRoom);
 	void DoGameObjectCollision(const std::vector<GameObject*>& objects);
 
 	void DoIsaacCollisionCheck(Isaac* isaac);
+
+	void DoDying(float elapsedSec);
 };
 

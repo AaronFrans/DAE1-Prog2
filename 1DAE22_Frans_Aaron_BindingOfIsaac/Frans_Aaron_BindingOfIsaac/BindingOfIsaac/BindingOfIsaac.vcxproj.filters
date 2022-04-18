@@ -117,6 +117,15 @@
     <ClInclude Include="UIManager.h">
       <Filter>Game Files\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="Rock.h">
+      <Filter>Game Files\Room\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Fly.h">
+      <Filter>Game Files\Room\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -198,6 +207,15 @@
       <Filter>Game Files\Isaac\UI</Filter>
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Rock.cpp">
+      <Filter>Game Files\Room\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Fly.cpp">
+      <Filter>Game Files\Room\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
       <Filter>Game Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>

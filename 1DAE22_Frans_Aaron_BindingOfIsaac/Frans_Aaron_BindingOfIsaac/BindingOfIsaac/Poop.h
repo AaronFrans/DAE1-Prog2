@@ -4,8 +4,11 @@ class Texture;
 
 class Poop final : public GameObject
 {
+
 public:
-	Poop(Texture* objectTexture, int nrColls, int nrRows, Point2f center, float size);
+
+	Poop(Texture* objectTexture, Point2f center, float size);
+
 
 	virtual void Draw() const override;
 

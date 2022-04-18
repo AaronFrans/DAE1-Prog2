@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "TearManager.h"
 #include "Texture.h"
+#include "Tear.h"
 #include "GameObject.h"
+#include "Enemy.h"
 
 TearManager::TearManager()
 {
@@ -42,13 +44,13 @@ void TearManager::DrawBackTears() const
 
 
 
-void TearManager::UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects)
+void TearManager::UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies)
 {
 	for (Tear* tear : m_pTears)
 	{
 		if (tear->GetState() != Tear::TearState::inactive)
 		{
-			tear->Update(elapsedSec, gameObjects);
+			tear->Update(elapsedSec, gameObjects, enemies);
 
 		}
 	}

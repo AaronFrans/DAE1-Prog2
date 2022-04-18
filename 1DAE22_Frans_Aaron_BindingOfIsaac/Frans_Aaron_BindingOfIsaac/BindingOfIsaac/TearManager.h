@@ -1,18 +1,23 @@
 #pragma once
-#include "Tear.h"
 #include <vector>
 
-class Texture;
-
+class Enemy;
+class Tear;
+class GameObject;
 class TearManager final
 {
 public:
 	TearManager();
+
+	TearManager(const TearManager& rhs) = default;
+	TearManager(TearManager && rhs) = default;
+	TearManager& operator=(const TearManager & rhs) = default;
+	TearManager& operator=(TearManager && rhs) = default;
 	~TearManager();
 
 	void DrawFrontTears() const;
 	void DrawBackTears() const;
-	void UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects);
+	void UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies);
 
 	Tear* ShootTear();
 private:

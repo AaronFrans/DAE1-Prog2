@@ -30,18 +30,22 @@ Rectf Camera::GetCameraView(const Point2f& targetCenter) const
 void Camera::Clamp(Point2f& centerPos) const
 {
 	float cameraWidthHalf = m_Width / 2.0f;
+
 	float cameraBoundaryDifference = (centerPos.x - cameraWidthHalf) - m_LevelBoundaries.left;
 	if (cameraBoundaryDifference < 0)
 		centerPos.x -= cameraBoundaryDifference;
+
 	cameraBoundaryDifference = (centerPos.x + cameraWidthHalf) - (m_LevelBoundaries.left + m_LevelBoundaries.width);
 	if (cameraBoundaryDifference > 0)
 		centerPos.x -= cameraBoundaryDifference;
 
 
 	float cameramHeightHalf = m_Height / 2.0f;
+
 	cameraBoundaryDifference = (centerPos.y - cameramHeightHalf) - m_LevelBoundaries.bottom;
 	if (cameraBoundaryDifference < 0)
 		centerPos.y -= cameraBoundaryDifference;
+
 	cameraBoundaryDifference = (centerPos.y + cameramHeightHalf) - (m_LevelBoundaries.bottom + m_LevelBoundaries.height);
 	if (cameraBoundaryDifference > 0)
 		centerPos.y -= cameraBoundaryDifference;

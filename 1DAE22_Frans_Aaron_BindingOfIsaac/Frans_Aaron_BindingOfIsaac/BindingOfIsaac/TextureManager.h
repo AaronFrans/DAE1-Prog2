@@ -14,11 +14,13 @@ public:
 		isaacHead = 0,
 		isaacBodyLR,
 		isaacBodyUD,
+		isaacHurt,
 		//Tear Textures
 		isaacTearHit,
 		isaacTear ,
 		//GameObject Textures
 		poop,
+		rock,
 		//Room Textures
 		roomBig,
 		roomSmall,
@@ -26,12 +28,19 @@ public:
 		hearths,
 		//Enemy Textures
 		smallSpiderMovement,
-		smallSpiderDeath,
+		smallSpiderDying,
+		flyMovement,
+		flyDying,
 
 	};
 
 
 	TextureManager();
+
+	TextureManager(const TextureManager& rhs) = default;
+	TextureManager(TextureManager && rhs) = default;
+	TextureManager& operator=(const TextureManager & rhs) = default;
+	TextureManager& operator=(TextureManager && rhs) = default;
 	~TextureManager();
 
 	Texture* GetTexture(TextureLookup lookup) const;

@@ -667,7 +667,6 @@ std::vector<Point2f> utils::GetVertices(const Rectf& a)
 	m_Vertices.push_back(Point2f{ a.left + a.width, a.bottom });
 	m_Vertices.push_back(Point2f{ a.left + a.width, a.bottom + a.height });
 	m_Vertices.push_back(Point2f{ a.left, a.bottom + a.height });
-	m_Vertices.push_back(m_Vertices[0]);
 	return m_Vertices;
 }
 

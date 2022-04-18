@@ -3,10 +3,10 @@
 #include "Sprite.h"
 #include "utils.h"
 
-Poop::Poop(Texture* objectTexture, int nrColls, int nrRows, Point2f center, float size)
-	: GameObject{ objectTexture, nrColls, nrRows, center, size }
+Poop::Poop(Texture* objectTexture, Point2f center, float size)
+	: GameObject{ objectTexture,5, 1, center, size }
 	, m_NrHitsTaken{ 0 }
-	, m_NrStates{ (nrColls * nrRows) - 1 }
+	, m_NrStates{ (5 * 1) - 1 }
 {
 }
 

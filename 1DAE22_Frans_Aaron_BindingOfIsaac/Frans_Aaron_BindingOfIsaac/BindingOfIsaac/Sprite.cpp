@@ -23,6 +23,30 @@ Sprite::Sprite(Texture* texture, int nrCols, int nrRows, float frameSec, float s
 		m_Frames = m_Cols * m_Rows;
 }
 
+Sprite::Sprite(const Sprite& rhs)
+	: m_pSpriteSheet{ rhs.m_pSpriteSheet }
+	, m_Frames{ rhs.m_Frames }
+	, m_Cols{ rhs.m_Cols }
+	, m_Rows{ rhs.m_Rows }
+	, m_FrameSec{ rhs.m_FrameSec }
+	, m_ActFrame{ 0 }
+	, m_AccuSec{ 0.0f }
+	, m_Scale{ rhs.m_Scale }
+{
+}
+
+Sprite& Sprite::operator=(const Sprite& rhs)
+{
+	m_pSpriteSheet = rhs.m_pSpriteSheet;
+	m_Frames = rhs.m_Frames;
+	m_Cols = rhs.m_Cols;
+	m_Rows = rhs.m_Rows;
+	m_FrameSec = rhs.m_FrameSec;
+	m_Scale = rhs.m_Scale;
+
+	return *this;
+}
+
 Sprite::~Sprite()
 {
 }
@@ -67,7 +91,7 @@ void Sprite::Draw(const Rectf& dstRect, const Point2f& srcBottomLeft) const
 
 
 	Rectf srcRect{ srcBottomLeft.x + m_ActFrame % m_Cols * frameWidth,
-				   srcBottomLeft.y + (m_ActFrame / m_Rows + 1) * frameHeight,
+				   srcBottomLeft.y + (m_ActFrame / m_Cols + 1) * frameHeight,
 				   frameWidth,
 				   frameHeight };
 

@@ -41,6 +41,7 @@ void TextureManager::InitIsaacTextures()
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Head.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Walk-LR.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Walk-UD.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Hurt.png" });
 }
 
 void TextureManager::InitTearTextures()
@@ -52,6 +53,7 @@ void TextureManager::InitTearTextures()
 void TextureManager::InitGameObjectTextures()
 {
 	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/GameObjects/Poop.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/GameObjects/Rocks-Basement.png" });
 }
 
 void TextureManager::InitRoomTextures()
@@ -69,4 +71,7 @@ void TextureManager::InitEnemyTextures()
 {
 	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Spider-Small-Movement.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Spider-Small-Death.png" });
+
+	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Fly-Movement.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Fly-Death.png" });
 }

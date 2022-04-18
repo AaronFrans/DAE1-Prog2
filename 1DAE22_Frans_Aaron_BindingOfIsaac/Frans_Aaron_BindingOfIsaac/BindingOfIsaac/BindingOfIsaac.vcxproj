@@ -154,6 +154,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="Fly.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Hearth.cpp" />
@@ -168,6 +170,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Poop.cpp" />
+    <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
@@ -188,6 +191,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="Fly.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Hearth.h" />
@@ -197,6 +202,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Poop.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Rock.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="SoundEffect.h" />

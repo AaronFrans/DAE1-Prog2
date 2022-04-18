@@ -38,13 +38,18 @@ class Isaac final
 	enum class DamageState
 	{
 		undamaged,
-		damaged,
+		hurt,
 		dead
 	};
 
 public:
 
 	Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition);
+
+	Isaac(const Isaac& rhs) = default;
+	Isaac(Isaac && rhs) = default;
+	Isaac& operator=(const Isaac & rhs) = default;
+	Isaac& operator=(Isaac && rhs) = default;
 	~Isaac();
 
 	void Draw() const;
@@ -54,10 +59,8 @@ public:
 
 	void ProcessKeyUpEvent(const SDL_KeyboardEvent& e);
 
-	Point2f GetCenter();
-	Rectf GetHitBox();
-
-	//void SetState(BodyState bodyState);
+	Point2f GetCenter() const;
+	Rectf GetHitBox() const;
 
 private:
 
@@ -66,6 +69,7 @@ private:
 	Sprite* m_pHeadSprite;
 	Sprite* m_pWalkSpriteUD;
 	Sprite* m_pWalkSpriteLR;
+	Sprite* m_pHurtSprite;
 	IsaacHealthBar* m_pHealth;
 
 	Point2f m_CenterPosition;
@@ -89,18 +93,19 @@ private:
 	float m_InvisAccuSec;
 	float m_InvisMaxSec;
 
+	Vector2f m_Velocity;
 
 	//Character Changeable Stats
 	float m_WalkSpeed;
 	float m_TearHeight;
 	float m_TearSpeed;
-	Vector2f m_Velocity;
 	float m_TearRange;
+	float m_Damage;
 
 
 
 	void DrawBody() const;
-	void UpdateBody(float elapsedSec, Room* currentRoom);
+	void UpdateBody(float elapsedSec);
 	void UpdatePos(float elapsedSec, Room* currentRoom);
 
 	void DoRoomCollision(const Room* currentRoom);
@@ -112,8 +117,11 @@ private:
 	void Shoot(TearManager* tearManager, const TextureManager& textureManager, Vector2f tearVelocity);
 
 
-	void DrawDamaged() const;
-	void UpdateDamaged(float elapsedSec, Room* currentRoom);
+	void DrawHurt() const;
+	void UpdateHurt(float elapsedSec);
+
+	void DrawDead() const;
+	void UpdateDead(float elapsedSec);
 
 	bool CanShoot();
 	bool IsInvis();

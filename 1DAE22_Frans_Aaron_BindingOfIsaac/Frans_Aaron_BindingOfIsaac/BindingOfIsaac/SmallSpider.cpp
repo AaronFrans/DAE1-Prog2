@@ -1,37 +1,84 @@
 #include "pch.h"
 #include "SmallSpider.h"
 #include "Sprite.h"
-#include "Enemy.h"
 #include "Room.h"
 #include "GameObject.h"
 #include "utils.h"
 #include "Isaac.h"
 
-SmallSpider::SmallSpider(Texture* movementSpriteSheet, Texture* deathSpriteSheet, Point2f centerPoint, float damage, float speed)
-	: Enemy{ centerPoint, damage, speed }
+SmallSpider::SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint)
+	: Enemy{ centerPoint, 0.5f, 150, 6.5 }
 	, m_State{ SmallSpiderState::idle }
 	, m_MovementAccuSec{ 0 }
 	, m_IdleAccuSec{ 0 }
 	, m_IdleMinSec{ 0.5 }
+	, m_DyingAccuSec{ 0 }
 {
-	m_pMovementSprite = new Sprite(movementSpriteSheet, 2, 4, 1 / 10.0f, 1);
+	m_pMovementSprite = new Sprite(movementSpriteSheet, 2, 2, 1 / 15.0f, 1);
 	m_MovementWidth = m_pMovementSprite->GetFrameWidth();
 	m_MovementHeight = m_pMovementSprite->GetFrameHeight();
 
 
 	m_MovementMaxSec = m_pMovementSprite->GetTotalLoopTime();
 
-	m_pDeathSprite = new Sprite(movementSpriteSheet, 4, 3, 1 / 10.0f, 1, 11);
-	m_DeathWidth = m_pDeathSprite->GetFrameWidth();
-	m_DeathHeight = m_pDeathSprite->GetFrameHeight();
+	m_pDyingSprite = new Sprite(DyingSpriteSheet, 4, 3, 1 / 15.0f, 1, 11);
+	m_DyingWidth = m_pDyingSprite->GetFrameWidth();
+	m_DyingHeight = m_pDyingSprite->GetFrameHeight();
+	m_DyingMaxSec = m_pDyingSprite->GetTotalLoopTime();
+}
+
+SmallSpider::SmallSpider(const SmallSpider& rhs)
+	: Enemy{ rhs.m_CenterPosition , 0.5f, 150,  6.5 }
+	, m_State{ rhs.m_State }
+	, m_MovementAccuSec{ 0 }
+	, m_IdleAccuSec{ 0 }
+	, m_IdleMinSec{ 0.5 }
+	, m_DyingAccuSec{ 0 }
+{
+	m_pMovementSprite = new Sprite{ *rhs.m_pMovementSprite };
+	m_MovementWidth = rhs.m_MovementWidth;
+	m_MovementHeight = rhs.m_MovementHeight;
+
+
+	m_MovementMaxSec = rhs.m_MovementMaxSec;
+
+	m_pDyingSprite = new Sprite{ *rhs.m_pDyingSprite };
+	m_DyingWidth = rhs.m_DyingWidth;
+	m_DyingHeight = rhs.m_DyingHeight;
+	m_DyingMaxSec = rhs.m_DyingMaxSec;
+}
+
+SmallSpider& SmallSpider::operator=(const SmallSpider& rhs)
+{
+	rhs.m_CenterPosition;
+	0.5f;
+	150;
+	6.5;
+	m_State = rhs.m_State;
+	m_MovementAccuSec = 0;
+	m_IdleAccuSec = 0;
+	m_IdleMinSec = 0.5;
+	m_DyingAccuSec = 0;
+	m_pMovementSprite = new Sprite{ *rhs.m_pMovementSprite };
+	m_MovementWidth = rhs.m_MovementWidth;
+	m_MovementHeight = rhs.m_MovementHeight;
+
+
+	m_MovementMaxSec = rhs.m_MovementMaxSec;
+
+	m_pDyingSprite = new Sprite{ *rhs.m_pDyingSprite };
+	m_DyingWidth = rhs.m_DyingWidth;
+	m_DyingHeight = rhs.m_DyingHeight;
+	m_DyingMaxSec = rhs.m_DyingMaxSec;
+	return *this;
 }
 
 SmallSpider::~SmallSpider()
 {
 	delete m_pMovementSprite;
 	m_pMovementSprite = nullptr;
-	delete m_pDeathSprite;
-	m_pDeathSprite = nullptr;
+	delete m_pDyingSprite;
+	m_pDyingSprite = nullptr;
 
 }
 
@@ -39,17 +86,17 @@ void SmallSpider::Draw() const
 {
 	switch (m_State)
 	{
-	case SmallSpider::SmallSpiderState::idle:
+	case SmallSpiderState::idle:
 		m_pMovementSprite->Draw(Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f,
 			m_MovementWidth, m_MovementHeight });
 		break;
-	case SmallSpider::SmallSpiderState::moving:
+	case SmallSpiderState::moving:
 		m_pMovementSprite->Draw(Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f,
 			m_MovementWidth, m_MovementHeight });
 		break;
-	case SmallSpider::SmallSpiderState::dying:
-		m_pDeathSprite->Draw(Rectf{ m_CenterPosition.x - m_DeathWidth / 2.0f,m_CenterPosition.y - m_DeathHeight / 2.0f,
-			m_DeathWidth, m_DeathHeight });
+	case SmallSpiderState::dying:
+		m_pDyingSprite->Draw(Rectf{ m_CenterPosition.x - m_DyingWidth / 2.0f,m_CenterPosition.y - m_DyingHeight / 2.0f,
+			m_DyingWidth, m_DyingHeight });
 		break;
 	default:
 		break;
@@ -57,17 +104,18 @@ void SmallSpider::Draw() const
 
 }
 
-void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac)
+void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex)
 {
 	switch (m_State)
 	{
-	case SmallSpider::SmallSpiderState::idle:
+	case SmallSpiderState::idle:
 		m_pMovementSprite->SetAccuSec(0);
 		m_pMovementSprite->SetActFrame(0);
 		m_Velocity = Vector2f{ 0, 0 };
 		DoIdle(elapsedSec);
+		DoIsaacCollisionCheck(isaac);
 		break;
-	case SmallSpider::SmallSpiderState::moving:
+	case SmallSpiderState::moving:
 		m_pMovementSprite->Update(elapsedSec);
 		if (m_Velocity == Vector2f{ 0,0 })
 		{
@@ -76,8 +124,10 @@ void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac
 		}
 		UpdatePos(elapsedSec, currentRoom);
 		DoIsaacCollisionCheck(isaac);
+		DoEnemyCollisions(currentRoom->GetEnemies(), currentEnemyIndex);
 		break;
-	case SmallSpider::SmallSpiderState::dying:
+	case SmallSpiderState::dying:
+		DoDying(elapsedSec);
 		break;
 	default:
 		break;
@@ -86,7 +136,26 @@ void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac
 
 bool SmallSpider::IsDead() const
 {
-	return m_HasDied;
+	return m_State == SmallSpiderState::dying || m_State == SmallSpiderState::dead;
+}
+
+Rectf SmallSpider::GetHitBox() const
+{
+	return Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f, m_MovementWidth, m_MovementHeight };
+}
+
+void SmallSpider::TakeDamage(float damage)
+{
+	m_Health -= damage;
+	if (m_Health <= 0)
+	{
+		m_State = SmallSpiderState::dying;
+	}
+}
+
+Enemy* SmallSpider::clone() const
+{
+	return new SmallSpider{ *this };
 }
 
 void SmallSpider::UpdatePos(float elapsedSec, const Room* currentRoom)
@@ -117,41 +186,6 @@ void SmallSpider::DoIdle(float elapsedSec)
 		}
 	}
 
-}
-
-void SmallSpider::DoRoomCollision(const Room* currentRoom)
-{
-	utils::HitInfo hitInfo;
-	Point2f spiderHitboxBottom{ m_CenterPosition.x,  m_CenterPosition.y - m_MovementHeight / 2.0f };
-	Point2f spiderHitboxTop{ m_CenterPosition.x,  m_CenterPosition.y + m_MovementHeight / 2.0f };
-	Point2f spiderHitboxLeft{ m_CenterPosition.x - m_MovementWidth / 2.0f,  m_CenterPosition.y };
-	Point2f spiderHitboxRight{ m_CenterPosition.x + m_MovementWidth / 2.0f,  m_CenterPosition.y };
-	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), spiderHitboxTop, spiderHitboxBottom, hitInfo))
-	{
-		if (m_Velocity.y > 0)
-		{
-			m_CenterPosition.y = hitInfo.intersectPoint.y - m_MovementHeight / 2.0f;
-			m_Velocity.y = -m_Velocity.y;
-		}
-		else
-		{
-			m_CenterPosition.y = hitInfo.intersectPoint.y + m_MovementHeight / 2.0f;
-			m_Velocity.y = -m_Velocity.y;
-		}
-	}
-	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), spiderHitboxLeft, spiderHitboxRight, hitInfo))
-	{
-		if (m_Velocity.x > 0)
-		{
-			m_CenterPosition.x = hitInfo.intersectPoint.x - m_MovementWidth / 2.0f;
-			m_Velocity.x = -m_Velocity.y;
-		}
-		else
-		{
-			m_CenterPosition.x = hitInfo.intersectPoint.x + m_MovementWidth / 2.0f;
-			m_Velocity.x = -m_Velocity.y;
-		}
-	}
 }
 
 void SmallSpider::DoGameObjectCollision(const std::vector<GameObject*>& objects)
@@ -195,10 +229,18 @@ void SmallSpider::DoGameObjectCollision(const std::vector<GameObject*>& objects)
 
 void SmallSpider::DoIsaacCollisionCheck(Isaac* isaac)
 {
-	Rectf hitBox{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f, m_MovementWidth, m_MovementHeight };
-	if (utils::IsOverlapping(hitBox, isaac->GetHitBox()))
+	if (utils::IsOverlapping(GetHitBox(), isaac->GetHitBox()))
 	{
 		isaac->TakeDamage(m_Damage);
 	}
+}
+
+void SmallSpider::DoDying(float elapsedSec)
+{
+	m_DyingAccuSec += elapsedSec;
+	if (m_DyingAccuSec >= m_DyingMaxSec)
+		m_State = SmallSpiderState::dead;
+	else
+		m_pDyingSprite->Update(elapsedSec);
 }
 

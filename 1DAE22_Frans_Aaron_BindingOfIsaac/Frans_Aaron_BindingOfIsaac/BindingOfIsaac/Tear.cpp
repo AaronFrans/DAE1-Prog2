@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "utils.h"
 #include "Poop.h"
+#include "Enemy.h"
 #include <vector>
 #include <typeinfo>
 
@@ -16,6 +17,7 @@ Tear::Tear()
 	, m_HeightDecrease{ 35 }
 	, m_TearRadius{ 0 }
 	, m_IsFront{ false }
+	, m_Damage{ 0 }
 {
 	m_pTearHitSprite = nullptr;
 	m_pTearTexture = nullptr;
@@ -29,7 +31,7 @@ Tear::~Tear()
 
 void Tear::Draw() const
 {
-	if (m_State == TearState::groundHit)
+	if (m_State == TearState::hit)
 	{
 		m_pTearHitSprite->Draw(Rectf{ m_Center.x - (m_TearRadius * 3.0f),
 			m_Center.y + m_Height - (m_TearRadius * 3.0f),
@@ -47,10 +49,10 @@ void Tear::Draw() const
 
 }
 
-void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects)
+void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies)
 {
 
-	if (m_State == TearState::groundHit)
+	if (m_State == TearState::hit)
 	{
 		m_AccuGroundTime += elapsedSec;
 		if (m_AccuGroundTime >= m_TotalGroundTime)
@@ -72,11 +74,23 @@ void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects)
 		{
 			m_Height -= m_HeightDecrease * elapsedSec;
 			if (m_Height <= 0)
-				m_State = TearState::groundHit;
+				m_State = TearState::hit;
+		}
+		Circlef shape{ Point2f{m_Center.x, m_Center.y + m_Height}, m_TearRadius };
+		for (Enemy* enemy : enemies)
+		{
+			if (utils::IsOverlapping(enemy->GetHitBox(), shape) && m_State == TearState::active)
+			{
+				if (!enemy->IsDead())
+				{
+					m_State = TearState::hit;
+					enemy->TakeDamage(m_Damage);
+				}
+			}
 		}
 		for (GameObject* object : gameObjects)
 		{
-			if (utils::IsOverlapping(object->GetShape(), Circlef{ m_Center, m_TearRadius }) && m_State == TearState::active)
+			if (utils::IsOverlapping(object->GetShape(), shape) && m_State == TearState::active)
 			{
 				if (object->IsNotDestroyed())
 				{
@@ -84,7 +98,7 @@ void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects)
 					{
 						Poop* pPoop{ static_cast<Poop*> (object) };
 
-						ClearTear();
+						m_State = TearState::hit;
 						pPoop->IsHit();
 					}
 				}
@@ -133,7 +147,7 @@ void Tear::SetTearTexture(Texture* tearTexture)
 
 void Tear::SetTearHitSprite(Texture* tearHitTexture)
 {
-	m_pTearHitSprite = new Sprite(tearHitTexture, 4, 4, 1 / 15.0f, 1, 15);
+	m_pTearHitSprite = new Sprite(tearHitTexture, 4, 4, 1 / 20.0f, 1, 15);
 	m_TotalGroundTime = m_pTearHitSprite->GetTotalLoopTime();
 }
 
@@ -149,6 +163,11 @@ void Tear::SetRange(float range)
 void Tear::SetIsFront(bool isFront)
 {
 	m_IsFront = isFront;
+}
+
+void Tear::SetDamage(float damage)
+{
+	m_Damage = damage;
 }
 
 void Tear::ClearTear()

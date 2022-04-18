@@ -45,4 +45,9 @@ void IsaacHealthBar::TakeDamage(float damage)
 	m_Health -= damage;
 }
 
+bool IsaacHealthBar::IsDead()
+{
+	return m_Health <= 0;
+}
+
 

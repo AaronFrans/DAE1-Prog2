@@ -5,6 +5,11 @@ class GameObject
 {
 public:
 	GameObject(Texture* objectTexture, int nrColls, int nrRows, Point2f center, float size);
+
+	GameObject(const GameObject& rhs) = default;
+	GameObject(GameObject && rhs) = default;
+	GameObject& operator=(const GameObject & rhs) = default;
+	GameObject& operator=(GameObject && rhs) = default;
 	virtual ~GameObject();
 
 	virtual void Draw() const = 0;

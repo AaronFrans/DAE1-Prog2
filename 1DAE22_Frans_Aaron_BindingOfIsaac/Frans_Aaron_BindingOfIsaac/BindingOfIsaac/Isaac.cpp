@@ -7,11 +7,8 @@
 #include "Room.h"
 #include "GameObject.h"
 #include "IsaacHealthBar.h"
+#include "Tear.h"
 #include <iostream>
-
-
-
-
 
 
 Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition)
@@ -28,21 +25,25 @@ Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBa
 	, m_HeadState{ HeadState::idle }
 	, m_IdleAccuSec{ 0 }
 	, m_pHealth{ isaacHealthBar }
-	, m_InvisMaxSec{ 0.5 }
+	, m_InvisMaxSec{ 1.5f }
 	, m_InvisAccuSec{ 0 }
 	, m_DamageState{ DamageState::undamaged }
+	, m_Damage{ 3.5 }
 {
 	m_pHeadSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacHead),
 		8, 1, m_TearFireRate / 2.0f, 1, 2 };
 	m_pWalkSpriteUD = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacBodyUD),
-		10, 1, 1 / 10.0f, 1 };
+		10, 1, 1 / 15.0f, 1 };
 
 	m_Width = m_pWalkSpriteUD->GetFrameWidth();
 	m_Height = m_pWalkSpriteUD->GetFrameHeight();
 
 	m_pWalkSpriteLR = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacBodyLR),
-		10, 1, 1 / 10.0f, 1 };
+		10, 1, 1 / 15.0f, 1 };
 
+
+	m_pHurtSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacHurt),
+		1, 1, 1 / 15.0f, 1 };
 
 	m_TearHeight = m_Height / 2.0f + m_pHeadSprite->GetFrameHeight() / 2.0f;
 }
@@ -55,31 +56,44 @@ Isaac::~Isaac()
 	Isaac::m_pWalkSpriteUD = nullptr;
 	delete Isaac::m_pWalkSpriteLR;
 	Isaac::m_pWalkSpriteLR = nullptr;
+	delete Isaac::m_pHurtSprite;
+	Isaac::m_pHurtSprite = nullptr;
 }
 
 void Isaac::Draw() const
 {
-	if (m_DamageState == DamageState::undamaged)
+	switch (m_DamageState)
 	{
+	case Isaac::DamageState::undamaged:
 		DrawBody();
 		DrawHead();
-	}
-	else
-	{
-
+		break;
+	case Isaac::DamageState::hurt:
+		DrawHurt();
+		break;
+	case Isaac::DamageState::dead:
+		DrawDead();
+		break;
 	}
 }
 
 void Isaac::Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom)
 {
-	if (m_DamageState == DamageState::undamaged)
+
+	switch (m_DamageState)
 	{
-		UpdateBody(elapsedSec, currentRoom);
+	case Isaac::DamageState::undamaged:
+		UpdateBody(elapsedSec);
 		UpdateHead(elapsedSec, tearManager, textureManager);
-	}
-	else
-	{
-		UpdateDamaged(elapsedSec, currentRoom);
+		UpdatePos(elapsedSec, currentRoom);
+		break;
+	case Isaac::DamageState::hurt:
+		UpdateHurt(elapsedSec);
+		UpdatePos(elapsedSec, currentRoom);
+		break;
+	case Isaac::DamageState::dead:
+		UpdateDead(elapsedSec);
+		break;
 	}
 }
 
@@ -88,7 +102,15 @@ void Isaac::TakeDamage(float damage)
 	if (!IsInvis())
 	{
 		m_pHealth->TakeDamage(damage);
-		m_DamageState = DamageState::damaged;
+		switch (m_pHealth->IsDead())
+		{
+		case true:
+			m_DamageState = DamageState::dead;
+			break;
+		case false:
+			m_DamageState = DamageState::hurt;
+			break;
+		}
 	}
 }
 
@@ -125,12 +147,12 @@ void Isaac::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
 	}
 }
 
-Point2f Isaac::GetCenter()
+Point2f Isaac::GetCenter() const
 {
 	return Point2f{ m_CenterPosition.x, m_CenterPosition.y + m_pHeadSprite->GetFrameHeight() / 2.0f };
 }
 
-Rectf Isaac::GetHitBox()
+Rectf Isaac::GetHitBox() const
 {
 	return Rectf{ m_CenterPosition.x - m_Width / 2.0f,m_CenterPosition.y - m_Height / 2.0f, m_Width, m_Height };
 }
@@ -182,7 +204,23 @@ void Isaac::DrawBody() const
 	}
 }
 
-void Isaac::UpdateBody(float elapsedSec, Room* currentRoom)
+void Isaac::UpdateBody(float elapsedSec)
+{
+	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
+
+	if (pStates[SDL_SCANCODE_D] || pStates[SDL_SCANCODE_A])
+	{
+		m_pWalkSpriteLR->Update(elapsedSec);
+
+	}
+	if (pStates[SDL_SCANCODE_W] || pStates[SDL_SCANCODE_S])
+	{
+		m_pWalkSpriteUD->Update(elapsedSec);
+	}
+	
+}
+
+void Isaac::UpdatePos(float elapsedSec, Room* currentRoom)
 {
 	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
 
@@ -191,7 +229,6 @@ void Isaac::UpdateBody(float elapsedSec, Room* currentRoom)
 		m_BodyDirection = Direction::right;
 		m_BodyState = BodyState::walking;
 		m_Velocity.x = m_WalkSpeed;
-		m_pWalkSpriteLR->Update(elapsedSec);
 
 	}
 	else if (pStates[SDL_SCANCODE_A])
@@ -199,7 +236,6 @@ void Isaac::UpdateBody(float elapsedSec, Room* currentRoom)
 		m_BodyDirection = Direction::left;
 		m_BodyState = BodyState::walking;
 		m_Velocity.x = -m_WalkSpeed;
-		m_pWalkSpriteLR->Update(elapsedSec);
 	}
 
 	if (pStates[SDL_SCANCODE_W])
@@ -207,20 +243,14 @@ void Isaac::UpdateBody(float elapsedSec, Room* currentRoom)
 		m_BodyDirection = Direction::up;
 		m_BodyState = BodyState::walking;
 		m_Velocity.y = m_WalkSpeed;
-		m_pWalkSpriteUD->Update(elapsedSec);
 	}
 	else if (pStates[SDL_SCANCODE_S])
 	{
 		m_BodyDirection = Direction::down;
 		m_BodyState = BodyState::walking;
 		m_Velocity.y = -m_WalkSpeed;
-		m_pWalkSpriteUD->Update(elapsedSec);
 	}
-	UpdatePos(elapsedSec, currentRoom);
-}
 
-void Isaac::UpdatePos(float elapsedSec, Room* currentRoom)
-{
 	if (m_BodyState == BodyState::walking)
 	{
 		m_CenterPosition.y += m_Velocity.y * elapsedSec;
@@ -235,30 +265,34 @@ void Isaac::DoRoomCollision(const Room* currentRoom)
 {
 
 	utils::HitInfo hitInfo;
-	Point2f isaacHitboxBottom{ m_CenterPosition.x,  m_CenterPosition.y - m_Height / 2.0f };
-	Point2f isaacHitboxTop{ m_CenterPosition.x,  m_CenterPosition.y + m_Height / 2.0f };
-	Point2f isaacHitboxLeft{ m_CenterPosition.x - m_Width / 2.0f,  m_CenterPosition.y };
-	Point2f isaacHitboxRight{ m_CenterPosition.x + m_Width / 2.0f,  m_CenterPosition.y };
-	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), isaacHitboxTop, isaacHitboxBottom, hitInfo))
+	Rectf hitbox = GetHitBox();
+	std::vector<Point2f> hitboxPoints{ utils::GetVertices(hitbox) };
+	Point2f bottomLeft{ hitboxPoints[0] };
+	Point2f bottomRight{ hitboxPoints[1] };
+	Point2f topRight{ hitboxPoints[2] };
+	Point2f topLeft{ hitboxPoints[3] };
+	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), topRight, bottomRight, hitInfo) ||
+		utils::Raycast(currentRoom->GetWalkableAreaVertices(), topLeft, bottomLeft, hitInfo))
 	{
 		if (m_Velocity.y > 0)
 		{
-			m_CenterPosition.y = hitInfo.intersectPoint.y - m_Height / 2.0f;
+			m_CenterPosition.y = hitInfo.intersectPoint.y - hitbox.height / 2.0f;
 		}
 		else
 		{
-			m_CenterPosition.y = hitInfo.intersectPoint.y + m_Height / 2.0f;
+			m_CenterPosition.y = hitInfo.intersectPoint.y + hitbox.height / 2.0f;
 		}
 	}
-	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), isaacHitboxLeft, isaacHitboxRight, hitInfo))
+	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), topLeft, topRight, hitInfo) ||
+		utils::Raycast(currentRoom->GetWalkableAreaVertices(), bottomRight, bottomLeft, hitInfo))
 	{
 		if (m_Velocity.x > 0)
 		{
-			m_CenterPosition.x = hitInfo.intersectPoint.x - m_Width / 2.0f;
+			m_CenterPosition.x = hitInfo.intersectPoint.x - hitbox.width / 2.0f;
 		}
 		else
 		{
-			m_CenterPosition.x = hitInfo.intersectPoint.x + m_Width / 2.0f;
+			m_CenterPosition.x = hitInfo.intersectPoint.x + hitbox.width / 2.0f;
 		}
 	}
 }
@@ -266,35 +300,40 @@ void Isaac::DoRoomCollision(const Room* currentRoom)
 void Isaac::DoGameObjectCollision(const std::vector<GameObject*>& objects)
 {
 	utils::HitInfo hitInfo;
-	Point2f isaacHitboxBottom{ m_CenterPosition.x,  m_CenterPosition.y - m_Height / 2.0f };
-	Point2f isaacHitboxTop{ m_CenterPosition.x,  m_CenterPosition.y + m_Height / 2.0f };
-	Point2f isaacHitboxLeft{ m_CenterPosition.x - m_Width / 2.0f,  m_CenterPosition.y };
-	Point2f isaacHitboxRight{ m_CenterPosition.x + m_Width / 2.0f,  m_CenterPosition.y };
+	Rectf hitbox{ GetHitBox() };
+	std::vector<Point2f> hitboxPoints{ utils::GetVertices(hitbox) };
+	Point2f bottomLeft{ hitboxPoints[0].x -1,  hitboxPoints[0].y - 1 };
+	Point2f bottomRight{ hitboxPoints[1].x - 1,  hitboxPoints[1].y - 1 };
+	Point2f topRight{ hitboxPoints[2].x - 1,  hitboxPoints[2].y - 1 };
+	Point2f topLeft{ hitboxPoints[3].x - 1,  hitboxPoints[3].y - 1 };
+
 	for (GameObject* object : objects)
 	{
 		if (object->IsNotDestroyed())
 		{
 			std::vector<Point2f> vertices{ utils::GetVertices(object->GetShape()) };
-			if (utils::Raycast(vertices, isaacHitboxTop, isaacHitboxBottom, hitInfo))
+			if (utils::Raycast(vertices, topRight, bottomRight, hitInfo) ||
+				utils::Raycast(vertices, topLeft, bottomLeft, hitInfo))
 			{
 				if (m_Velocity.y > 0)
 				{
-					m_CenterPosition.y = hitInfo.intersectPoint.y - m_Height / 2.0f;
+					m_CenterPosition.y = hitInfo.intersectPoint.y - hitbox.height / 2.0f;
 				}
 				else
 				{
-					m_CenterPosition.y = hitInfo.intersectPoint.y + m_Height / 2.0f;
+					m_CenterPosition.y = hitInfo.intersectPoint.y + hitbox.height / 2.0f;
 				}
 			}
-			if (utils::Raycast(vertices, isaacHitboxLeft, isaacHitboxRight, hitInfo))
+			if (utils::Raycast(vertices, topLeft, topRight, hitInfo) ||
+				utils::Raycast(vertices, bottomRight, bottomLeft, hitInfo))
 			{
 				if (m_Velocity.x > 0)
 				{
-					m_CenterPosition.x = hitInfo.intersectPoint.x - m_Width / 2.0f;
+					m_CenterPosition.x = hitInfo.intersectPoint.x - hitbox.width / 2.0f;
 				}
 				else
 				{
-					m_CenterPosition.x = hitInfo.intersectPoint.x + m_Width / 2.0f;
+					m_CenterPosition.x = hitInfo.intersectPoint.x + hitbox.width / 2.0f;
 				}
 			}
 		}
@@ -452,27 +491,40 @@ void Isaac::Shoot(TearManager* tearManager, const TextureManager& textureManager
 
 		pShotTear->SetTearTexture(textureManager.GetTexture(TextureManager::TextureLookup::isaacTear));
 		pShotTear->SetTearHitSprite(textureManager.GetTexture(TextureManager::TextureLookup::isaacTearHit));
-		pShotTear->SetTearShape(tearCenterPos, 10);
+		pShotTear->SetTearShape(tearCenterPos, 6);
 		pShotTear->SetVelocity(tearVelocity + (m_Velocity / 4.0));
 		pShotTear->SetHeight(m_TearHeight);
 		pShotTear->SetRange(m_TearRange);
 		pShotTear->SetIsFront(isFront);
+		pShotTear->SetDamage(m_Damage);
 	}
 }
 
-void Isaac::DrawDamaged() const
+void Isaac::DrawHurt() const
 {
-
+	m_pHurtSprite->Draw(Point2f{
+		m_CenterPosition.x - m_pWalkSpriteUD->GetFrameWidth() / 2.0f,
+		m_CenterPosition.y - m_pWalkSpriteUD->GetFrameHeight() / 2.0f
+		});
 }
 
-void Isaac::UpdateDamaged(float elapsedSec, Room* currentRoom)
+void Isaac::UpdateHurt(float elapsedSec)
 {
 	m_InvisAccuSec += elapsedSec;
+	m_pHurtSprite->Update(elapsedSec);
 	if (m_InvisAccuSec > m_InvisMaxSec)
 	{
 		m_InvisAccuSec = 0;
 		m_DamageState = DamageState::undamaged;
 	}
+}
+
+void Isaac::DrawDead() const
+{
+}
+
+void Isaac::UpdateDead(float elapsedSec)
+{
 }
 
 bool Isaac::CanShoot()
@@ -485,8 +537,3 @@ bool Isaac::IsInvis()
 	return m_DamageState != DamageState::undamaged;
 }
 
-
-//void Isaac::SetState(BodyState bodyState)
-//{
-//	m_BodyDirection = bodyState;
-//}

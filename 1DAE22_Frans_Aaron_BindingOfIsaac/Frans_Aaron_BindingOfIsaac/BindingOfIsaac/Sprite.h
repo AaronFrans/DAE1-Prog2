@@ -8,6 +8,11 @@ class Sprite final
 public:
 	Sprite();
 	Sprite(Texture* texture, int nrCols, int nrRows, float frameSec, float scale, int nrFrames = 0);
+
+	Sprite(const Sprite& rhs);
+	Sprite(Sprite && rhs) = default;
+	Sprite& operator=(const Sprite & rhs);
+	Sprite& operator=(Sprite && rhs) = default;
 	~Sprite();
 
 	void Update(float elapsedSec);

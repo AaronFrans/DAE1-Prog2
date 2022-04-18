@@ -2,26 +2,16 @@
 #include "TextureManager.h"
 #include "Sprite.h"
 #include "Camera.h"
-
-
-
-//TODO: 7. make Room class
-//TODO: 8. make enemy class, base = GameObject
-//TODO: 10. make GameObjectManager class
-//TODO: 11. make Healthbar class
-//TODO: 12. make Minimap class
-//TODO: 13. UI Class, has Healthbar, Minimap ...
-//TODO: 14. Rooms via array -> random index... boss and start room seperate
+#include "RoomManager.h"
+#include "EnemyManager.h"
+//TODO: 14. Room Templates via array -> recursive to make floor ... boss and start room seperate
 //TODO: 15. Think about transition between floors
-//TODO: 16. Rock class
-//TODO: 17. Make SpriteManager to determine Draw Order
+//TODO: 16. Make SpriteManager to determine Draw Order
 
 class Isaac;
-class RoomManager;
 class TearManager;
 class UIManager;
 class IsaacHealthBar;
-class SmallSpider;
 class Game final
 {
 public:
@@ -47,14 +37,13 @@ private:
 	const Window m_Window;
 	Camera m_Camera;
 	TextureManager m_TextureManager;
+	EnemyManager m_EnemyManager;
 	RoomManager* m_pRoomManager;
 	TearManager* m_pTearManager;
 	UIManager* m_pUIManager;
 
-	SmallSpider* testSpider;
-
 	Isaac* m_pPlayer;
-
+	RoomManager::RoomLookup m_CurrentRoom;
 
 	// FUNCTIONS
 	void Initialize();
