@@ -21,10 +21,6 @@ RoomManager::~RoomManager()
 	{
 		delete room;
 	}
-	for (Room* room : m_pRooms)
-	{
-		delete room;
-	}
 }
 
 Room* RoomManager::GetRoom(RoomLookup lookup) const
@@ -84,7 +80,7 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const Ene
 	float wallWidth{ 63 }, wallHeight{ 57 };
 
 	Enemy* pRandomEnemy{ nullptr };
-	Rectf enemyShape{ };
+	Circlef enemyShape{ };
 	Enemy* pEnemy{ nullptr };
 
 #pragma region FirstRoom
@@ -107,16 +103,16 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const Ene
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
 
-	pEnemy->SetPosition(Point2f{ 0 + wallWidth * 2 + enemyShape.width * 0.5f,
-			roomHeight - wallHeight * 2 - enemyShape.height * 0.5f });
+	pEnemy->SetPosition(Point2f{ 0 + wallWidth * 2 + enemyShape.radius,
+			roomHeight - wallHeight * 2 - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ 0 + wallWidth * 2 + enemyShape.width * 0.5f
-		, roomHeight - wallHeight * 2 - enemyShape.height * 2.5f });
+	pEnemy->SetPosition(Point2f{ 0 + wallWidth * 2 + enemyShape.radius
+		, roomHeight - wallHeight * 2 - enemyShape.radius * 5 });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ 0 + wallWidth * 2 + enemyShape.width * 2.5f,
-		roomHeight - wallHeight * 2 - enemyShape.height * 0.5f });
+	pEnemy->SetPosition(Point2f{ 0 + wallWidth * 2 + enemyShape.radius * 5,
+		roomHeight - wallHeight * 2 - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 
@@ -124,16 +120,16 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const Ene
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
 
-	pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.width * 1.5f,
-		0 + wallHeight * 2 - enemyShape.height * 1.5f });
+	pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.radius * 3,
+		0 + wallHeight * 2 - enemyShape.radius * 3 });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.width * 1.5f,
-		0 + wallHeight * 2 - enemyShape.height * 2.5f });
+	pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.radius * 3,
+		0 + wallHeight * 2 - enemyShape.radius * 5 });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.width * 2.5f,
-		0 + wallHeight * 2 - enemyShape.height * 1.5f });
+	pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.radius * 5,
+		0 + wallHeight * 2 - enemyShape.radius * 3 });
 	enemies.push_back(pEnemy->clone());
 
 
@@ -226,16 +222,16 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const Ene
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.width, roomHeight / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.radius * 2, roomHeight / 2.0f });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.width, roomHeight / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.radius * 2, roomHeight / 2.0f });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f, roomHeight / 2.0f + enemyShape.height });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f, roomHeight / 2.0f + enemyShape.radius * 2 });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f, roomHeight / 2.0f - enemyShape.height });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f, roomHeight / 2.0f - enemyShape.radius * 2 });
 	enemies.push_back(pEnemy->clone());
 
 	Room* smallRoom3 = new Room(textureManager.GetTexture(
@@ -263,7 +259,7 @@ void RoomManager::MakeBigRooms(const TextureManager& textureManager, const Enemy
 	float wallWidth{ 63 }, wallHeight{ 57 };
 
 	Enemy* pRandomEnemy{ nullptr };
-	Rectf enemyShape{ };
+	Circlef enemyShape{ };
 	Enemy* pEnemy{ nullptr };
 
 #pragma region FirstRoom
@@ -337,64 +333,64 @@ void RoomManager::MakeBigRooms(const TextureManager& textureManager, const Enemy
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.width / 2.0f, roomHeight * 0.25f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.radius, roomHeight * 0.25f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.width / 2.0f, roomHeight * 0.25f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.radius, roomHeight * 0.25f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.width / 2.0f, roomHeight * 0.25f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.radius, roomHeight * 0.25f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.width / 2.0f, roomHeight * 0.25f - enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
-	pEnemy = pRandomEnemy;
-	enemyShape = pEnemy->GetHitBox();
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.width / 2.0f, roomHeight / 2.0f + enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.width / 2.0f, roomHeight / 2.0f + enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.width / 2.0f, roomHeight / 2.0f - enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.width / 2.0f, roomHeight / 2.0f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.radius, roomHeight * 0.25f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.width / 2.0f, roomHeight / 2.0f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.radius, roomHeight / 2.0f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.width / 2.0f, roomHeight / 2.0f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.radius, roomHeight / 2.0f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.width / 2.0f, roomHeight / 2.0f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.radius, roomHeight / 2.0f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.width / 2.0f, roomHeight / 2.0f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.radius, roomHeight / 2.0f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.width / 2.0f, roomHeight * 0.75f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.radius, roomHeight / 2.0f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.width / 2.0f, roomHeight * 0.75f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.radius, roomHeight / 2.0f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.width / 2.0f, roomHeight * 0.75f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.radius, roomHeight / 2.0f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.width / 2.0f, roomHeight * 0.75f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.radius, roomHeight / 2.0f - enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
+	pEnemy = pRandomEnemy;
+	enemyShape = pEnemy->GetHitBox();
+
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.radius, roomHeight * 0.75f + enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.radius, roomHeight * 0.75f + enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f + enemyShape.radius, roomHeight * 0.75f - enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pEnemy->SetPosition(Point2f{ roomWidth / 2.0f - enemyShape.radius, roomHeight * 0.75f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 	Room* bigRoom1 = new Room(textureManager.GetTexture(
@@ -451,61 +447,61 @@ void RoomManager::MakeBigRooms(const TextureManager& textureManager, const Enemy
 	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.width / 2.0f, roomHeight * 0.25f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.radius, roomHeight * 0.25f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.width / 2.0f, roomHeight * 0.25f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.radius, roomHeight * 0.25f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.width / 2.0f, roomHeight * 0.25f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.radius, roomHeight * 0.25f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.width / 2.0f, roomHeight * 0.25f + enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
-	pEnemy = pRandomEnemy;
-	enemyShape = pEnemy->GetHitBox();
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.width / 2.0f, roomHeight * 0.25f - enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.width / 2.0f, roomHeight * 0.25f - enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.width / 2.0f, roomHeight * 0.25f + enemyShape.width / 2.0f });
-	enemies.push_back(pEnemy->clone());
-
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.width / 2.0f, roomHeight * 0.25f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.radius, roomHeight * 0.25f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.width / 2.0f, roomHeight * 0.75f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.radius, roomHeight * 0.25f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.width / 2.0f, roomHeight * 0.75f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.radius, roomHeight * 0.25f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.width / 2.0f, roomHeight * 0.75f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.radius, roomHeight * 0.25f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.width / 2.0f, roomHeight * 0.75f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.radius, roomHeight * 0.25f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
 	pEnemy = pRandomEnemy;
 	enemyShape = pEnemy->GetHitBox();
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.width / 2.0f, roomHeight * 0.75f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.radius, roomHeight * 0.75f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.width / 2.0f, roomHeight * 0.75f - enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.radius, roomHeight * 0.75f - enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.width / 2.0f, roomHeight * 0.75f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f + enemyShape.radius, roomHeight * 0.75f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
-	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.width / 2.0f, roomHeight * 0.75f + enemyShape.width / 2.0f });
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.25f - enemyShape.radius, roomHeight * 0.75f + enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
+	pEnemy = pRandomEnemy;
+	enemyShape = pEnemy->GetHitBox();
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.radius, roomHeight * 0.75f - enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.radius, roomHeight * 0.75f - enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f + enemyShape.radius, roomHeight * 0.75f + enemyShape.radius });
+	enemies.push_back(pEnemy->clone());
+
+	pEnemy->SetPosition(Point2f{ roomWidth * 0.75f - enemyShape.radius, roomHeight * 0.75f + enemyShape.radius });
 	enemies.push_back(pEnemy->clone());
 
 	Room* bigRoom2 = new Room(textureManager.GetTexture(

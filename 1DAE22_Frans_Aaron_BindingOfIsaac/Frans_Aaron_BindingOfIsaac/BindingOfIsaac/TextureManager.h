@@ -15,6 +15,7 @@ public:
 		isaacBodyLR,
 		isaacBodyUD,
 		isaacHurt,
+		isaacDying,
 		//Tear Textures
 		isaacTearHit,
 		isaacTear ,

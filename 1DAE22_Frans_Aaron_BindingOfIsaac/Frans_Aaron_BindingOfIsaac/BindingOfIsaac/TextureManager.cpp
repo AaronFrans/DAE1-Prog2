@@ -42,6 +42,7 @@ void TextureManager::InitIsaacTextures()
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Walk-LR.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Walk-UD.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Hurt.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Isaac/Isaac-Dying.png" });
 }
 
 void TextureManager::InitTearTextures()

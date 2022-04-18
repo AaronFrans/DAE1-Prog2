@@ -29,7 +29,7 @@ public:
 	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
 
 	virtual bool IsDead() const override;
-	virtual Rectf GetHitBox() const override;
+	virtual Circlef GetHitBox() const override;
 
 	virtual void TakeDamage(float damage) override;
 

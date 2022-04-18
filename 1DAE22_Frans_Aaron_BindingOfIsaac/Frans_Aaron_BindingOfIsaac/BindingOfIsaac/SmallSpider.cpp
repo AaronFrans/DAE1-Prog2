@@ -139,9 +139,9 @@ bool SmallSpider::IsDead() const
 	return m_State == SmallSpiderState::dying || m_State == SmallSpiderState::dead;
 }
 
-Rectf SmallSpider::GetHitBox() const
+Circlef SmallSpider::GetHitBox() const
 {
-	return Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f, m_MovementWidth, m_MovementHeight };
+	return Circlef{ m_CenterPosition, m_MovementHeight / 2.0f };
 }
 
 void SmallSpider::TakeDamage(float damage)
@@ -229,7 +229,7 @@ void SmallSpider::DoGameObjectCollision(const std::vector<GameObject*>& objects)
 
 void SmallSpider::DoIsaacCollisionCheck(Isaac* isaac)
 {
-	if (utils::IsOverlapping(GetHitBox(), isaac->GetHitBox()))
+	if (utils::IsOverlapping(isaac->GetHitBox(), GetHitBox()))
 	{
 		isaac->TakeDamage(m_Damage);
 	}

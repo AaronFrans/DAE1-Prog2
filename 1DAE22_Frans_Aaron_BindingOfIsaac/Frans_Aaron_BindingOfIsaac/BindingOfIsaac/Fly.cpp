@@ -100,9 +100,9 @@ bool Fly::IsDead() const
 	return m_State == FlyState::dying || m_State == FlyState::dead;
 }
 
-Rectf Fly::GetHitBox() const
+Circlef Fly::GetHitBox() const
 {
-	return Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f, m_MovementWidth, m_MovementHeight };
+	return Circlef{ m_CenterPosition, m_MovementHeight / 2.0f};
 }
 
 void Fly::TakeDamage(float damage)
@@ -132,7 +132,7 @@ void Fly::UpdatePos(float elapsedSec, const Room* currentRoom, Isaac* isaac)
 
 void Fly::DoIsaacCollisionCheck(Isaac* isaac)
 {
-	if (utils::IsOverlapping(GetHitBox(), isaac->GetHitBox()))
+	if (utils::IsOverlapping(isaac->GetHitBox(), GetHitBox()))
 	{
 		isaac->TakeDamage(m_Damage);
 	}

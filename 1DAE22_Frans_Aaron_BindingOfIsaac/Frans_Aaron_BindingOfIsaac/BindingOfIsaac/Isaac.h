@@ -70,11 +70,15 @@ private:
 	Sprite* m_pWalkSpriteUD;
 	Sprite* m_pWalkSpriteLR;
 	Sprite* m_pHurtSprite;
+	Sprite* m_pDyingSprite;
 	IsaacHealthBar* m_pHealth;
 
 	Point2f m_CenterPosition;
-	float m_Width;
-	float m_Height;
+	float m_MovementWidth;
+	float m_MovementHeight;
+
+	float m_DyingWidth;
+	float m_DyingHeight;
 
 	Point2f m_TearSrcBottomLeft;
 
@@ -94,6 +98,8 @@ private:
 	float m_InvisMaxSec;
 
 	Vector2f m_Velocity;
+
+	float m_DeathRotationAngle;
 
 	//Character Changeable Stats
 	float m_WalkSpeed;

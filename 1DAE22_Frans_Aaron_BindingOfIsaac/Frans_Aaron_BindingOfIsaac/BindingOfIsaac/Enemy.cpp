@@ -22,49 +22,29 @@ void Enemy::SetPosition(const Point2f& center)
 void Enemy::DoEnemyCollisions(const std::vector<Enemy*>& enemies, int currentEnemyIndex)
 {
 	utils::HitInfo hitInfo;
-	Rectf hitbox = GetHitBox();
+	Circlef hitbox = GetHitBox();
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		Rectf enemyHitbox{ enemies[i]->GetHitBox() };
-		if (i != currentEnemyIndex &&
-			!enemies[i]->IsDead() &&
-			utils::IsOverlapping(hitbox, enemyHitbox)&&
-			typeid(*this) == typeid(*enemies[i]))
+		if ((i != currentEnemyIndex &&
+			!enemies[i]->IsDead()))
 		{
-			float minX{ hitbox.left + hitbox.width > enemyHitbox.left + enemyHitbox.width ?
-				enemyHitbox.left + enemyHitbox.width : hitbox.left + hitbox.width };
-			float minY{ hitbox.bottom + hitbox.height > enemyHitbox.bottom + enemyHitbox.height ?
-				enemyHitbox.bottom + enemyHitbox.height : hitbox.bottom + hitbox.height };
 
-			float maxX{ hitbox.left < enemyHitbox.left ?
-				enemyHitbox.left : hitbox.left };
-			float maxY{ hitbox.bottom < enemyHitbox.bottom ?
-				enemyHitbox.bottom : hitbox.bottom };
-
-			float distHoriz = minX - maxX;
-			float distVert = minY - maxY;
-
-			if (abs(distHoriz) < abs(distVert))
+			Vector2f currentToEnemy{ m_CenterPosition , enemies[i]->m_CenterPosition };
+			Vector2f velNorm{ m_Velocity.Normalized() };
+			float dot{ velNorm.DotProduct(currentToEnemy) };
+			if (dot > 0)
 			{
-				if (m_Velocity.y > 0)
+				Circlef enemyHitbox{ enemies[i]->GetHitBox() };
+				if (utils::IsOverlapping(hitbox, enemyHitbox) &&
+					typeid(*this) == typeid(*enemies[i]))
 				{
-					m_CenterPosition.x += distHoriz + 1.0f;
-				}
-				else
-				{
-					m_CenterPosition.x -= distHoriz - 1.0f;
+					float radiusSum{ enemyHitbox.radius + hitbox.radius };
+					Vector2f enemyToCurrentNorm{ -(currentToEnemy.Normalized()) };
+					Vector2f currentDisplament{ enemyToCurrentNorm * radiusSum };
+					m_CenterPosition = enemies[i]->m_CenterPosition + currentDisplament;
 				}
 			}
-			{
-				if (m_Velocity.x > 0)
-				{
-					m_CenterPosition.y += distVert + 1.0f;
-				}
-				else
-				{
-					m_CenterPosition.y -= distVert - 1.0f;
-				}
-			}
+
 		}
 	}
 }
@@ -73,37 +53,35 @@ void Enemy::DoEnemyCollisions(const std::vector<Enemy*>& enemies, int currentEne
 void Enemy::DoRoomCollision(const Room* currentRoom)
 {
 	utils::HitInfo hitInfo;
-	Rectf hitbox = GetHitBox();
-	std::vector<Point2f> hitboxPoints{ utils::GetVertices(hitbox) };
-	Point2f bottomLeft{ hitboxPoints[0] };
-	Point2f bottomRight{ hitboxPoints[1] };
-	Point2f topRight{ hitboxPoints[2] };
-	Point2f topLeft{ hitboxPoints[3] };
-	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), topRight, bottomRight, hitInfo) ||
-		utils::Raycast(currentRoom->GetWalkableAreaVertices(), topLeft, bottomLeft, hitInfo))
+	Circlef hitbox = GetHitBox();
+	Point2f bottom{ hitbox.center.x, hitbox.center.y - hitbox.radius };
+	Point2f top{ hitbox.center.x, hitbox.center.y + hitbox.radius };
+	Point2f left{ hitbox.center.x - hitbox.radius,  hitbox.center.y };
+	Point2f right{ hitbox.center.x + hitbox.radius,  hitbox.center.y };
+
+	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), bottom, top, hitInfo))
 	{
 		if (m_Velocity.y > 0)
 		{
-			m_CenterPosition.y = hitInfo.intersectPoint.y - hitbox.height / 2.0f;
+			m_CenterPosition.y = hitInfo.intersectPoint.y - hitbox.radius;
 			m_Velocity.y = -m_Velocity.y;
 		}
 		else
 		{
-			m_CenterPosition.y = hitInfo.intersectPoint.y + hitbox.height / 2.0f;
+			m_CenterPosition.y = hitInfo.intersectPoint.y + hitbox.radius;
 			m_Velocity.y = -m_Velocity.y;
 		}
 	}
-	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), topLeft, topRight, hitInfo) ||
-		utils::Raycast(currentRoom->GetWalkableAreaVertices(), bottomRight, bottomLeft, hitInfo))
+	if (utils::Raycast(currentRoom->GetWalkableAreaVertices(), left, right, hitInfo))
 	{
 		if (m_Velocity.x > 0)
 		{
-			m_CenterPosition.x = hitInfo.intersectPoint.x - hitbox.width / 2.0f;
+			m_CenterPosition.x = hitInfo.intersectPoint.x - hitbox.radius;
 			m_Velocity.x = -m_Velocity.x;
 		}
 		else
 		{
-			m_CenterPosition.x = hitInfo.intersectPoint.x + hitbox.width / 2.0f;
+			m_CenterPosition.x = hitInfo.intersectPoint.x + hitbox.radius;
 			m_Velocity.x = -m_Velocity.x;
 		}
 	}

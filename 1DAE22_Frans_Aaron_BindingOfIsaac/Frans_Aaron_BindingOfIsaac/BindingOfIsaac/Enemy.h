@@ -24,7 +24,7 @@ public:
 	virtual void TakeDamage(float damage) = 0;
 
 	virtual bool IsDead() const = 0;
-	virtual Rectf GetHitBox() const = 0;
+	virtual Circlef GetHitBox() const = 0;
 	
 	void SetPosition(const Point2f& center);
 

@@ -25,18 +25,19 @@ Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBa
 	, m_HeadState{ HeadState::idle }
 	, m_IdleAccuSec{ 0 }
 	, m_pHealth{ isaacHealthBar }
-	, m_InvisMaxSec{ 1.5f }
+	, m_InvisMaxSec{ 1 }
 	, m_InvisAccuSec{ 0 }
 	, m_DamageState{ DamageState::undamaged }
 	, m_Damage{ 3.5 }
+	, m_DeathRotationAngle{ 0 }
 {
 	m_pHeadSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacHead),
 		8, 1, m_TearFireRate / 2.0f, 1, 2 };
 	m_pWalkSpriteUD = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacBodyUD),
 		10, 1, 1 / 15.0f, 1 };
 
-	m_Width = m_pWalkSpriteUD->GetFrameWidth();
-	m_Height = m_pWalkSpriteUD->GetFrameHeight();
+	m_MovementWidth = m_pWalkSpriteUD->GetFrameWidth();
+	m_MovementHeight = m_pWalkSpriteUD->GetFrameHeight();
 
 	m_pWalkSpriteLR = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacBodyLR),
 		10, 1, 1 / 15.0f, 1 };
@@ -45,19 +46,27 @@ Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBa
 	m_pHurtSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacHurt),
 		1, 1, 1 / 15.0f, 1 };
 
-	m_TearHeight = m_Height / 2.0f + m_pHeadSprite->GetFrameHeight() / 2.0f;
+	m_pDyingSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacDying),
+		1, 1, 1 / 15.0f, 1 };
+
+	m_DyingWidth = m_pDyingSprite->GetFrameWidth();;
+	m_DyingHeight = m_pDyingSprite->GetFrameHeight();;
+
+	m_TearHeight = m_MovementHeight / 2.0f + m_pHeadSprite->GetFrameHeight() / 2.0f;
 }
 
 Isaac::~Isaac()
 {
-	delete Isaac::m_pHeadSprite;
-	Isaac::m_pHeadSprite = nullptr;
-	delete Isaac::m_pWalkSpriteUD;
-	Isaac::m_pWalkSpriteUD = nullptr;
-	delete Isaac::m_pWalkSpriteLR;
-	Isaac::m_pWalkSpriteLR = nullptr;
-	delete Isaac::m_pHurtSprite;
-	Isaac::m_pHurtSprite = nullptr;
+	delete m_pHeadSprite;
+	m_pHeadSprite = nullptr;
+	delete m_pWalkSpriteUD;
+	m_pWalkSpriteUD = nullptr;
+	delete m_pWalkSpriteLR;
+	m_pWalkSpriteLR = nullptr;
+	delete m_pHurtSprite;
+	m_pHurtSprite = nullptr;
+	delete m_pDyingSprite;
+	m_pHurtSprite = nullptr;
 }
 
 void Isaac::Draw() const
@@ -154,7 +163,7 @@ Point2f Isaac::GetCenter() const
 
 Rectf Isaac::GetHitBox() const
 {
-	return Rectf{ m_CenterPosition.x - m_Width / 2.0f,m_CenterPosition.y - m_Height / 2.0f, m_Width, m_Height };
+	return Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f, m_MovementWidth, m_MovementHeight };
 }
 
 void Isaac::DrawBody() const
@@ -186,8 +195,8 @@ void Isaac::DrawBody() const
 		glTranslatef(-m_CenterPosition.x, -m_CenterPosition.y, 0);
 
 		m_pWalkSpriteLR->Draw(Point2f{
-			m_CenterPosition.x - m_pWalkSpriteLR->GetFrameWidth() / 2.0f,
-			m_CenterPosition.y - m_pWalkSpriteLR->GetFrameHeight() / 2.0f
+			m_CenterPosition.x - m_MovementWidth / 2.0f,
+			m_CenterPosition.y - m_MovementHeight / 2.0f
 			});
 
 		glPopMatrix();
@@ -196,8 +205,8 @@ void Isaac::DrawBody() const
 	case Isaac::Direction::right:
 
 		m_pWalkSpriteLR->Draw(Point2f{
-			m_CenterPosition.x - m_pWalkSpriteLR->GetFrameWidth() / 2.0f,
-			m_CenterPosition.y - m_pWalkSpriteLR->GetFrameHeight() / 2.0f
+			m_CenterPosition.x - m_MovementWidth / 2.0f,
+			m_CenterPosition.y - m_MovementHeight / 2.0f
 			});
 
 		break;
@@ -217,7 +226,7 @@ void Isaac::UpdateBody(float elapsedSec)
 	{
 		m_pWalkSpriteUD->Update(elapsedSec);
 	}
-	
+
 }
 
 void Isaac::UpdatePos(float elapsedSec, Room* currentRoom)
@@ -302,7 +311,7 @@ void Isaac::DoGameObjectCollision(const std::vector<GameObject*>& objects)
 	utils::HitInfo hitInfo;
 	Rectf hitbox{ GetHitBox() };
 	std::vector<Point2f> hitboxPoints{ utils::GetVertices(hitbox) };
-	Point2f bottomLeft{ hitboxPoints[0].x -1,  hitboxPoints[0].y - 1 };
+	Point2f bottomLeft{ hitboxPoints[0].x - 1,  hitboxPoints[0].y - 1 };
 	Point2f bottomRight{ hitboxPoints[1].x - 1,  hitboxPoints[1].y - 1 };
 	Point2f topRight{ hitboxPoints[2].x - 1,  hitboxPoints[2].y - 1 };
 	Point2f topLeft{ hitboxPoints[3].x - 1,  hitboxPoints[3].y - 1 };
@@ -464,25 +473,25 @@ void Isaac::Shoot(TearManager* tearManager, const TextureManager& textureManager
 		case Direction::up:
 			tearCenterPos = Point2f{
 					m_CenterPosition.x,
-					m_CenterPosition.y - m_pWalkSpriteLR->GetFrameHeight() / 2.0f };
+					m_CenterPosition.y - m_MovementHeight / 2.0f };
 			break;
 		case Direction::down:
 			tearCenterPos = Point2f{
 					m_CenterPosition.x,
-					m_CenterPosition.y - m_pWalkSpriteLR->GetFrameHeight() / 2.0f };
+					m_CenterPosition.y - m_MovementHeight / 2.0f };
 
 			isFront = true;
 			break;
 		case Direction::left:
 			tearCenterPos = Point2f{
 					m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
-					m_CenterPosition.y - m_pWalkSpriteLR->GetFrameHeight() / 2.0f };
+					m_CenterPosition.y - m_MovementHeight / 2.0f };
 			isFront = true;
 			break;
 		case Direction::right:
 			tearCenterPos = Point2f{
 					m_CenterPosition.x + m_pHeadSprite->GetFrameWidth() / 2.0f,
-					m_CenterPosition.y - m_pWalkSpriteLR->GetFrameHeight() / 2.0f };
+					m_CenterPosition.y - m_MovementHeight / 2.0f };
 			isFront = true;
 			break;
 		default:
@@ -521,10 +530,22 @@ void Isaac::UpdateHurt(float elapsedSec)
 
 void Isaac::DrawDead() const
 {
+	glPushMatrix();
+	glTranslatef(m_CenterPosition.x, m_CenterPosition.y - m_MovementHeight / 2.0f, 0);
+	glRotatef(-m_DeathRotationAngle, 0, 0, 1);
+	glTranslatef(-m_CenterPosition.x, -(m_CenterPosition.y - m_MovementHeight / 2.0f) , 0);
+	m_pDyingSprite->Draw(Point2f{
+	m_CenterPosition.x - m_DyingWidth / 2.0f,
+	m_CenterPosition.y - m_DyingHeight / 2.0f
+		});
+
+	glPopMatrix();
 }
 
 void Isaac::UpdateDead(float elapsedSec)
 {
+	if (m_DeathRotationAngle < 90)
+		m_DeathRotationAngle += 270 * elapsedSec;
 }
 
 bool Isaac::CanShoot()
