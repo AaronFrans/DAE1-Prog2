@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Game Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Framework Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Game Files\Isaac">
+      <UniqueIdentifier>{07f00eda-1912-4b0d-98a7-c41a3c7fd30b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Managers">
+      <UniqueIdentifier>{ff29836c-f1fb-43c4-b4a9-80fec307527e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Game Basic Files">
+      <UniqueIdentifier>{cc7fadd5-6ed0-45b1-b943-aa3ac5b72858}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Isaac\UI">
+      <UniqueIdentifier>{c41d0495-7c19-49c9-b3ae-51d1aa0b0910}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Floor">
+      <UniqueIdentifier>{5e7a4705-6576-4b37-9a8e-66f242845a15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Floor\Room">
+      <UniqueIdentifier>{85312f25-94b3-41a2-a468-84284bfc06f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Floor\Room\GameObjects">
+      <UniqueIdentifier>{a3b1955f-c9b1-41ec-a954-ae6255a8f5ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Floor\Room\Enemies">
+      <UniqueIdentifier>{bccf22b1-d682-492f-be1a-ade9fca579f3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix2x3.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffect.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundStream.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structs.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGParser.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2f.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Framework Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Isaac.h">
+      <Filter>Game Files\Isaac</Filter>
+    </ClInclude>
+    <ClInclude Include="TearManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Game Files\Floor\Room\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Poop.h">
+      <Filter>Game Files\Floor\Room\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Game Files\Floor\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Game Files\Floor\Room\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Tear.h">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmallSpider.h">
+      <Filter>Game Files\Floor\Room\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Hearth.h">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="IsaacHealthBar.h">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Rock.h">
+      <Filter>Game Files\Floor\Room\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Fly.h">
+      <Filter>Game Files\Floor\Room\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
+      <Filter>Game Files\Floor\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Floor.h">
+      <Filter>Game Files\Floor</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix2x3.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEffect.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundStream.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structs.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVGParser.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2f.cpp">
+      <Filter>Framework Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Isaac.cpp">
+      <Filter>Game Files\Isaac</Filter>
+    </ClCompile>
+    <ClCompile Include="TearManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Game Files\Floor\Room\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Poop.cpp">
+      <Filter>Game Files\Floor\Room\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Game Files\Floor\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Game Files\Floor\Room\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Tear.cpp">
+      <Filter>Game Files\Game Basic Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SmallSpider.cpp">
+      <Filter>Game Files\Floor\Room\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Hearth.cpp">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="IsaacHealthBar.cpp">
+      <Filter>Game Files\Isaac\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Rock.cpp">
+      <Filter>Game Files\Floor\Room\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Fly.cpp">
+      <Filter>Game Files\Floor\Room\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Door.cpp">
+      <Filter>Game Files\Floor\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Floor.cpp">
+      <Filter>Game Files\Floor</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
