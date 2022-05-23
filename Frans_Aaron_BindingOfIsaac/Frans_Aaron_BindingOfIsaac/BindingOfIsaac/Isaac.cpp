@@ -161,6 +161,11 @@ Point2f Isaac::GetCenter() const
 	return Point2f{ m_CenterPosition.x, m_CenterPosition.y + m_pHeadSprite->GetFrameHeight() / 2.0f };
 }
 
+void Isaac::SetCenter(const Point2f& center)
+{
+	m_CenterPosition = center;
+}
+
 Circlef Isaac::GetHitBox() const
 {
 	return Circlef{ m_CenterPosition, m_MovementWidth / 2.0f };

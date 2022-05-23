@@ -58,6 +58,8 @@ public:
 	void ProcessKeyUpEvent(const SDL_KeyboardEvent& e);
 
 	Point2f GetCenter() const;
+	void SetCenter(const Point2f& center);
+
 	Circlef GetHitBox() const;
 
 private:

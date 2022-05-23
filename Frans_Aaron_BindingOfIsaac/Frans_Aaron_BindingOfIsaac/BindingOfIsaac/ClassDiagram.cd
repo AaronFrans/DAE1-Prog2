@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Isaac" Collapsed="true">
+    <Position X="8.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUBVCIABAiQJoAQZNAAACoBIACAoASIQApxgAQAkiI=</HashCode>
+      <FileName>Isaac.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hearth" Collapsed="true">
+    <Position X="7" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAgAAABAgAAAAAAAAAAAQAAAgAAABAAgAAAACA=</HashCode>
+      <FileName>Hearth.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IsaacHealthBar" Collapsed="true">
+    <Position X="10.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAEQACAgAAAAAAEAAogAAAAAA=</HashCode>
+      <FileName>IsaacHealthBar.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EnemyManager" Collapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIACAAAAAAACAAAAAQAAAAAAAAAEAAAgAAAAAAA=</HashCode>
+      <FileName>EnemyManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomManager" Collapsed="true">
+    <Position X="5.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAFIAIAAAAAAAAAAAAAAAgEAABAAAAgAAIAAAA=</HashCode>
+      <FileName>RoomManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TearManager" Collapsed="true">
+    <Position X="7" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQEAAAAABAAAAAAAAAAQAAAABAAAAAgAIQAABA=</HashCode>
+      <FileName>TearManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureManager" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACRAAIBAAABAAAEQAABAAAAAAAAAAgAQAAAAE=</HashCode>
+      <FileName>TextureManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIManager" Collapsed="true">
+    <Position X="12.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAIgAAAAAAAAAAAQAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>UIManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAIAJAAAAAAABAAAAAAQAAAAACACAAAAAAAAAAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game" Collapsed="true">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIQBABA4QAgBA4hYAggQAIABAAiAAAAAAAIgoEcAECA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sprite" Collapsed="true">
+    <Position X="10.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUCAIEAQAAgAiAQAAAAAIAAIBAEAAAQgAAgAABAAAI=</HashCode>
+      <FileName>Sprite.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tear" Collapsed="true">
+    <Position X="5.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEUABGCEAAABIgIFAAAAEAAAgIYAAYQAUAAgIABABAQ=</HashCode>
+      <FileName>Tear.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Floor" Collapsed="true">
+    <Position X="12.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQKAAIAAAAAAgkCAAAAAAAEIAIAABQLAEAgAAABACA=</HashCode>
+      <FileName>Floor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Door" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgBCAAAEAJIgBVEQAAAAAAIAIAUACIBAAsAACAAAA=</HashCode>
+      <FileName>Door.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Room" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBIxAAABABAgAYABAABQAAAAAAEMACAAMgAASFAAA=</HashCode>
+      <FileName>Room.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObject" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAgAEAAAAAAAAIACAAAgABAEgAAIAABA=</HashCode>
+      <FileName>GameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Poop" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAgACAIAgAAAAqAAAAABA=</HashCode>
+      <FileName>Poop.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rock" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAgAAAEAAABAAAAAABAgAAAAgAAAAABA=</HashCode>
+      <FileName>Rock.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Enemy" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgUAEgAAAAAAAoAQQAAAEQAAIAAAAgQAAAAggAAAABA=</HashCode>
+      <FileName>Enemy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Fly" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAABAAAABAoAAZAAAEAAAAACQAACAAAIngEAAEBA=</HashCode>
+      <FileName>Fly.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SmallSpider" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAABAAAGBAoAAZAEAEAAEAACYQBCAAAIkgEAAkBA=</HashCode>
+      <FileName>SmallSpider.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAEAABAAQAAAAAgAAAAAAAAAAAAAAEgCMAAAAI=</HashCode>
+      <FileName>Core.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundEffect" Collapsed="true">
+    <Position X="7" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAMAAAgAAAAAAAACQCAggAgAQAAAAA=</HashCode>
+      <FileName>SoundEffect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundStream" Collapsed="true">
+    <Position X="8.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAQAAAAAAAAMAAAAAAAAAAQACACAoAAgAAgAAAI=</HashCode>
+      <FileName>SoundStream.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SVGParser" Collapsed="true">
+    <Position X="12.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAFAABAAAMCAAAAAAAAAAADIEAAAAAAAAAAAAAIQAE=</HashCode>
+      <FileName>SVGParser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Texture" Collapsed="true">
+    <Position X="8.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAADAAggABACABAABAAAAAAASAAAIgAEAAAEE=</HashCode>
+      <FileName>Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Matrix2x3" Collapsed="true">
+    <Position X="12.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAcASBCAAEgAIAAAQCAAACgCAAAAAAAAAAAIA=</HashCode>
+      <FileName>Matrix2x3.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Window" Collapsed="true">
+    <Position X="10.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAQAQAAAAAAAAAAAAAAAAAAACBAAAAA=</HashCode>
+      <FileName>structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Point2f" Collapsed="true">
+    <Position X="5.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Rectf" Collapsed="true">
+    <Position X="7" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABQAQAAAAAAAAAAIAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Color4f" Collapsed="true">
+    <Position X="7" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAoAQABAAAAAAA=</HashCode>
+      <FileName>structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Circlef" Collapsed="true">
+    <Position X="5.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAACAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Ellipsef" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAGAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Vector2f" Collapsed="true">
+    <Position X="8.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAEAAAAABAKEgAAAAAhAAAAAAAAAAARgQUAAAAA=</HashCode>
+      <FileName>Vector2f.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="utils::HitInfo" Collapsed="true">
+    <Position X="10.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAIAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>utils.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -9,6 +9,7 @@ class Isaac;
 class TearManager;
 class UIManager;
 class IsaacHealthBar;
+class Floor;
 class Game final
 {
 public:
@@ -39,9 +40,14 @@ private:
 	TearManager* m_pTearManager;
 	UIManager* m_pUIManager;
 
+	Floor* m_pFloor;
+
 	Isaac* m_pPlayer;
 	RoomManager::RoomLookup m_CurrentRoom;
 
+	std::vector<int> testAlgo;
+
+	float time{ 0 };
 	// FUNCTIONS
 	void Initialize();
 	void Cleanup();
@@ -60,4 +66,12 @@ private:
 	void InitUIManager(IsaacHealthBar* isaacHealthBar);
 	void DrawUIManager() const;
 	void DeleteUIManager();
+
+	void InitFloor(RoomManager* roomManager);
+	void DrawFloor() const;
+	void DeleteFloor();
+
+
+	
+	void PrintFloor() ;
 };

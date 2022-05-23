@@ -114,7 +114,7 @@ void Fly::TakeDamage(float damage)
 	}
 }
 
-Enemy* Fly::clone() const
+Enemy* Fly::Clone() const
 {
 	return new Fly(*this);
 }

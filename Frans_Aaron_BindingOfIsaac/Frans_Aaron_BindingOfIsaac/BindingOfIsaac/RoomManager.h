@@ -11,13 +11,11 @@ public:
 
 	enum class RoomLookup
 	{
-		startRoom = 0,
-		smallRoom1 = 1,
-		smallRoom2 = 2,
-		smallRoom3 = 3,
-		bigRoom1 = 4,
-		bigRoom2 = 5,
-
+		startRoom, 
+		smallRoom1,
+		smallRoom2,
+		smallRoom3,
+		count
 	};
 
 	RoomManager(const TextureManager& textureManager, const EnemyManager& enemyManager);
@@ -38,7 +36,7 @@ private:
 	void MakeRoomTemplates(const TextureManager& textureManager, const EnemyManager& enemyManager);
 
 	void MakeStartRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices);
-	void MakeSmallRooms(const TextureManager& textureManager, const EnemyManager& enemyManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices);
-	void MakeBigRooms(const TextureManager& textureManager, const EnemyManager& enemyManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices);
+	void MakeSmallRooms(const TextureManager& textureManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices);
+	//void MakeBigRooms(const TextureManager& textureManager, const EnemyManager& enemyManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices);
 };
 

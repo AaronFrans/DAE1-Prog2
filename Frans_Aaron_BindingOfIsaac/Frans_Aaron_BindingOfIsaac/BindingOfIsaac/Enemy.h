@@ -31,7 +31,7 @@ public:
 	void SetPosition(const Point2f& center);
 	Point2f GetCenter();
 
-	virtual Enemy* clone() const = 0;
+	virtual Enemy* Clone() const = 0;
 
 protected:
 

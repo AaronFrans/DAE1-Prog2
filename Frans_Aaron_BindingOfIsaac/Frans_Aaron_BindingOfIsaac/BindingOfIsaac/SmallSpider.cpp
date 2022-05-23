@@ -153,7 +153,7 @@ void SmallSpider::TakeDamage(float damage)
 	}
 }
 
-Enemy* SmallSpider::clone() const
+Enemy* SmallSpider::Clone() const
 {
 	return new SmallSpider{ *this };
 }

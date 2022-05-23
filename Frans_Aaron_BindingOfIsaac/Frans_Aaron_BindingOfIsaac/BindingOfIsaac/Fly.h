@@ -34,7 +34,7 @@ public:
 	virtual void TakeDamage(float damage) override;
 
 
-	virtual Enemy* clone() const;
+	virtual Enemy* Clone() const override;
 
 
 private:

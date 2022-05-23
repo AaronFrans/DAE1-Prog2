@@ -2,11 +2,14 @@
 #include "Door.h"
 #include "Texture.h"
 #include "TextureManager.h"
+#include "utils.h"
 
-Door::Door(const TextureManager& textureManager, Point2f center, DoorState state, DoorDirection direction)
+Door::Door(const TextureManager& textureManager, Point2f center, DoorState state, DoorDirection direction, Rectf shape)
 	: m_Center{ center }
 	, m_State{ state }
 	, m_Direction{ direction }
+	, m_IsActive{ false }
+	, m_Shape{shape}
 {
 	m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorFrame);
 
@@ -21,29 +24,79 @@ Door::Door(const TextureManager& textureManager, Point2f center, DoorState state
 
 	m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorRight);
 	m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorLeft);
+}
 
-	m_temp = 0;
+Door::Door(const Door& rhs)
+	: m_Center{ rhs.m_Center }
+	, m_State{ rhs.m_State }
+	, m_Direction{ rhs.m_Direction }
+	, m_IsActive{ rhs.m_IsActive }
+	, m_Shape{rhs.m_Shape}
+{
+	m_pDoorFrame = rhs.m_pDoorFrame;
+	m_Width = rhs.m_Width;
+	m_Height = rhs.m_Height;
+
+	m_pDoorHallway = rhs.m_pDoorHallway;
+
+	m_HallwayWidth = rhs.m_HallwayWidth;
+	m_HallwayHeight = rhs.m_HallwayHeight;
+
+
+	m_pDoorRight = rhs.m_pDoorRight;
+	m_pDoorLeft = rhs.m_pDoorLeft;
+
+}
+
+Door& Door::operator=(const Door& rhs)
+{
+	m_Center = rhs.m_Center;
+	m_State = rhs.m_State;
+	m_Direction = rhs.m_Direction;
+	m_IsActive = rhs.m_IsActive;
+	m_Shape = rhs.m_Shape;
+
+	m_pDoorFrame = rhs.m_pDoorFrame;
+	m_Width = rhs.m_Width;
+	m_Height = rhs.m_Height;
+
+	m_pDoorHallway = rhs.m_pDoorHallway;
+
+	m_HallwayWidth = rhs.m_HallwayWidth;
+	m_HallwayHeight = rhs.m_HallwayHeight;
+
+
+	m_pDoorRight = rhs.m_pDoorRight;
+	m_pDoorLeft = rhs.m_pDoorLeft;
+
+	return *this;
 }
 
 
 
 void Door::Draw() const
 {
-	switch (m_Direction)
+
+	if (m_IsActive)
 	{
-	case Door::DoorDirection::up:
-		DrawUp();
-		break;
-	case Door::DoorDirection::down:
-		DrawDown();
-		break;
-	case Door::DoorDirection::left:
-		DrawLeft();
-		break;
-	case Door::DoorDirection::right:
-		DrawRight();
-		break;
+		switch (m_Direction)
+		{
+		case Door::DoorDirection::up:
+			DrawUp();
+			break;
+		case Door::DoorDirection::down:
+			DrawDown();
+			break;
+		case Door::DoorDirection::left:
+			DrawLeft();
+			break;
+		case Door::DoorDirection::right:
+			DrawRight();
+			break;
+		}
 	}
+
+
 }
 
 void Door::Update(float elapsedSec)
@@ -64,14 +117,37 @@ void Door::SetState(DoorState state)
 	m_State = state;
 }
 
+void Door::Activate()
+{
+	m_IsActive = true;
+}
+
+Door::DoorDirection Door::GetDirection()
+{
+	return m_Direction;
+}
+
+Rectf Door::GetShape() const
+{
+	return m_Shape;
+}
+
+bool Door::IsActive() const
+{
+	return m_IsActive;
+}
+
+void Door::SetRoomOrigin(const Point2f& roomOrigin)
+{
+	m_Center.x += roomOrigin.x;
+	m_Center.y += roomOrigin.y;
+	m_Shape.left += roomOrigin.x;
+	m_Shape.bottom += roomOrigin.y;
+}
+
 void Door::DrawUp() const
 {
-	glPushMatrix();
-	glTranslatef(m_Center.x, m_Center.y, 0);
-	glScalef(1, -1, 1);
-	glTranslatef(-m_Center.x, -m_Center.y, 0);
 	DrawSprite();
-	glPopMatrix();
 }
 
 void Door::DrawLeft() const
@@ -86,7 +162,12 @@ void Door::DrawLeft() const
 
 void Door::DrawDown() const
 {
+	glPushMatrix();
+	glTranslatef(m_Center.x, m_Center.y, 0);
+	glScalef(1, -1, 1);
+	glTranslatef(-m_Center.x, -m_Center.y, 0);
 	DrawSprite();
+	glPopMatrix();
 }
 
 void Door::DrawRight() const

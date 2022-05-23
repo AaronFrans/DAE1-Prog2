@@ -1,11 +1,14 @@
 #pragma once
-#include <vector>
 #include "Door.h"
+#include "EnemyManager.h"
+#include <vector>
+#include <map>
 
 class GameObject;
 class Texture;
 class Enemy;
 class Isaac;
+class EnemyManager;
 class Room
 {
 
@@ -18,26 +21,36 @@ public:
 	};
 
 	Room(Texture* background, Rectf shape, std::vector<GameObject*> objects,
-		std::vector<Enemy*> enemies, std::vector<Point2f> walkableAreaVertices,
+		std::vector<std::vector<Point2f>> enemyGroupPositions, std::vector<Point2f> walkableAreaVertices,
 		RoomType type, bool isCleared = false);
 
-	Room(const Room& rhs) = default;
+	Room(const Room& rhs);
 	Room(Room && rhs) = default;
-	Room& operator=(const Room & rhs) = default;
+	Room& operator=(const Room & rhs);
 	Room& operator=(Room && rhs) = default;
 	~Room();
 
 	void Draw() const;
 	void Update(float elapsedSec, Isaac* isaac);
 
-	Rectf GetBoundaries() const;
 
+	Rectf GetBoundaries() const;
 	std::vector<GameObject*> GetGameObjects() const;
 	std::vector<Enemy*> GetEnemies() const;
 	size_t GetNrObjects() const;
 	std::vector<Point2f> GetWalkableAreaVertices() const;
+	std::vector<Door*> GetDoors();
+	Rectf GetDoorShape(Door::DoorDirection direction);
+	bool IsCleared() const;
 
-	void PlaceDoor(const TextureManager& textureManager, const Point2f& doorCenter, Door::DoorDirection direction);
+
+
+	void SetOrigin(Point2f origin);
+
+	void PlaceDoor(const TextureManager& textureManager, const Point2f& doorCenter, Door::DoorDirection direction, Rectf shape);
+	void ActivateDoor(Door::DoorDirection direction);
+	void InitEnemies(const EnemyManager& enemyManager);
+
 
 private:
 
@@ -50,6 +63,8 @@ private:
 	RoomType m_Type;
 
 	std::vector<Door*> m_pDoors;
+
+	std::vector<std::vector<Point2f>> m_EnemyGroupPositions;
 
 	bool m_IsCleared;
 

@@ -9,6 +9,12 @@ public:
 
 	Poop(Texture* objectTexture, Point2f center, float size);
 
+	Poop(const Poop& rhs);
+	Poop(Poop && rhs) = default;
+	Poop& operator=(const Poop & rhs);
+	Poop& operator=(Poop && rhs) = default;
+	~Poop();
+
 
 	virtual void Draw() const override;
 
@@ -16,6 +22,7 @@ public:
 
 	virtual bool IsNotDestroyed() const override;
 
+	virtual GameObject* Clone() const override;
 private:
 
 	int m_NrHitsTaken;

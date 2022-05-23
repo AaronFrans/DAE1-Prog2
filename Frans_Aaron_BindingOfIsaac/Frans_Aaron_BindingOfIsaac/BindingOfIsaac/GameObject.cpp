@@ -11,6 +11,10 @@ GameObject::GameObject(Texture* objectTexture, int nrColls, int nrRows, Point2f 
 
 }
 
+GameObject::GameObject()
+{
+}
+
 GameObject::~GameObject()
 {
 	delete m_pSprite;

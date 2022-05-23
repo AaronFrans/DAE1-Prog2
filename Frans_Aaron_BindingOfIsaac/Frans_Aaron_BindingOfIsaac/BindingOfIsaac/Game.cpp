@@ -7,6 +7,7 @@
 #include "IsaacHealthBar.h"
 #include "UIManager.h"
 #include "Room.h"
+#include "Floor.h"
 
 Game::Game(const Window& window)
 	: m_Window{ window }
@@ -26,6 +27,8 @@ Game::~Game()
 
 void Game::Initialize()
 {
+
+
 	IsaacHealthBar* isaacHealthBar = new IsaacHealthBar(m_TextureManager.GetTexture(TextureManager::TextureLookup::hearths),
 		3, Point2f{ 0, m_Window.height - 20 });
 	InitPlayer(isaacHealthBar);
@@ -33,8 +36,10 @@ void Game::Initialize()
 	InitUIManager(isaacHealthBar);
 	isaacHealthBar = nullptr;
 	m_pRoomManager = new RoomManager{ m_TextureManager, m_EnemyManager };
-	m_Camera.SetLevelBoundaries(m_pRoomManager->GetRoom(m_CurrentRoom)->GetBoundaries());
 
+	InitFloor(m_pRoomManager);
+
+	m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
 }
 
 void Game::Cleanup()
@@ -43,13 +48,29 @@ void Game::Cleanup()
 	DeleteTearManager();
 	DeletePlayer();
 	DeleteUIManager();
+	DeleteFloor();
 }
 
 void Game::Update(float elapsedSec)
 {
-	UpdateTearManager(elapsedSec);
-	UpdatePlayer(elapsedSec);
-	m_pRoomManager->GetRoom(m_CurrentRoom)->Update(elapsedSec, m_pPlayer);
+	time += elapsedSec;
+	if (time > 5)
+	{
+		time -= 5;
+		PrintFloor();
+	}
+	if (!m_pFloor->IsTransitioning())
+	{
+		UpdateTearManager(elapsedSec);
+		UpdatePlayer(elapsedSec);
+		m_pFloor->Update(elapsedSec, m_pPlayer);
+	}
+	else
+	{
+		m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
+		m_pFloor->DoneTransitioning();
+	}
+
 }
 
 void Game::Draw() const
@@ -58,12 +79,13 @@ void Game::Draw() const
 	ClearBackground();
 	glPushMatrix();
 	m_Camera.Transform(m_pPlayer->GetCenter());
-	m_pRoomManager->GetRoom(m_CurrentRoom)->Draw();
+	DrawFloor();
 	m_pTearManager->DrawBackTears();
 	DrawPlayer();
 	m_pTearManager->DrawFrontTears();
 	DrawUIManager();
 	glPopMatrix();
+
 }
 
 void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
@@ -141,7 +163,7 @@ void Game::DrawPlayer() const
 
 void Game::UpdatePlayer(float elapsedSec)
 {
-	m_pPlayer->Update(elapsedSec, m_pTearManager, m_TextureManager, m_pRoomManager->GetRoom(m_CurrentRoom));
+	m_pPlayer->Update(elapsedSec, m_pTearManager, m_TextureManager, m_pFloor->GetCurrentRoom());
 }
 
 void Game::DeletePlayer()
@@ -157,7 +179,7 @@ void Game::InitTearManager()
 
 void Game::UpdateTearManager(float elapsedSec)
 {
-	m_pTearManager->UpdateTears(elapsedSec, m_pRoomManager->GetRoom(m_CurrentRoom)->GetGameObjects(), m_pRoomManager->GetRoom(m_CurrentRoom)->GetEnemies());
+	m_pTearManager->UpdateTears(elapsedSec, m_pFloor->GetCurrentRoom()->GetGameObjects(), m_pFloor->GetCurrentRoom()->GetEnemies());
 }
 
 void Game::DeleteTearManager()
@@ -179,4 +201,40 @@ void Game::DrawUIManager() const
 void Game::DeleteUIManager()
 {
 	delete m_pUIManager;
+}
+
+void Game::InitFloor(RoomManager* roomManager)
+{
+	m_pFloor = new Floor{};
+	m_pFloor->GenerateFloor(roomManager);
+	m_pFloor->ActivateDoors();
+	m_pFloor->InitEnemies(m_EnemyManager);
+}
+
+void Game::DrawFloor() const
+{
+	m_pFloor->Draw();
+}
+
+void Game::DeleteFloor()
+{
+	delete m_pFloor;
+}
+
+void Game::PrintFloor()
+{
+	testAlgo = m_pFloor->GetLayout();
+	std::cout << '\n';
+	std::cout << '\n';
+	for (int i = 8; i >= 0; i--)
+	{
+
+		for (int j = 0; j < 9; j++)
+		{
+			std::cout << testAlgo[i * 9 + j];
+		}
+		std::cout << '\n';
+	}
+	std::cout << '\n';
+	std::cout << '\n';
 }

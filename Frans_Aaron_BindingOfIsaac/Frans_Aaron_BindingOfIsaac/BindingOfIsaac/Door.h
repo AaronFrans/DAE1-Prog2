@@ -23,11 +23,11 @@ public:
 		right
 	};
 
-	Door(const TextureManager& textureManager, Point2f center, DoorState state, DoorDirection direction);
+	Door(const TextureManager& textureManager, Point2f center, DoorState state, DoorDirection direction, Rectf shape);
 	
-	Door(const Door& rhs) = default;
+	Door(const Door& rhs);
 	Door(Door && rhs) = default;
-	Door& operator=(const Door & rhs) = default;
+	Door& operator=(const Door & rhs);
 	Door& operator=(Door && rhs) = default;
 	virtual ~Door() = default;
 
@@ -35,7 +35,16 @@ public:
 	void Update(float elapsedSec);
 
 	void SetState(DoorState state);
+	void Activate();
 
+	DoorDirection GetDirection();
+
+	Rectf GetShape() const;
+	bool IsActive() const;
+
+
+	void SetRoomOrigin(const Point2f& roomOrigin);
+	
 private:
 
 	Texture* m_pDoorFrame;
@@ -51,10 +60,12 @@ private:
 	float m_HallwayWidth;
 	float m_HallwayHeight;
 
-	float m_temp;
-
 	DoorState m_State;
 	DoorDirection m_Direction;
+
+	bool m_IsActive;
+
+	Rectf m_Shape;
 
 	void DrawUp() const;
 	void DrawLeft() const;
