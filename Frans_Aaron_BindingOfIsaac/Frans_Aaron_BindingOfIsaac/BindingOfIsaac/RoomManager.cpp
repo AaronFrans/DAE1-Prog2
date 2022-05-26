@@ -5,8 +5,9 @@
 #include "Poop.h"
 #include "Rock.h"
 #include "SVGParser.h"
-#include <iostream>
 #include "EnemyManager.h"
+#include "ItemPedestal.h"
+#include <iostream>
 
 
 RoomManager::RoomManager(const TextureManager& textureManager, const EnemyManager& enemyManager)
@@ -45,11 +46,15 @@ void RoomManager::MakeRoomTemplates(const TextureManager& textureManager, const 
 
 	MakeStartRoom(textureManager, roomWidth, roomHeight, walkableAreaVertices[0]);
 
+	MakeItemRoom(textureManager, roomWidth, roomHeight, walkableAreaVertices[0], gameObjectSize);
+
+	MakeBossRoom(textureManager, roomWidth, roomHeight, walkableAreaVertices[0]);
+
 	MakeSmallRooms(textureManager, roomWidth, roomHeight, gameObjectSize, walkableAreaVertices[0]);
 
 
-	roomWidth = 1080;
-	roomHeight = 720;
+	//roomWidth = 1080;
+	//roomHeight = 720;
 
 	//if (!SVGParser::GetVerticesFromSvgFile("Resources/SVGs/Rooms/Basement-Room-Big.svg", walkableAreaVertices))
 	//{
@@ -64,10 +69,11 @@ void RoomManager::MakeRoomTemplates(const TextureManager& textureManager, const 
 
 void RoomManager::MakeStartRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices)
 {
+
 	Room* startRoom = new Room(textureManager.GetTexture(
 		TextureManager::TextureLookup::roomSmall
-		), Rectf{ 0,0,roomWidth, roomHeight }, std::vector<GameObject*>{}, std::vector<std::vector<Point2f>>{}, walkableAreaVertices,
-		Room::RoomType::small, true);
+	), Rectf{ 0,0,roomWidth, roomHeight }, std::vector<GameObject*>{}, std::vector<std::vector<Point2f>>{}, walkableAreaVertices,
+		Room::RoomType::starter, true);
 
 	startRoom->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::down, Rectf{ 257, 27, 27, 34 });
 	startRoom->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::up, Rectf{ 257, 301, 27, 34 });
@@ -75,6 +81,40 @@ void RoomManager::MakeStartRoom(const TextureManager& textureManager, const floa
 	startRoom->PlaceDoor(textureManager, Point2f{ 495, 180 }, Door::DoorDirection::right, Rectf{ 478, 168, 34, 27 });
 
 	m_pRoomTemplates.push_back(startRoom);
+}
+
+void RoomManager::MakeItemRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices, float gameObjectSize)
+{
+	
+
+	
+
+	Room* itemRoom = new Room(textureManager.GetTexture(
+		TextureManager::TextureLookup::roomSmall
+	), Rectf{ 0,0,roomWidth, roomHeight }, std::vector<GameObject*>{}, std::vector<std::vector<Point2f>>{}, walkableAreaVertices,
+		Room::RoomType::item, true);
+
+	itemRoom->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::down, Rectf{ 257, 27, 27, 34 });
+	itemRoom->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::up, Rectf{ 257, 301, 27, 34 });
+	itemRoom->PlaceDoor(textureManager, Point2f{ 50, 180 }, Door::DoorDirection::left, Rectf{ 36, 168, 34, 27 });
+	itemRoom->PlaceDoor(textureManager, Point2f{ 495, 180 }, Door::DoorDirection::right, Rectf{ 478, 168, 34, 27 });
+
+	m_pRoomTemplates.push_back(itemRoom);
+}
+
+void RoomManager::MakeBossRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices)
+{
+	Room* itemRoom = new Room(textureManager.GetTexture(
+		TextureManager::TextureLookup::roomSmall
+	), Rectf{ 0,0,roomWidth, roomHeight }, std::vector<GameObject*>{}, std::vector<std::vector<Point2f>>{}, walkableAreaVertices,
+		Room::RoomType::boss, true);
+
+	itemRoom->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::down, Rectf{ 257, 27, 27, 34 });
+	itemRoom->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::up, Rectf{ 257, 301, 27, 34 });
+	itemRoom->PlaceDoor(textureManager, Point2f{ 50, 180 }, Door::DoorDirection::left, Rectf{ 36, 168, 34, 27 });
+	itemRoom->PlaceDoor(textureManager, Point2f{ 495, 180 }, Door::DoorDirection::right, Rectf{ 478, 168, 34, 27 });
+
+	m_pRoomTemplates.push_back(itemRoom);
 }
 
 void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices)
@@ -110,21 +150,12 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const flo
 
 #pragma region Enemies
 
-	//move inside floort
-
-	//pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
-	//pEnemy = pRandomEnemy;
-	//enemyShape = pEnemy->GetHitBox();
-
-	//pEnemy->SetPosition(Point2f{ roomWidth - wallWidth * 2 + enemyShape.radius * 3,
-	//	0 + wallHeight * 2 - enemyShape.radius * 3 });
-	//enemies.push_back(pEnemy->Clone());
 
 	enemyPositions.push_back(Point2f{ 0 + wallWidth * 2 + enemySpacing,
 			roomHeight - wallHeight * 2 - enemySpacing });
 
 	enemyPositions.push_back(Point2f{ 0 + wallWidth * 2 + enemySpacing
-		, roomHeight - wallHeight * 2 - enemySpacing * 5 });
+		, roomHeight - wallHeight * 2 - enemySpacing * 3 });
 
 	enemyPositions.push_back(Point2f{ 0 + wallWidth * 2 + enemySpacing * 5,
 		roomHeight - wallHeight * 2 - enemySpacing });
@@ -133,14 +164,14 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const flo
 
 	enemyPositions.clear();
 
-	enemyPositions.push_back(Point2f{ roomWidth - wallWidth * 2 + enemySpacing * 3,
-		0 + wallHeight * 2 - enemySpacing * 3 });
+	enemyPositions.push_back(Point2f{ roomWidth - wallWidth * 2 - enemySpacing * 3,
+		0 + wallHeight * 2 + enemySpacing * 3 });
 
-	enemyPositions.push_back(Point2f{ roomWidth - wallWidth * 2 + enemySpacing * 3,
-		0 + wallHeight * 2 - enemySpacing * 5 });
+	enemyPositions.push_back(Point2f{ roomWidth - wallWidth * 2 - enemySpacing * 3,
+		0 + wallHeight * 2 + enemySpacing * 5 });
 
-	enemyPositions.push_back(Point2f{ roomWidth - wallWidth * 2 + enemySpacing * 5,
-		0 + wallHeight * 2 - enemySpacing * 3 });
+	enemyPositions.push_back(Point2f{ roomWidth - wallWidth * 2 - enemySpacing * 5,
+		0 + wallHeight * 2 + enemySpacing * 3 });
 
 	enemyGroupPositions.push_back(enemyPositions);
 
@@ -150,7 +181,7 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const flo
 
 	Room* smallRoom1 = new Room(textureManager.GetTexture(
 		TextureManager::TextureLookup::roomSmall
-	), Rectf{ 0,0,roomWidth , roomHeight }, objects, enemyGroupPositions, walkableAreaVertices, Room::RoomType::small);
+	), Rectf{ 0,0,roomWidth , roomHeight }, objects, enemyGroupPositions, walkableAreaVertices, Room::RoomType::normal);
 
 	smallRoom1->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::down, Rectf{ 257, 27, 27, 34 });
 	smallRoom1->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::up, Rectf{ 257, 301, 27, 34 });
@@ -204,7 +235,7 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const flo
 
 	Room* smallRoom2 = new Room(textureManager.GetTexture(
 		TextureManager::TextureLookup::roomSmall
-	), Rectf{ 0,0,roomWidth , roomHeight }, objects, enemyGroupPositions, walkableAreaVertices, Room::RoomType::small);
+	), Rectf{ 0,0,roomWidth , roomHeight }, objects, enemyGroupPositions, walkableAreaVertices, Room::RoomType::normal);
 
 	smallRoom2->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::down, Rectf{ 257, 27, 27, 34 });
 	smallRoom2->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::up, Rectf{ 257, 301, 27, 34 });
@@ -273,7 +304,7 @@ void RoomManager::MakeSmallRooms(const TextureManager& textureManager, const flo
 
 	Room* smallRoom3 = new Room(textureManager.GetTexture(
 		TextureManager::TextureLookup::roomSmall
-	), Rectf{ 0,0,roomWidth , roomHeight }, objects, enemyGroupPositions, walkableAreaVertices, Room::RoomType::small);
+	), Rectf{ 0,0,roomWidth , roomHeight }, objects, enemyGroupPositions, walkableAreaVertices, Room::RoomType::normal);
 
 	smallRoom3->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::down, Rectf{ 257, 27, 27, 34 });
 	smallRoom3->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::up, Rectf{ 257, 301, 27, 34 });

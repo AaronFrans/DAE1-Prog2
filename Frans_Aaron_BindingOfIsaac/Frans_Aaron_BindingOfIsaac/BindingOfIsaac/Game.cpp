@@ -8,8 +8,9 @@
 #include "UIManager.h"
 #include "Room.h"
 #include "Floor.h"
+#include "ItemManager.h"
 
-Game::Game(const Window& window)
+Game::Game(const Window & window)
 	: m_Window{ window }
 	, m_TextureManager{}
 	, m_EnemyManager{ m_TextureManager }
@@ -36,7 +37,7 @@ void Game::Initialize()
 	InitUIManager(isaacHealthBar);
 	isaacHealthBar = nullptr;
 	m_pRoomManager = new RoomManager{ m_TextureManager, m_EnemyManager };
-
+	m_pItemManager = new ItemManager{ m_TextureManager };
 	InitFloor(m_pRoomManager);
 
 	m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
@@ -45,6 +46,7 @@ void Game::Initialize()
 void Game::Cleanup()
 {
 	delete m_pRoomManager;
+	delete m_pItemManager;
 	DeleteTearManager();
 	DeletePlayer();
 	DeleteUIManager();
@@ -163,7 +165,7 @@ void Game::DrawPlayer() const
 
 void Game::UpdatePlayer(float elapsedSec)
 {
-	m_pPlayer->Update(elapsedSec, m_pTearManager, m_TextureManager, m_pFloor->GetCurrentRoom());
+	m_pPlayer->Update(elapsedSec, m_pTearManager, m_TextureManager, m_pFloor->GetCurrentRoom(), m_pItemManager);
 }
 
 void Game::DeletePlayer()
@@ -179,7 +181,8 @@ void Game::InitTearManager()
 
 void Game::UpdateTearManager(float elapsedSec)
 {
-	m_pTearManager->UpdateTears(elapsedSec, m_pFloor->GetCurrentRoom()->GetGameObjects(), m_pFloor->GetCurrentRoom()->GetEnemies());
+	m_pTearManager->UpdateTears(elapsedSec, m_pFloor->GetCurrentRoom()->GetGameObjects(),
+		m_pFloor->GetCurrentRoom()->GetEnemies(), m_pFloor->GetCurrentRoom()->GetPedestals());
 }
 
 void Game::DeleteTearManager()
@@ -206,7 +209,7 @@ void Game::DeleteUIManager()
 void Game::InitFloor(RoomManager* roomManager)
 {
 	m_pFloor = new Floor{};
-	m_pFloor->GenerateFloor(roomManager);
+	m_pFloor->GenerateFloor(roomManager, m_TextureManager, m_pItemManager);
 	m_pFloor->ActivateDoors();
 	m_pFloor->InitEnemies(m_EnemyManager);
 }

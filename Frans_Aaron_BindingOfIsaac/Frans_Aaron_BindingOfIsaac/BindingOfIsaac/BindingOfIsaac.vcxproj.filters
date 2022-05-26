@@ -37,6 +37,12 @@
     <Filter Include="Game Files\Floor\Room\Enemies">
       <UniqueIdentifier>{bccf22b1-d682-492f-be1a-ade9fca579f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\Items">
+      <UniqueIdentifier>{2c116a85-b458-40bc-9af8-3ce285d74093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\Floor\Room\Enemies\Bosses">
+      <UniqueIdentifier>{3a9b61bf-5c17-467a-af6f-72669ab1ca83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -134,6 +140,21 @@
     </ClInclude>
     <ClInclude Include="Floor.h">
       <Filter>Game Files\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Game Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemPedestal.h">
+      <Filter>Game Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Costume.h">
+      <Filter>Game Files\Isaac</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h">
+      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -233,8 +254,24 @@
     <ClCompile Include="Floor.cpp">
       <Filter>Game Files\Floor</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemPedestal.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Costume.cpp">
+      <Filter>Game Files\Isaac</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

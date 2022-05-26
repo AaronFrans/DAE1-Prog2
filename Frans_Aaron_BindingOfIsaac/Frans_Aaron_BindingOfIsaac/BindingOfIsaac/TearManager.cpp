@@ -4,6 +4,7 @@
 #include "Tear.h"
 #include "GameObject.h"
 #include "Enemy.h"
+#include "ItemPedestal.h"
 
 TearManager::TearManager()
 {
@@ -44,13 +45,13 @@ void TearManager::DrawBackTears() const
 
 
 
-void TearManager::UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies)
+void TearManager::UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies, std::vector<ItemPedestal*> pedestals)
 {
 	for (Tear* tear : m_pTears)
 	{
 		if (tear->GetState() != Tear::TearState::inactive)
 		{
-			tear->Update(elapsedSec, gameObjects, enemies);
+			tear->Update(elapsedSec, gameObjects, enemies, pedestals);
 
 		}
 	}

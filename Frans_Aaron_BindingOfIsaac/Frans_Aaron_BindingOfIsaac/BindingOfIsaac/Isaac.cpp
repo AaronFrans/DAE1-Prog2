@@ -8,6 +8,11 @@
 #include "GameObject.h"
 #include "IsaacHealthBar.h"
 #include "Tear.h"
+#include "ItemPedestal.h"
+#include "Item.h"
+#include "ItemManager.h"
+#include "Costume.h"
+
 #include <iostream>
 
 
@@ -86,7 +91,7 @@ void Isaac::Draw() const
 	}
 }
 
-void Isaac::Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom)
+void Isaac::Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom, ItemManager* itemManager)
 {
 
 	switch (m_DamageState)
@@ -94,11 +99,15 @@ void Isaac::Update(float elapsedSec, TearManager* tearManager, const TextureMana
 	case Isaac::DamageState::undamaged:
 		UpdateBody(elapsedSec);
 		UpdateHead(elapsedSec, tearManager, textureManager);
-		UpdatePos(elapsedSec, currentRoom);
+		UpdatePos(elapsedSec, currentRoom, itemManager);
+		for (Costume* costume : m_pCostumes)
+		{
+			costume->Update(elapsedSec);
+		}
 		break;
 	case Isaac::DamageState::hurt:
 		UpdateHurt(elapsedSec);
-		UpdatePos(elapsedSec, currentRoom);
+		UpdatePos(elapsedSec, currentRoom, itemManager);
 		break;
 	case Isaac::DamageState::dead:
 		UpdateDead(elapsedSec);
@@ -141,7 +150,6 @@ void Isaac::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
 		m_pWalkSpriteUD->SetAccuSec(0);
 		m_BodyDirection = Isaac::Direction::down;
 		m_BodyState = BodyState::idle;
-		m_BodyState = BodyState::idle;
 		m_Velocity.y = 0;
 		break;
 	case SDLK_UP:
@@ -153,6 +161,11 @@ void Isaac::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
 		m_HeadState = HeadState::idle;
 		m_TearFireAccuSec = 0;
 		break;
+	}
+
+	for (Costume* costume : m_pCostumes)
+	{
+		costume->ProcessKeyUpEvent(e);
 	}
 }
 
@@ -176,6 +189,7 @@ void Isaac::DrawBody() const
 	switch (m_BodyDirection)
 	{
 	case Isaac::Direction::up:
+		DrawBodyCostumes();
 
 		m_pWalkSpriteUD->Draw(Point2f{
 			m_CenterPosition.x - m_pWalkSpriteUD->GetFrameWidth() / 2.0f,
@@ -185,10 +199,13 @@ void Isaac::DrawBody() const
 		break;
 	case Isaac::Direction::down:
 
+
 		m_pWalkSpriteUD->Draw(Point2f{
 			m_CenterPosition.x - m_pWalkSpriteUD->GetFrameWidth() / 2.0f,
 			m_CenterPosition.y - m_pWalkSpriteUD->GetFrameHeight() / 2.0f
 			});
+
+		DrawBodyCostumes();
 
 		break;
 	case Isaac::Direction::left:
@@ -204,6 +221,7 @@ void Isaac::DrawBody() const
 			m_CenterPosition.y - m_MovementHeight / 2.0f
 			});
 
+		DrawBodyCostumes();
 		glPopMatrix();
 
 		break;
@@ -214,7 +232,17 @@ void Isaac::DrawBody() const
 			m_CenterPosition.y - m_MovementHeight / 2.0f
 			});
 
+		DrawBodyCostumes();
 		break;
+	}
+}
+
+void Isaac::DrawBodyCostumes() const
+{
+	for (Costume* costume : m_pCostumes)
+	{
+		if (costume->GetType() == Costume::CostumeType::body)
+			costume->Draw();
 	}
 }
 
@@ -234,7 +262,7 @@ void Isaac::UpdateBody(float elapsedSec)
 
 }
 
-void Isaac::UpdatePos(float elapsedSec, Room* currentRoom)
+void Isaac::UpdatePos(float elapsedSec, Room* currentRoom, ItemManager* itemManager)
 {
 	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
 
@@ -269,8 +297,22 @@ void Isaac::UpdatePos(float elapsedSec, Room* currentRoom)
 	{
 		m_CenterPosition.y += m_Velocity.y * elapsedSec;
 		m_CenterPosition.x += m_Velocity.x * elapsedSec;
+		for (Costume* costume : m_pCostumes)
+		{
+			switch (costume->GetType())
+			{
+			case Costume::CostumeType::head:
+				costume->SetPosition(Point2f{
+					m_CenterPosition.x,
+					m_CenterPosition.y + m_pHeadSprite->GetFrameHeight() / 2.0f });
+				break;
+			case Costume::CostumeType::body:
+				costume->SetPosition(m_CenterPosition);
+				break;
+			}
+		}
 		DoRoomCollision(currentRoom);
-		DoGameObjectCollision(currentRoom->GetGameObjects());
+		DoGameObjectCollision(currentRoom->GetGameObjects(), currentRoom->GetPedestals(), itemManager);
 
 	}
 }
@@ -292,7 +334,7 @@ void Isaac::DoRoomCollision(const Room* currentRoom)
 			m_CenterPosition.y = hitInfo.intersectPoint.y - hitbox.radius;
 			m_Velocity.y = -m_Velocity.y;
 		}
-		else if(m_Velocity.y < 0)
+		else if (m_Velocity.y < 0)
 		{
 			m_CenterPosition.y = hitInfo.intersectPoint.y + hitbox.radius;
 			m_Velocity.y = -m_Velocity.y;
@@ -305,7 +347,7 @@ void Isaac::DoRoomCollision(const Room* currentRoom)
 			m_CenterPosition.x = hitInfo.intersectPoint.x - hitbox.radius;
 			m_Velocity.x = -m_Velocity.x;
 		}
-		else if(m_Velocity.x < 0)
+		else if (m_Velocity.x < 0)
 		{
 			m_CenterPosition.x = hitInfo.intersectPoint.x + hitbox.radius;
 			m_Velocity.x = -m_Velocity.x;
@@ -313,7 +355,7 @@ void Isaac::DoRoomCollision(const Room* currentRoom)
 	}
 }
 
-void Isaac::DoGameObjectCollision(const std::vector<GameObject*>& objects)
+void Isaac::DoGameObjectCollision(const std::vector<GameObject*>& objects, const std::vector<ItemPedestal*>& pedestals, ItemManager* itemManager)
 {
 	Circlef hitbox{ GetHitBox() };
 
@@ -333,6 +375,28 @@ void Isaac::DoGameObjectCollision(const std::vector<GameObject*>& objects)
 		}
 
 	}
+
+	for (ItemPedestal* pedestal : pedestals)
+	{
+		Vector2f currentToEnemy{ m_CenterPosition , pedestal->GetCenter() };
+		Circlef objectShape{ pedestal->GetShape() };
+		if (utils::IsOverlapping(hitbox, objectShape))
+		{
+			float radiusSum{ objectShape.radius + hitbox.radius };
+			Vector2f enemyToCurrentNorm{ -(currentToEnemy.Normalized()) };
+			Vector2f currentDisplament{ enemyToCurrentNorm * radiusSum };
+			m_CenterPosition = pedestal->GetCenter() + currentDisplament;
+
+			if (pedestal->IsItemTaken() == false)
+			{
+
+				PickUpItem(pedestal->GetItem(), itemManager);
+				pedestal->TakeItem();
+
+			}
+		}
+
+	}
 }
 
 void Isaac::DrawHead() const
@@ -340,47 +404,65 @@ void Isaac::DrawHead() const
 	switch (m_HeadDirection)
 	{
 	case Isaac::Direction::up:
+
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
 			m_CenterPosition.y },
-
 			Point2f{
 				m_pHeadSprite->GetFrameWidth() * 4,
 				0
 			});
+
+		DrawHeadCostumes();
 		break;
 	case Isaac::Direction::down:
+
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
 			m_CenterPosition.y },
-
 			Point2f{
 				0,
 				0
 			});
+
+		DrawHeadCostumes();
 		break;
 	case Isaac::Direction::left:
+
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
 			m_CenterPosition.y },
-
 			Point2f{
 				m_pHeadSprite->GetFrameWidth() * 6,
 				0
 			});
+
+		DrawHeadCostumes();
 		break;
 	case Isaac::Direction::right:
+
 		m_pHeadSprite->Draw(Point2f{
 			m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
 			m_CenterPosition.y },
-
 			Point2f{
 				m_pHeadSprite->GetFrameWidth() * 2,
 				0
 			});
+
+		DrawHeadCostumes();
+
 		break;
 	default:
 		break;
+	}
+}
+
+void Isaac::DrawHeadCostumes() const
+{
+	for (Costume* costume : m_pCostumes)
+	{
+		if (costume->GetType() == Costume::CostumeType::head)
+			costume->Draw();
 	}
 }
 
@@ -542,4 +624,54 @@ bool Isaac::IsInvis()
 {
 	return m_DamageState != DamageState::undamaged;
 }
+
+void Isaac::PickUpItem(Item* item, ItemManager* itemManager)
+{
+	Costume* costume{ item->GetCostume() };
+
+	switch (costume->GetType())
+	{
+	case Costume::CostumeType::head:
+		costume->SetPosition(Point2f{
+			m_CenterPosition.x,
+			m_CenterPosition.y + m_pHeadSprite->GetFrameHeight() / 2.0f });
+		break;
+	case Costume::CostumeType::body:
+		costume->SetPosition(m_CenterPosition);
+		break;
+	}
+
+	m_pCostumes.push_back(costume);
+	itemManager->PickUpItem(item->GetName());
+
+	for (std::pair<Item::StatChanges, float> statChange : item->GetStatChanges())
+	{
+		switch (statChange.first)
+		{
+		case  Item::StatChanges::walkSpeed:
+			m_WalkSpeed += statChange.second;
+			break;
+		case  Item::StatChanges::tearHeight:
+			m_TearHeight += statChange.second;
+			break;
+		case  Item::StatChanges::tearSpeed:
+			m_TearSpeed += statChange.second;
+			break;
+		case  Item::StatChanges::tearRange:
+			m_TearRange += statChange.second;
+			break;
+		case  Item::StatChanges::damage:
+			m_Damage += statChange.second;
+			break;
+		case  Item::StatChanges::tearFireRate:
+			m_TearFireRate += statChange.second;
+			break;
+		case  Item::StatChanges::healthCointainer:
+			m_pHealth->AddHealth(statChange.second);
+			break;
+		}
+	}
+
+}
+
 

@@ -12,6 +12,13 @@ public:
 
 	Hearth(Texture* heartSheet, HearthState state, float dstHeartSize);
 
+	Hearth(const Hearth& rhs);
+	Hearth(Hearth && rhs) = default;
+	Hearth& operator=(const Hearth & rhs);
+	Hearth& operator=(Hearth && rhs) = default;
+	virtual ~Hearth() = default;
+
+
 	void Draw(const Point2f& centerPos) const;
 	HearthState GetState() const;
 
@@ -23,9 +30,7 @@ private:
 	Point2f m_CenterPos;
 	HearthState m_State;
 
-	const float m_DstHeartSize;
+	float m_DstHeartSize;
 	float m_SrcHeartSize;
-
-
 };
 

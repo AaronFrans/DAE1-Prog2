@@ -11,6 +11,24 @@ Hearth::Hearth(Texture* heartSheet, HearthState state, float dstHeartSize)
 	m_SrcHeartSize = m_pHeartSheet->GetWidth() / 3;
 }
 
+Hearth::Hearth(const Hearth& rhs)
+	: m_State{ rhs.m_State }
+	, m_DstHeartSize{ rhs.m_DstHeartSize }
+{
+	m_pHeartSheet = rhs.m_pHeartSheet;
+	m_SrcHeartSize = rhs.m_SrcHeartSize;
+}
+
+Hearth& Hearth::operator=(const Hearth& rhs)
+{
+	m_State = rhs.m_State;
+	m_DstHeartSize = rhs.m_DstHeartSize;
+	m_pHeartSheet = rhs.m_pHeartSheet;
+	m_SrcHeartSize = rhs.m_SrcHeartSize;
+
+	return *this;
+}
+
 void Hearth::Draw(const Point2f& centerPos) const
 {
 	Rectf srcRect{ m_SrcHeartSize * (int)m_State, 0, m_SrcHeartSize, m_SrcHeartSize };

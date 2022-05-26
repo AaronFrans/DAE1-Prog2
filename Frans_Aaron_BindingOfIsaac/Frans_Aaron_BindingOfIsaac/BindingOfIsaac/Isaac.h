@@ -2,14 +2,17 @@
 #include "Vector2f.h"
 #include "utils.h"
 #include <vector>
+
 class Sprite;
 class TextureManager;
 class TearManager;
 class Room;
 class GameObject;
 class IsaacHealthBar;
-
-
+class ItemPedestal;
+class Costume;
+class ItemManager;
+class Item;
 class Isaac final
 {
 
@@ -45,13 +48,13 @@ public:
 	Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition);
 
 	Isaac(const Isaac& rhs) = default;
-	Isaac(Isaac && rhs) = default;
-	Isaac& operator=(const Isaac & rhs) = default;
-	Isaac& operator=(Isaac && rhs) = default;
+	Isaac(Isaac&& rhs) = default;
+	Isaac& operator=(const Isaac& rhs) = default;
+	Isaac& operator=(Isaac&& rhs) = default;
 	~Isaac();
 
 	void Draw() const;
-	void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom);
+	void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom, ItemManager* itemManager);
 
 	void TakeDamage(float damage);
 
@@ -71,7 +74,6 @@ private:
 	Sprite* m_pWalkSpriteLR;
 	Sprite* m_pHurtSprite;
 	Sprite* m_pDyingSprite;
-	IsaacHealthBar* m_pHealth;
 
 	Point2f m_CenterPosition;
 	float m_MovementWidth;
@@ -90,7 +92,6 @@ private:
 
 	DamageState m_DamageState;
 
-	float m_TearFireRate;
 	float m_TearFireAccuSec;
 	float m_IdleAccuSec;
 
@@ -101,23 +102,29 @@ private:
 
 	float m_DeathRotationAngle;
 
+	std::vector<Costume*> m_pCostumes;
+
 	//Character Changeable Stats
 	float m_WalkSpeed;
 	float m_TearHeight;
 	float m_TearSpeed;
 	float m_TearRange;
 	float m_Damage;
-
+	float m_TearFireRate;
+	IsaacHealthBar* m_pHealth;
 
 
 	void DrawBody() const;
+	void DrawBodyCostumes() const;
 	void UpdateBody(float elapsedSec);
-	void UpdatePos(float elapsedSec, Room* currentRoom);
+	void UpdatePos(float elapsedSec, Room* currentRoom, ItemManager* itemManager);
+
 
 	void DoRoomCollision(const Room* currentRoom);
-	void DoGameObjectCollision(const std::vector<GameObject*>& objects);
+	void DoGameObjectCollision(const std::vector<GameObject*>& objects, const std::vector<ItemPedestal*>& pedestals, ItemManager* itemManager);
 
 	void DrawHead() const;
+	void DrawHeadCostumes() const;
 	void UpdateHead(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager);
 
 	void Shoot(TearManager* tearManager, const TextureManager& textureManager, Vector2f tearVelocity);
@@ -131,6 +138,8 @@ private:
 
 	bool CanShoot();
 	bool IsInvis();
+
+	void PickUpItem(Item* item, ItemManager* itemManager);
 
 };
 

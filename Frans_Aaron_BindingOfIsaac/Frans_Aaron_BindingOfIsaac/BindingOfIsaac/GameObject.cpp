@@ -13,6 +13,7 @@ GameObject::GameObject(Texture* objectTexture, int nrColls, int nrRows, Point2f 
 
 GameObject::GameObject()
 {
+	m_pSprite = nullptr;
 }
 
 GameObject::~GameObject()

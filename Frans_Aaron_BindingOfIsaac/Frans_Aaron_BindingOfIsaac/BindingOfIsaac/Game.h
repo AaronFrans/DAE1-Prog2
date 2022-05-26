@@ -10,6 +10,7 @@ class TearManager;
 class UIManager;
 class IsaacHealthBar;
 class Floor;
+class ItemManager;
 class Game final
 {
 public:
@@ -39,6 +40,7 @@ private:
 	RoomManager* m_pRoomManager;
 	TearManager* m_pTearManager;
 	UIManager* m_pUIManager;
+	ItemManager* m_pItemManager;
 
 	Floor* m_pFloor;
 

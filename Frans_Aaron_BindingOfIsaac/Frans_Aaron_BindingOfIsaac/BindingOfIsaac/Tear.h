@@ -6,6 +6,7 @@ class Sprite;
 class Texture;
 class GameObject;
 class Enemy;
+class ItemPedestal;
 class Tear final
 {
 
@@ -27,7 +28,7 @@ public:
 
 
 	void Draw() const;
-	void Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies);
+	void Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies, std::vector<ItemPedestal*> pedestals);
 
 	TearState GetState() const;
 	bool GetIsFront() const;

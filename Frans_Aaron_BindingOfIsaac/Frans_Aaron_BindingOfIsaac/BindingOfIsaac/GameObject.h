@@ -4,6 +4,7 @@ class Texture;
 class GameObject
 {
 public:
+
 	GameObject(Texture* objectTexture, int nrColls, int nrRows, Point2f center, float size);
 	GameObject();
 
@@ -20,6 +21,7 @@ public:
 	Point2f GetCenter() const;
 
 	virtual GameObject* Clone() const = 0;
+
 protected:
 
 	Sprite* m_pSprite;

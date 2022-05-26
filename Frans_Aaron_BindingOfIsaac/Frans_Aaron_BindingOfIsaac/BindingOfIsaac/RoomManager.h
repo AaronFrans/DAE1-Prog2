@@ -11,7 +11,9 @@ public:
 
 	enum class RoomLookup
 	{
-		startRoom, 
+		startRoom = 0,
+		itemRoom,
+		bossRoom,
 		smallRoom1,
 		smallRoom2,
 		smallRoom3,
@@ -36,6 +38,8 @@ private:
 	void MakeRoomTemplates(const TextureManager& textureManager, const EnemyManager& enemyManager);
 
 	void MakeStartRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices);
+	void MakeItemRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices, float gameObjectSize);
+	void MakeBossRoom(const TextureManager& textureManager, const float roomWidth, const float roomHeight, std::vector<Point2f> walkableAreaVertices);
 	void MakeSmallRooms(const TextureManager& textureManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices);
 	//void MakeBigRooms(const TextureManager& textureManager, const EnemyManager& enemyManager, const float roomWidth, const float roomHeight, const float gameObjectSize, std::vector<Point2f> walkableAreaVertices);
 };

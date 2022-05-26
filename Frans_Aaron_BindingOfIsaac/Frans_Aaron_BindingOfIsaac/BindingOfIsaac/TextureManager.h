@@ -22,13 +22,19 @@ public:
 		//GameObject Textures
 		poop,
 		rock,
+		itemPedestal,
 		//Room Textures
 		roomBig,
 		roomSmall,
 		basementDoorFrame,
+		itemDoorFrame,
 		basementDoorHallway,
 		basementDoorLeft,
 		basementDoorRight,
+		bossDoorFrame,
+		bossDoorHallway,
+		bossDoorLeft,
+		bossDoorRight,
 		//Ui Textures
 		hearths,
 		//Enemy Textures
@@ -36,6 +42,12 @@ public:
 		smallSpiderDying,
 		flyMovement,
 		flyDying,
+		//Items
+		collectibleHeart,
+		costumeHeartUD,
+		costumeHeartLR,
+		collectiblesBluecap,
+		costumeBluecap,
 
 	};
 
@@ -61,6 +73,7 @@ private:
 	void InitRoomTextures();
 	void InitUi();
 	void InitEnemyTextures();
+	void InitItemTextures();
 
 };
 

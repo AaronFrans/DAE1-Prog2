@@ -23,7 +23,16 @@ public:
 		right
 	};
 
-	Door(const TextureManager& textureManager, Point2f center, DoorState state, DoorDirection direction, Rectf shape);
+	enum class DoorType
+	{
+		starter,
+		normal,
+		boss,
+		item
+	};
+
+	Door(const TextureManager& textureManager, Point2f center, DoorState state,
+		DoorDirection direction, Rectf shape, DoorType roomType);
 	
 	Door(const Door& rhs);
 	Door(Door && rhs) = default;
@@ -44,6 +53,8 @@ public:
 
 
 	void SetRoomOrigin(const Point2f& roomOrigin);
+
+	void ChangeDoorType(DoorType type, const TextureManager& textureManager);
 	
 private:
 
@@ -62,6 +73,8 @@ private:
 
 	DoorState m_State;
 	DoorDirection m_Direction;
+
+	DoorType m_Type;
 
 	bool m_IsActive;
 

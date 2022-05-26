@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "Poop.h"
 #include "Enemy.h"
+#include "ItemPedestal.h"
 #include <vector>
 #include <typeinfo>
 
@@ -49,7 +50,7 @@ void Tear::Draw() const
 
 }
 
-void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies)
+void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies, std::vector<ItemPedestal*> pedestals)
 {
 
 	if (m_State == TearState::hit)
@@ -100,8 +101,15 @@ void Tear::Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::v
 
 						pPoop->IsHit();
 					}
-						m_State = TearState::hit;
+					m_State = TearState::hit;
 				}
+			}
+		}
+		for (ItemPedestal* pedestal : pedestals)
+		{
+			if (utils::IsOverlapping(pedestal->GetShape(), shape) && m_State == TearState::active)
+			{
+				m_State = TearState::hit;
 			}
 		}
 

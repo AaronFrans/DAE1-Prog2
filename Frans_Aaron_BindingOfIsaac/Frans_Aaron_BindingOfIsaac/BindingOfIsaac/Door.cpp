@@ -4,26 +4,65 @@
 #include "TextureManager.h"
 #include "utils.h"
 
-Door::Door(const TextureManager& textureManager, Point2f center, DoorState state, DoorDirection direction, Rectf shape)
+Door::Door(const TextureManager& textureManager, Point2f center, DoorState state,
+	DoorDirection direction, Rectf shape, DoorType roomType)
 	: m_Center{ center }
 	, m_State{ state }
 	, m_Direction{ direction }
 	, m_IsActive{ false }
-	, m_Shape{shape}
+	, m_Shape{ shape }
+	, m_Type{ roomType }
 {
-	m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorFrame);
+	switch (m_Type)
+	{
+	case Door::DoorType::starter:
+	case Door::DoorType::normal:
+		m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorFrame);
+		m_Width = m_pDoorFrame->GetWidth();
+		m_Height = m_pDoorFrame->GetHeight();
 
-	m_Width = m_pDoorFrame->GetWidth();
-	m_Height = m_pDoorFrame->GetHeight();
+		m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorHallway);
 
-	m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorHallway);
+		m_HallwayWidth = m_pDoorHallway->GetWidth();
+		m_HallwayHeight = m_pDoorHallway->GetHeight();
 
-	m_HallwayWidth = m_pDoorHallway->GetWidth();
-	m_HallwayHeight = m_pDoorHallway->GetHeight();
+		m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorRight);
+		m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorLeft);
+		break;
+	case Door::DoorType::boss:
+		m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorFrame);
+		m_Width = m_pDoorFrame->GetWidth();
+		m_Height = m_pDoorFrame->GetHeight();
+
+		m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorHallway);
+
+		m_HallwayWidth = m_pDoorHallway->GetWidth();
+		m_HallwayHeight = m_pDoorHallway->GetHeight();
+
+		m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorRight);
+		m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorLeft);
+		break;
+	case Door::DoorType::item:
+		m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::itemDoorFrame);
+		m_Width = m_pDoorFrame->GetWidth();
+		m_Height = m_pDoorFrame->GetHeight();
+
+		m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorHallway);
+
+		m_HallwayWidth = m_pDoorHallway->GetWidth();
+		m_HallwayHeight = m_pDoorHallway->GetHeight();
+
+		m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorRight);
+		m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorLeft);
 
 
-	m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorRight);
-	m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorLeft);
+		break;
+	default:
+		break;
+	}
+
+
+
 }
 
 Door::Door(const Door& rhs)
@@ -31,7 +70,8 @@ Door::Door(const Door& rhs)
 	, m_State{ rhs.m_State }
 	, m_Direction{ rhs.m_Direction }
 	, m_IsActive{ rhs.m_IsActive }
-	, m_Shape{rhs.m_Shape}
+	, m_Shape{ rhs.m_Shape }
+	, m_Type{ rhs.m_Type }
 {
 	m_pDoorFrame = rhs.m_pDoorFrame;
 	m_Width = rhs.m_Width;
@@ -55,6 +95,7 @@ Door& Door::operator=(const Door& rhs)
 	m_Direction = rhs.m_Direction;
 	m_IsActive = rhs.m_IsActive;
 	m_Shape = rhs.m_Shape;
+	m_Type = rhs.m_Type;
 
 	m_pDoorFrame = rhs.m_pDoorFrame;
 	m_Width = rhs.m_Width;
@@ -143,6 +184,60 @@ void Door::SetRoomOrigin(const Point2f& roomOrigin)
 	m_Center.y += roomOrigin.y;
 	m_Shape.left += roomOrigin.x;
 	m_Shape.bottom += roomOrigin.y;
+}
+
+void Door::ChangeDoorType(DoorType type, const TextureManager& textureManager)
+{
+	m_Type = type;
+
+	switch (m_Type)
+	{
+	case Door::DoorType::starter:
+	case Door::DoorType::normal:
+		m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorFrame);
+		m_Width = m_pDoorFrame->GetWidth();
+		m_Height = m_pDoorFrame->GetHeight();
+
+		m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorHallway);
+
+		m_HallwayWidth = m_pDoorHallway->GetWidth();
+		m_HallwayHeight = m_pDoorHallway->GetHeight();
+
+		m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorRight);
+		m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorLeft);
+		break;
+	case Door::DoorType::boss:
+		m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorFrame);
+		m_Width = m_pDoorFrame->GetWidth();
+		m_Height = m_pDoorFrame->GetHeight();
+
+		m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorHallway);
+
+		m_HallwayWidth = m_pDoorHallway->GetWidth();
+		m_HallwayHeight = m_pDoorHallway->GetHeight();
+
+		m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorRight);
+		m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::bossDoorLeft);
+		break;
+	case Door::DoorType::item:
+		m_pDoorFrame = textureManager.GetTexture(TextureManager::TextureLookup::itemDoorFrame);
+		m_Width = m_pDoorFrame->GetWidth();
+		m_Height = m_pDoorFrame->GetHeight();
+
+		m_pDoorHallway = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorHallway);
+
+		m_HallwayWidth = m_pDoorHallway->GetWidth();
+		m_HallwayHeight = m_pDoorHallway->GetHeight();
+
+		m_pDoorRight = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorRight);
+		m_pDoorLeft = textureManager.GetTexture(TextureManager::TextureLookup::basementDoorLeft);
+
+
+		break;
+	default:
+		break;
+	}
+
 }
 
 void Door::DrawUp() const

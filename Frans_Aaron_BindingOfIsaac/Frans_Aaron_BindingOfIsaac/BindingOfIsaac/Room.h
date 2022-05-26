@@ -9,6 +9,8 @@ class Texture;
 class Enemy;
 class Isaac;
 class EnemyManager;
+class ItemPedestal;
+class Item;
 class Room
 {
 
@@ -16,8 +18,10 @@ public:
 
 	enum class RoomType
 	{
-		small,
-		big
+		starter,
+		normal,
+		boss,
+		item
 	};
 
 	Room(Texture* background, Rectf shape, std::vector<GameObject*> objects,
@@ -42,8 +46,8 @@ public:
 	std::vector<Door*> GetDoors();
 	Rectf GetDoorShape(Door::DoorDirection direction);
 	bool IsCleared() const;
-
-
+	RoomType GetType() const;
+	std::vector<ItemPedestal*> GetPedestals();
 
 	void SetOrigin(Point2f origin);
 
@@ -51,11 +55,16 @@ public:
 	void ActivateDoor(Door::DoorDirection direction);
 	void InitEnemies(const EnemyManager& enemyManager);
 
+	void ChangeDoorType(Door::DoorDirection direction, Door::DoorType type,
+		const TextureManager& textureManager);
+
+	void AddPedestal(Item* item, Texture* pedestalTexture);
 
 private:
 
 	Texture* m_pBackground;
 	std::vector<GameObject*> m_pObjects;
+	std::vector<ItemPedestal*> m_pPedestals;
 	std::vector<Enemy*> m_pEnemies;
 	std::vector<Point2f> m_WalkableAreaVertices;
 	Rectf m_Shape;
@@ -63,7 +72,6 @@ private:
 	RoomType m_Type;
 
 	std::vector<Door*> m_pDoors;
-
 	std::vector<std::vector<Point2f>> m_EnemyGroupPositions;
 
 	bool m_IsCleared;

@@ -1,4 +1,0 @@
-startRoom->PlaceDoor(textureManager, Point2f{ 270, 42 }, Door::DoorDirection::up);
-startRoom->PlaceDoor(textureManager, Point2f{ 270, 320 }, Door::DoorDirection::down);
-startRoom->PlaceDoor(textureManager, Point2f{ 50, 180 }, Door::DoorDirection::left);
-startRoom->PlaceDoor(textureManager, Point2f{ 495, 180 }, Door::DoorDirection::right);

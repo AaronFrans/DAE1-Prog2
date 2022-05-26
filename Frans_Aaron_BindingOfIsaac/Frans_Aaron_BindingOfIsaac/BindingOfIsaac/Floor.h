@@ -2,10 +2,13 @@
 #include "Door.h"
 #include "EnemyManager.h"
 #include <vector>
+#include <map>
+#include <utility>
 
 class Room;
 class Isaac;
 class RoomManager;
+class ItemManager;
 class Floor final
 {
 public:
@@ -32,7 +35,7 @@ public:
 
 	Room* GetCurrentRoom();
 
-	void GenerateFloor(RoomManager* roomManager);
+	void GenerateFloor(RoomManager* roomManager, const TextureManager& textureManager, ItemManager* itemManager);
 	void InitEnemies(const EnemyManager& enemyManager);
 
 	std::vector<int> GetLayout();
@@ -53,9 +56,11 @@ private:
 
 	void MoveToNextRoom(Door::DoorDirection direction, Isaac* isaac);
 
-	
-
-	void PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, int maxNrRows, int& NrRooms,
+	void PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 		int maxDirectionDepth, int& directionCurrentDepth, int maxDepth, int& currentDepth, RoomManager* roomManager);
+
+	void PlaceSpecialRooms(RoomManager* roomManager, const TextureManager& textureManager, std::map<int, std::pair<int, Door::DoorDirection>>& indexAndDirectionPairs, ItemManager* itemManager);
+
+	std::map<int, std::pair<int, Door::DoorDirection>> GetAvailableRooms();
 };
 

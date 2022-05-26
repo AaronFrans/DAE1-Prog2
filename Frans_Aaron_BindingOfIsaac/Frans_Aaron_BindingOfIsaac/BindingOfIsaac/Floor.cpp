@@ -3,6 +3,7 @@
 #include "Room.h"
 #include "Isaac.h"
 #include "RoomManager.h"
+#include "ItemManager.h"
 
 const int Floor::m_RoomsCols = 9;
 const int Floor::m_RoomsRows = 9;
@@ -86,7 +87,11 @@ std::vector<int> Floor::GetLayout()
 			else
 			{
 				if (i * m_RoomsCols + j == m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex)
+					layout.push_back(9);
+				else if (m_pRooms[i * m_RoomsCols + j]->GetType() == Room::RoomType::item)
 					layout.push_back(2);
+				else if (m_pRooms[i * m_RoomsCols + j]->GetType() == Room::RoomType::boss)
+					layout.push_back(8);
 				else
 					layout.push_back(1);
 			}
@@ -145,52 +150,71 @@ void Floor::MoveToNextRoom(Door::DoorDirection direction, Isaac* isaac)
 
 }
 
-void Floor::GenerateFloor(RoomManager* roomManager)
+void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textureManager, ItemManager* itemManager)
 {
-	int depth{ 0 }, direction{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
-	while (nrRooms < minRooms)
-	{
 
-		PlaceRoom(m_CurrentColIndex, m_CurrentRowIndex, 9, 9, nrRooms,
-			7, direction, 20, depth, roomManager);
-		if (nrRooms < minRooms)
-		{
-			nrRooms = 0;
-			for (Room* room : m_pRooms)
-			{
-				if (room != nullptr)
-				{
-					delete room;
-					room = nullptr;
-				}
+	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
+	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex + 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
+	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
 
-			}
-		}
-	}
+
+
+
+	//int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
+	//while (nrRooms < minRooms)
+	//{
+	//
+	//	PlaceRoom(m_CurrentColIndex, m_CurrentRowIndex, nrRooms,
+	//		5, directionDepth, 20, depth, roomManager);
+	//
+	std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs{ GetAvailableRooms() };
+	//
+	//	if (nrRooms > minRooms && indexAndDirectionPairs.size() >= 2)
+	//	{
+	PlaceSpecialRooms(roomManager, textureManager, indexAndDirectionPairs, itemManager);
+	//	}
+	//	else
+	//	{
+	//		nrRooms = 0;
+	//		directionDepth = 0;
+	//		depth = 0;
+	//		for (int i = 0; i < m_pRooms.size() - 1; i++)
+	//		{
+	//
+	//			if (m_pRooms[i] != nullptr)
+	//			{
+	//				delete m_pRooms[i];
+	//				m_pRooms[i] = nullptr;
+	//			}
+	//
+	//		}
+	//		indexAndDirectionPairs.clear();
+	//	}
+	//}
 }
 
 void Floor::InitEnemies(const EnemyManager& enemyManager)
 {
 	for (Room* room : m_pRooms)
 	{
-		if(room != nullptr)
-		room->InitEnemies(enemyManager);
+		if (room != nullptr)
+			room->InitEnemies(enemyManager);
 	}
 }
 
-void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, int maxNrRows, int& NrRooms,
+void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 	int maxDirectionDepth, int& directionCurrentDepth, int maxDepth, int& currentDepth, RoomManager* roomManager)
 {
 
 	if (currentDepth == 0)
 	{
-		m_pRooms[currentRowIndex * maxNrCols + currentColIndex] = new Room{*roomManager->GetRoom(RoomManager::RoomLookup::startRoom)};
+		m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
 		NrRooms += 1;
 	}
 	else
 	{
 		int roomIndex{ utils::GetRand((int)RoomManager::RoomLookup::smallRoom1, (int)RoomManager::RoomLookup::count - 1) };
-		m_pRooms[currentRowIndex * maxNrCols + currentColIndex] = new Room{ *roomManager->GetRoom((RoomManager::RoomLookup)roomIndex) };
+		m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex] = new Room{ *roomManager->GetRoom((RoomManager::RoomLookup)roomIndex) };
 		NrRooms += 1;
 	}
 
@@ -204,10 +228,10 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 			{
 				std::cout << "Left: " << '\n'
 					<< "Row: " << std::to_string(currentRowIndex) << '\n'
-					<< "Col: " << std::to_string(currentColIndex) << '\n' <<'\n';
+					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
 				if (currentColIndex - 1 != -1 &&
-					m_pRooms[currentRowIndex * maxNrCols + currentColIndex - 1] == nullptr)
-					PlaceRoom(currentColIndex - 1, currentRowIndex, maxNrCols, maxNrRows, NrRooms,
+					m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex - 1] == nullptr)
+					PlaceRoom(currentColIndex - 1, currentRowIndex, NrRooms,
 						maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 			}
 			directionCurrentDepth = 0;
@@ -216,9 +240,9 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 				std::cout << "Right: " << '\n'
 					<< "Row: " << std::to_string(currentRowIndex) << '\n'
 					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
-				if (currentColIndex + 1 != maxNrCols &&
-					m_pRooms[currentRowIndex * maxNrCols + currentColIndex + 1] == nullptr)
-					PlaceRoom(currentColIndex + 1, currentRowIndex, maxNrCols, maxNrRows, NrRooms,
+				if (currentColIndex + 1 != m_RoomsCols &&
+					m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex + 1] == nullptr)
+					PlaceRoom(currentColIndex + 1, currentRowIndex, NrRooms,
 						maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 			}
 			directionCurrentDepth = 0;
@@ -228,8 +252,8 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 					<< "Row: " << std::to_string(currentRowIndex) << '\n'
 					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
 				if (currentRowIndex - 1 != -1 &&
-					m_pRooms[(currentRowIndex - 1) * maxNrCols + currentColIndex] == nullptr)
-					PlaceRoom(currentColIndex, currentRowIndex - 1, maxNrCols, maxNrRows, NrRooms,
+					m_pRooms[(currentRowIndex - 1) * m_RoomsCols + currentColIndex] == nullptr)
+					PlaceRoom(currentColIndex, currentRowIndex - 1, NrRooms,
 						maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 			}
 			directionCurrentDepth = 0;
@@ -238,9 +262,9 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 				std::cout << "Up: " << '\n'
 					<< "Row: " << std::to_string(currentRowIndex) << '\n'
 					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
-				if (currentRowIndex + 1 != maxNrRows &&
-					m_pRooms[(currentRowIndex + 1) * maxNrCols + currentColIndex] == nullptr)
-					PlaceRoom(currentColIndex, currentRowIndex + 1, maxNrCols, maxNrRows, NrRooms,
+				if (currentRowIndex + 1 != m_RoomsRows &&
+					m_pRooms[(currentRowIndex + 1) * m_RoomsCols + currentColIndex] == nullptr)
+					PlaceRoom(currentColIndex, currentRowIndex + 1, NrRooms,
 						maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 			}
 		}
@@ -255,8 +279,8 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 				<< "Row: " << std::to_string(currentRowIndex) << '\n'
 				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
 			if (currentColIndex - 1 != -1 &&
-				m_pRooms[currentRowIndex * maxNrCols + currentColIndex - 1] == nullptr)
-				PlaceRoom(currentColIndex - 1, currentRowIndex, maxNrCols, maxNrRows, NrRooms,
+				m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex - 1] == nullptr)
+				PlaceRoom(currentColIndex - 1, currentRowIndex, NrRooms,
 					maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 		}
 		if (utils::GetRand(0, 10) % 2 == 0)
@@ -264,9 +288,9 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 			std::cout << "Right: " << '\n'
 				<< "Row: " << std::to_string(currentRowIndex) << '\n'
 				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
-			if (currentColIndex + 1 != maxNrCols &&
-				m_pRooms[currentRowIndex * maxNrCols + currentColIndex + 1] == nullptr)
-				PlaceRoom(currentColIndex + 1, currentRowIndex, maxNrCols, maxNrRows, NrRooms,
+			if (currentColIndex + 1 != m_RoomsCols &&
+				m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex + 1] == nullptr)
+				PlaceRoom(currentColIndex + 1, currentRowIndex, NrRooms,
 					maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 		}
 		if (utils::GetRand(0, 10) % 2 == 0)
@@ -275,8 +299,8 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 				<< "Row: " << std::to_string(currentRowIndex) << '\n'
 				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
 			if (currentRowIndex - 1 != -1 &&
-				m_pRooms[(currentRowIndex - 1) * maxNrCols + currentColIndex] == nullptr)
-				PlaceRoom(currentColIndex, currentRowIndex - 1, maxNrCols, maxNrRows, NrRooms,
+				m_pRooms[(currentRowIndex - 1) * m_RoomsCols + currentColIndex] == nullptr)
+				PlaceRoom(currentColIndex, currentRowIndex - 1, NrRooms,
 					maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 		}
 		if (utils::GetRand(0, 10) % 2 == 0)
@@ -284,12 +308,152 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int maxNrCols, i
 			std::cout << "Up: " << '\n'
 				<< "Row: " << std::to_string(currentRowIndex) << '\n'
 				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
-			if (currentRowIndex + 1 != maxNrRows &&
-				m_pRooms[(currentRowIndex + 1) * maxNrCols + currentColIndex] == nullptr)
-				PlaceRoom(currentColIndex, currentRowIndex + 1, maxNrCols, maxNrRows, NrRooms,
+			if (currentRowIndex + 1 != m_RoomsRows &&
+				m_pRooms[(currentRowIndex + 1) * m_RoomsCols + currentColIndex] == nullptr)
+				PlaceRoom(currentColIndex, currentRowIndex + 1, NrRooms,
 					maxDirectionDepth, directionCurrentDepth += 1, maxDepth, currentDepth += 1, roomManager);
 		}
 	}
+}
+
+void Floor::PlaceSpecialRooms(RoomManager* roomManager, const TextureManager& textureManager, 
+	std::map<int, std::pair<int, Door::DoorDirection>>& indexAndDirectionPairs, ItemManager* itemManager)
+{
+
+	int specialIndex{};
+	int specialNeighborIndex{};
+
+
+	Room::RoomType specialType{};
+	Door::DoorType newDoorType{};
+
+	Door::DoorDirection neighborToSpecialDirection{};
+
+	int pair{ utils::GetRand(0, (int)indexAndDirectionPairs.size() - 1) };
+
+	specialIndex = indexAndDirectionPairs[pair].first;
+	neighborToSpecialDirection = indexAndDirectionPairs[pair].second;
+	switch (neighborToSpecialDirection)
+	{
+	case Door::DoorDirection::up:
+		specialNeighborIndex = specialIndex - m_RoomsCols;
+		break;
+	case Door::DoorDirection::down:
+		specialNeighborIndex = specialIndex + m_RoomsCols;
+		break;
+	case Door::DoorDirection::left:
+		specialNeighborIndex = specialIndex + 1;
+		break;
+	case Door::DoorDirection::right:
+		specialNeighborIndex = specialIndex - 1;
+		break;
+	default:
+		break;
+	}
+
+	specialType = Room::RoomType::item;
+	newDoorType = (Door::DoorType)(int)specialType;
+
+	delete m_pRooms[specialIndex];
+	m_pRooms[specialIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::itemRoom) };
+
+
+
+	m_pRooms[specialIndex]->AddPedestal(itemManager->GetRandomItem(),
+		textureManager.GetTexture(TextureManager::TextureLookup::itemPedestal));
+
+	m_pRooms[specialNeighborIndex]->ChangeDoorType(neighborToSpecialDirection, newDoorType, textureManager);
+
+
+	int secondPair{ utils::GetRand(0, (int)indexAndDirectionPairs.size() - 1) };
+
+	while (secondPair == pair)
+	{
+		secondPair = utils::GetRand(0, (int)indexAndDirectionPairs.size() - 1);
+	}
+
+
+	specialIndex = indexAndDirectionPairs[secondPair].first;
+	neighborToSpecialDirection = indexAndDirectionPairs[secondPair].second;
+	switch (neighborToSpecialDirection)
+	{
+	case Door::DoorDirection::up:
+		specialNeighborIndex = specialIndex - m_RoomsCols;
+		break;
+	case Door::DoorDirection::down:
+		specialNeighborIndex = specialIndex + m_RoomsCols;
+		break;
+	case Door::DoorDirection::left:
+		specialNeighborIndex = specialIndex + 1;
+		break;
+	case Door::DoorDirection::right:
+		specialNeighborIndex = specialIndex - 1;
+		break;
+	default:
+		break;
+	}
+
+	specialType = Room::RoomType::boss;
+	newDoorType = (Door::DoorType)(int)specialType;
+
+	delete m_pRooms[specialIndex];
+	m_pRooms[specialIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::bossRoom) };
+
+	m_pRooms[specialNeighborIndex]->ChangeDoorType(neighborToSpecialDirection, newDoorType, textureManager);
+
+
+
+}
+
+std::map<int, std::pair<int, Door::DoorDirection>> Floor::GetAvailableRooms()
+{
+	int nrOfNeighbors{};
+	int nrOfPairs{};
+
+
+	Door::DoorDirection neighborToSpecialDirection{};
+	std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs;
+
+	for (int i = 0; i < m_RoomsCols; i++)
+	{
+		for (int j = 0; j < m_RoomsRows; j++)
+		{
+			nrOfNeighbors = 0;
+			if (m_pRooms[i * m_RoomsCols + j] != nullptr && m_pRooms[i * m_RoomsCols + j]->GetType() != Room::RoomType::starter)
+			{
+				if (j + 1 != m_RoomsCols && m_pRooms[i * m_RoomsCols + j + 1] != nullptr)
+				{
+					++nrOfNeighbors;
+					neighborToSpecialDirection = Door::DoorDirection::left;
+				}
+				if (j - 1 != -1 && m_pRooms[i * m_RoomsCols + j - 1] != nullptr)
+				{
+					++nrOfNeighbors;
+					neighborToSpecialDirection = Door::DoorDirection::right;
+				}
+				if (i + 1 != m_RoomsRows && m_pRooms[(i + 1) * m_RoomsCols + j] != nullptr)
+				{
+					++nrOfNeighbors;
+					neighborToSpecialDirection = Door::DoorDirection::down;
+				}
+				if (i - 1 != -1 && m_pRooms[(i - 1) * m_RoomsCols + j] != nullptr)
+				{
+					++nrOfNeighbors;
+					neighborToSpecialDirection = Door::DoorDirection::up;
+				}
+			}
+			if (nrOfNeighbors == 1)
+			{
+				indexAndDirectionPairs[nrOfPairs] =
+					std::make_pair(i * m_RoomsCols + j, neighborToSpecialDirection);
+
+				nrOfPairs++;
+			}
+		}
+	}
+
+	return indexAndDirectionPairs;
+
 }
 
 void Floor::ActivateDoors()

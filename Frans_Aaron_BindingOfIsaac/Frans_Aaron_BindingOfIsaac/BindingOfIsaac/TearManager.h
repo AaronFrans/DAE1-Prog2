@@ -4,6 +4,7 @@
 class Enemy;
 class Tear;
 class GameObject;
+class ItemPedestal;
 class TearManager final
 {
 public:
@@ -17,7 +18,7 @@ public:
 
 	void DrawFrontTears() const;
 	void DrawBackTears() const;
-	void UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies);
+	void UpdateTears(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies, std::vector<ItemPedestal*> pedestals);
 
 	Tear* ShootTear();
 private:

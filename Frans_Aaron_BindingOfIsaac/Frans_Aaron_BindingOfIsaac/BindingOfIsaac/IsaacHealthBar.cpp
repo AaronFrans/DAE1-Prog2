@@ -7,11 +7,15 @@ IsaacHealthBar::IsaacHealthBar(Texture* heartSheet, float health, Point2f bottom
 	: m_Health{ health }
 	, m_HeartSize{ 20 }
 {
+	m_pEmptyHeart = new Hearth{ heartSheet,
+		Hearth::HearthState::empty,
+		m_HeartSize };
+
 	for (int i = 0; i < m_Health; i++)
 	{
-		m_pHearts.push_back(new Hearth(heartSheet,
+		m_pHearts.push_back(new Hearth{ heartSheet,
 			Hearth::HearthState::full,
-			m_HeartSize));
+			m_HeartSize });
 	}
 }
 
@@ -21,6 +25,8 @@ IsaacHealthBar::~IsaacHealthBar()
 	{
 		delete hearth;
 	}
+
+	delete m_pEmptyHeart;
 }
 
 void IsaacHealthBar::DrawHealtBar(const Rectf& Camera) const
@@ -48,6 +54,14 @@ void IsaacHealthBar::TakeDamage(float damage)
 bool IsaacHealthBar::IsDead()
 {
 	return m_Health <= 0;
+}
+
+void IsaacHealthBar::AddHealth(float amount)
+{
+	for (int i = 0; i < amount; i++)
+	{
+		m_pHearts.push_back(new Hearth{ *m_pEmptyHeart });
+	}
 }
 
 

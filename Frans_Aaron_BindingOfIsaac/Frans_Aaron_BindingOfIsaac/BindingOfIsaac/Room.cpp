@@ -3,6 +3,8 @@
 #include "Texture.h"
 #include "Enemy.h"
 #include "GameObject.h"
+#include "Item.h"
+#include "ItemPedestal.h"
 
 
 Room::Room(Texture* background, Rectf shape, std::vector<GameObject*> objects,
@@ -12,7 +14,7 @@ Room::Room(Texture* background, Rectf shape, std::vector<GameObject*> objects,
 	, m_Shape{ shape }
 	, m_pObjects{ objects }
 	, m_WalkableAreaVertices{ walkableAreaVertices }
-	, m_EnemyGroupPositions{enemyGroupPositions}
+	, m_EnemyGroupPositions{ enemyGroupPositions }
 	, m_Type{ type }
 	, m_IsCleared{ isCleared }
 {
@@ -24,6 +26,7 @@ Room::Room(const Room& rhs)
 	, m_WalkableAreaVertices{ rhs.m_WalkableAreaVertices }
 	, m_Type{ rhs.m_Type }
 	, m_IsCleared{ rhs.m_IsCleared }
+	, m_EnemyGroupPositions{ rhs.m_EnemyGroupPositions }
 {
 	for (Enemy* enemy : rhs.m_pEnemies)
 	{
@@ -37,6 +40,10 @@ Room::Room(const Room& rhs)
 	{
 		m_pDoors.push_back(new Door(*door));
 	}
+	for (ItemPedestal* pedestal : rhs.m_pPedestals)
+	{
+		m_pPedestals.push_back(new ItemPedestal(*pedestal));
+	}
 }
 
 Room& Room::operator=(const Room& rhs)
@@ -47,6 +54,7 @@ Room& Room::operator=(const Room& rhs)
 	m_Type = rhs.m_Type;
 	m_IsCleared = rhs.m_IsCleared;
 
+	m_EnemyGroupPositions = rhs.m_EnemyGroupPositions;
 
 	for (Enemy* enemy : rhs.m_pEnemies)
 	{
@@ -59,6 +67,10 @@ Room& Room::operator=(const Room& rhs)
 	for (Door* door : rhs.m_pDoors)
 	{
 		m_pDoors.push_back(door);
+	}
+	for (ItemPedestal* pedestal : rhs.m_pPedestals)
+	{
+		m_pPedestals.push_back(new ItemPedestal(*pedestal));
 	}
 
 	return *this;
@@ -79,6 +91,10 @@ Room::~Room()
 	{
 		delete door;
 	}
+	for (ItemPedestal* itemPedestal : m_pPedestals)
+	{
+		delete itemPedestal;
+	}
 
 }
 
@@ -98,6 +114,10 @@ void Room::Draw() const
 	for (Enemy* enemy : m_pEnemies)
 	{
 		enemy->Draw();
+	}
+	for (ItemPedestal* itemPedestal : m_pPedestals)
+	{
+		itemPedestal->Draw();;
 	}
 
 }
@@ -162,14 +182,16 @@ void Room::SetOrigin(Point2f origin)
 
 	for (Point2f& vertex : m_WalkableAreaVertices)
 	{
-		vertex.x +=  origin.x;
-		vertex.y +=  origin.y;
+		vertex.x += origin.x;
+		vertex.y += origin.y;
 	}
 }
 
 void Room::PlaceDoor(const TextureManager& textureManager, const Point2f& doorCenter, Door::DoorDirection direction, Rectf shape)
 {
-	m_pDoors.push_back(new Door(textureManager, doorCenter, Door::DoorState::closed, direction, shape));
+	Door::DoorType roomType{ int(m_Type) };
+
+	m_pDoors.push_back(new Door(textureManager, doorCenter, Door::DoorState::closed, direction, shape, roomType));
 
 	m_IsCleared ? m_pDoors[m_pDoors.size() - 1]->SetState(Door::DoorState::open) : m_pDoors[m_pDoors.size() - 1]->SetState(Door::DoorState::closed);
 
@@ -207,6 +229,26 @@ void Room::InitEnemies(const EnemyManager& enemyManager)
 
 }
 
+void Room::ChangeDoorType(Door::DoorDirection direction, Door::DoorType type,
+	const TextureManager& textureManager)
+{
+	for (Door* door : m_pDoors)
+	{
+		if (door->GetDirection() == direction)
+			door->ChangeDoorType(type, textureManager);
+
+	}
+}
+
+void Room::AddPedestal(Item* item, Texture* pedestalTexture)
+{
+	ItemPedestal* pedestal{ new ItemPedestal{pedestalTexture, Point2f{m_Shape.width / 2.0f, m_Shape.height / 2.0f }, 30} };
+
+	pedestal->PlaceItem(item);
+
+	m_pPedestals.push_back(pedestal);
+}
+
 std::vector<Door*> Room::GetDoors()
 {
 	return m_pDoors;
@@ -215,7 +257,7 @@ std::vector<Door*> Room::GetDoors()
 Rectf Room::GetDoorShape(Door::DoorDirection direction)
 {
 
-	for (Door* door: m_pDoors)
+	for (Door* door : m_pDoors)
 	{
 		if (door->GetDirection() == direction)
 		{
@@ -231,6 +273,15 @@ bool Room::IsCleared() const
 	return m_IsCleared;
 }
 
+Room::RoomType Room::GetType() const
+{
+	return m_Type;
+}
+
+std::vector<ItemPedestal*> Room::GetPedestals()
+{
+	return m_pPedestals;
+}
 
 
 void Room::OpenDoors()
