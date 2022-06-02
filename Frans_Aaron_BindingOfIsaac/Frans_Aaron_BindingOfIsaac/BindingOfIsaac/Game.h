@@ -11,6 +11,7 @@ class UIManager;
 class IsaacHealthBar;
 class Floor;
 class ItemManager;
+class Monstro;
 class Game final
 {
 public:
@@ -46,6 +47,8 @@ private:
 
 	Isaac* m_pPlayer;
 	RoomManager::RoomLookup m_CurrentRoom;
+
+	Monstro* temp;
 
 	std::vector<int> testAlgo;
 

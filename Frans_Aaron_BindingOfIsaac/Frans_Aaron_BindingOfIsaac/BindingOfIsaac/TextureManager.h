@@ -42,6 +42,8 @@ public:
 		smallSpiderDying,
 		flyMovement,
 		flyDying,
+		//Boss Textures
+		bossMonstro,
 		//Items
 		collectibleHeart,
 		costumeHeartUD,
@@ -73,6 +75,7 @@ private:
 	void InitRoomTextures();
 	void InitUi();
 	void InitEnemyTextures();
+	void InitBossTextures();
 	void InitItemTextures();
 
 };

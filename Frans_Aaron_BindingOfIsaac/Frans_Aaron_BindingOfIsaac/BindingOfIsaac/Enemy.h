@@ -47,7 +47,6 @@ protected:
 
 	virtual void DoEnemyCollisions(const std::vector<Enemy*>& roomEnemies, int currentEnemyIndex) = 0;
 
-
 	void DoRoomCollision(const Room* currentRoom);
 };
 

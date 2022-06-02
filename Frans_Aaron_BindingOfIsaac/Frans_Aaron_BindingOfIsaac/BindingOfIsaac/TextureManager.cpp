@@ -41,6 +41,7 @@ void TextureManager::InitTextures()
 	InitRoomTextures();
 	InitUi();
 	InitEnemyTextures();
+	InitBossTextures();
 	InitItemTextures();
 }
 
@@ -105,6 +106,11 @@ void TextureManager::InitEnemyTextures()
 	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Fly-Movement.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Fly-Death.png" });
 
+}
+
+void TextureManager::InitBossTextures()
+{
+	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Bosses/Boss-Monstro.png" });
 }
 
 void TextureManager::InitItemTextures()

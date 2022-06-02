@@ -153,44 +153,44 @@ void Floor::MoveToNextRoom(Door::DoorDirection direction, Isaac* isaac)
 void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textureManager, ItemManager* itemManager)
 {
 
-	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
+	/*m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
 	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex + 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
-	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
+	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };*/
 
 
 
 
-	//int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
-	//while (nrRooms < minRooms)
-	//{
-	//
-	//	PlaceRoom(m_CurrentColIndex, m_CurrentRowIndex, nrRooms,
-	//		5, directionDepth, 20, depth, roomManager);
-	//
-	std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs{ GetAvailableRooms() };
-	//
-	//	if (nrRooms > minRooms && indexAndDirectionPairs.size() >= 2)
-	//	{
-	PlaceSpecialRooms(roomManager, textureManager, indexAndDirectionPairs, itemManager);
-	//	}
-	//	else
-	//	{
-	//		nrRooms = 0;
-	//		directionDepth = 0;
-	//		depth = 0;
-	//		for (int i = 0; i < m_pRooms.size() - 1; i++)
-	//		{
-	//
-	//			if (m_pRooms[i] != nullptr)
-	//			{
-	//				delete m_pRooms[i];
-	//				m_pRooms[i] = nullptr;
-	//			}
-	//
-	//		}
-	//		indexAndDirectionPairs.clear();
-	//	}
-	//}
+	int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
+	while (nrRooms < minRooms)
+	{
+
+		PlaceRoom(m_CurrentColIndex, m_CurrentRowIndex, nrRooms,
+			5, directionDepth, 20, depth, roomManager);
+
+		std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs{ GetAvailableRooms() };
+
+		if (nrRooms > minRooms && indexAndDirectionPairs.size() >= 2)
+		{
+			PlaceSpecialRooms(roomManager, textureManager, indexAndDirectionPairs, itemManager);
+		}
+		else
+		{
+			nrRooms = 0;
+			directionDepth = 0;
+			depth = 0;
+			for (int i = 0; i < m_pRooms.size() - 1; i++)
+			{
+
+				if (m_pRooms[i] != nullptr)
+				{
+					delete m_pRooms[i];
+					m_pRooms[i] = nullptr;
+				}
+
+			}
+			indexAndDirectionPairs.clear();
+		}
+	}
 }
 
 void Floor::InitEnemies(const EnemyManager& enemyManager)
@@ -316,7 +316,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 	}
 }
 
-void Floor::PlaceSpecialRooms(RoomManager* roomManager, const TextureManager& textureManager, 
+void Floor::PlaceSpecialRooms(RoomManager* roomManager, const TextureManager& textureManager,
 	std::map<int, std::pair<int, Door::DoorDirection>>& indexAndDirectionPairs, ItemManager* itemManager)
 {
 

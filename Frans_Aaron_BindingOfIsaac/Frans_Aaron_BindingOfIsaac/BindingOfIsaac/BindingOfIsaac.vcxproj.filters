@@ -156,6 +156,12 @@
     <ClInclude Include="Boss.h">
       <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
     </ClInclude>
+    <ClInclude Include="Monstro.h">
+      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="BossHealtBar.h">
+      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -267,6 +273,12 @@
       <Filter>Game Files\Isaac</Filter>
     </ClCompile>
     <ClCompile Include="Boss.cpp">
+      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="Monstro.cpp">
+      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="BossHealtBar.cpp">
       <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
     </ClCompile>
   </ItemGroup>

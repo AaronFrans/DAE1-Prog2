@@ -9,8 +9,9 @@
 #include "Room.h"
 #include "Floor.h"
 #include "ItemManager.h"
+#include "Monstro.h"
 
-Game::Game(const Window & window)
+Game::Game(const Window& window)
 	: m_Window{ window }
 	, m_TextureManager{}
 	, m_EnemyManager{ m_TextureManager }
@@ -39,7 +40,8 @@ void Game::Initialize()
 	m_pRoomManager = new RoomManager{ m_TextureManager, m_EnemyManager };
 	m_pItemManager = new ItemManager{ m_TextureManager };
 	InitFloor(m_pRoomManager);
-
+	temp = new Monstro{ m_TextureManager.GetTexture(TextureManager::TextureLookup::bossMonstro),
+		Point2f{m_Window.width / 2.0f, m_Window.height / 2.0f}, 1, 100, 250, };
 	m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
 }
 
@@ -47,6 +49,7 @@ void Game::Cleanup()
 {
 	delete m_pRoomManager;
 	delete m_pItemManager;
+	delete temp;
 	DeleteTearManager();
 	DeletePlayer();
 	DeleteUIManager();
@@ -55,6 +58,7 @@ void Game::Cleanup()
 
 void Game::Update(float elapsedSec)
 {
+
 	time += elapsedSec;
 	if (time > 5)
 	{
@@ -66,12 +70,15 @@ void Game::Update(float elapsedSec)
 		UpdateTearManager(elapsedSec);
 		UpdatePlayer(elapsedSec);
 		m_pFloor->Update(elapsedSec, m_pPlayer);
+
+		temp->Update(elapsedSec, m_pFloor->GetCurrentRoom(), m_pPlayer, 0);
 	}
 	else
 	{
 		m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
 		m_pFloor->DoneTransitioning();
 	}
+
 
 }
 
@@ -82,6 +89,7 @@ void Game::Draw() const
 	glPushMatrix();
 	m_Camera.Transform(m_pPlayer->GetCenter());
 	DrawFloor();
+	temp->Draw();
 	m_pTearManager->DrawBackTears();
 	DrawPlayer();
 	m_pTearManager->DrawFrontTears();
