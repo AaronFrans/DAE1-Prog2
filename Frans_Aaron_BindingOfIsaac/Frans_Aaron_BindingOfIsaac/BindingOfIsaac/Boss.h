@@ -1,15 +1,25 @@
 #pragma once
 #include "Enemy.h"
+#include "UIManager.h"
 
 class Boss : public Enemy
 {
 
 public:
 
-	Boss(Point2f centerPoint, float damage, float speed, float health);
+	Boss(Point2f centerPoint, float damage, float speed, float health, Texture* healthBarTexture, SoundEffectManager* soundEffectManager);
+	Boss(Point2f centerPoint, float damage, float speed, float health, BossHealthBar* healthBar, SoundEffectManager* soundEffectManager);
+
+	Boss(const Boss& rhs) = default;
+	Boss(Boss && rhs) = default;
+	Boss& operator=(const Boss & rhs) = default;
+	Boss& operator=(Boss && rhs) = default;
+	virtual ~Boss();
+
 
 	virtual void Draw() const override = 0;
-	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override = 0;
+	virtual void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+	const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) = 0;
 
 
 	virtual void TakeDamage(float damage) override = 0;
@@ -17,11 +27,13 @@ public:
 	virtual bool IsDead() const override = 0;
 	virtual Circlef GetHitBox() const override = 0;
 
+	BossHealthBar* GetHealthBar();
 
 	virtual Enemy* Clone() const override = 0;
 
-private:
+protected:
 
+	BossHealthBar* m_pHealthBar;
 
 };
 

@@ -4,9 +4,13 @@
 #include "Room.h"
 #include "utils.h"
 #include "Isaac.h"
+#include "Texture.h"
+#include "TearManager.h"
+#include "SoundEffectManager.h"
+#include "SoundEffect.h"
 
-Fly::Fly(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint)
-	: Enemy{ centerPoint, 0.5f, 75, 5 }
+Fly::Fly(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint, SoundEffectManager* soundEffectManager)
+	: Enemy{ centerPoint, 0.5f, 75, 5, soundEffectManager }
 	, m_State{ FlyState::moving }
 	, m_DyingAccuSec{ 0 }
 {
@@ -18,10 +22,14 @@ Fly::Fly(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f center
 	m_DyingWidth = m_pDyingSprite->GetFrameWidth();
 	m_DyingHeight = m_pDyingSprite->GetFrameHeight();
 	m_DyingMaxSec = m_pDyingSprite->GetTotalLoopTime();
+	m_Height = 15;
+	m_FlyingSoundPlaying = false;
+	m_FlyingSoundDur = 0.5f;
+	m_FlyingSoundAccuSec = 0;
 }
 
 Fly::Fly(const Fly& rhs)
-	: Enemy{ rhs.m_CenterPosition , 0.5f, 100, 5 }
+	: Enemy{ rhs.m_CenterPosition , 0.5f, 100, 5, rhs.m_pSoundEffectManager }
 	, m_State{ rhs.m_State }
 	, m_DyingAccuSec{ 0 }
 {
@@ -33,6 +41,11 @@ Fly::Fly(const Fly& rhs)
 	m_DyingWidth = rhs.m_DyingWidth;
 	m_DyingHeight = rhs.m_DyingHeight;
 	m_DyingMaxSec = rhs.m_DyingMaxSec;
+
+	m_Height = rhs.m_Height;
+	m_FlyingSoundPlaying = rhs.m_FlyingSoundPlaying;
+	m_FlyingSoundDur = rhs.m_FlyingSoundDur;
+	m_FlyingSoundAccuSec = rhs.m_FlyingSoundAccuSec;
 }
 
 Fly& Fly::operator=(const Fly& rhs)
@@ -40,10 +53,12 @@ Fly& Fly::operator=(const Fly& rhs)
 	m_CenterPosition = rhs.m_CenterPosition;
 	m_Damage = rhs.m_Damage;
 	m_Speed = rhs.m_Speed;
-	m_Health =rhs.m_Health;
+	m_Health = rhs.m_Health;
+	m_Height = rhs.m_Height;
+	m_pSoundEffectManager = rhs.m_pSoundEffectManager;
 
-	m_State = rhs.m_State ;
-	m_DyingAccuSec = rhs.m_DyingAccuSec;
+	m_State = rhs.m_State;
+	m_DyingAccuSec = 0;
 
 	m_pMovementSprite = new Sprite{ *rhs.m_pMovementSprite };
 	m_MovementWidth = rhs.m_MovementWidth;
@@ -53,6 +68,9 @@ Fly& Fly::operator=(const Fly& rhs)
 	m_DyingWidth = rhs.m_DyingWidth;
 	m_DyingHeight = rhs.m_DyingHeight;
 	m_DyingMaxSec = rhs.m_DyingMaxSec;
+	m_FlyingSoundPlaying = rhs.m_FlyingSoundPlaying;
+	m_FlyingSoundDur = rhs.m_FlyingSoundDur;
+	m_FlyingSoundAccuSec = rhs.m_FlyingSoundAccuSec;
 
 	return *this;
 }
@@ -70,9 +88,11 @@ void Fly::Draw() const
 	switch (m_State)
 	{
 	case FlyState::moving:
+	{
 		m_pMovementSprite->Draw(Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f,
 			m_MovementWidth, m_MovementHeight });
 		break;
+	}
 	case FlyState::dying:
 		m_pDyingSprite->Draw(Rectf{ m_CenterPosition.x - m_DyingWidth / 2.0f,m_CenterPosition.y - m_DyingHeight / 2.0f,
 			m_DyingWidth, m_DyingHeight });
@@ -80,16 +100,44 @@ void Fly::Draw() const
 	}
 }
 
-void Fly::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex)
+void Fly::Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+	const Room* currentRoom, Isaac* isaac, int currentEnemyIndex)
 {
 	switch (m_State)
 	{
 	case FlyState::moving:
+		if (!m_FlyingSoundPlaying)
+		{
+			SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect(SoundEffectManager::SoundEffectLookup::flyMoving) };
+			effect->SetVolume(10);
+			effect->Play(0);
+			m_FlyingSoundPlaying = true;
+		}
+		else
+		{
+			m_FlyingSoundAccuSec += elapsedSec;
+			if (m_FlyingSoundAccuSec >= m_FlyingSoundDur)
+			{
+				SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect(SoundEffectManager::SoundEffectLookup::flyMoving) };
+				effect->Play(0);
+				m_FlyingSoundAccuSec = 0;
+			}
+		}
 		m_pMovementSprite->Update(elapsedSec);
 		DoEnemyCollisions(currentRoom->GetEnemies(), currentEnemyIndex);
 		UpdatePos(elapsedSec, currentRoom, isaac);
 		break;
 	case FlyState::dying:
+		if (!m_PlayedDeathSound)
+		{
+
+			int soundEffect{ utils::GetRand((int)SoundEffectManager::SoundEffectLookup::animalDeathSound1,
+				(int)SoundEffectManager::SoundEffectLookup::animalDeathSound3) };
+			SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect((SoundEffectManager::SoundEffectLookup)soundEffect) };
+			effect->SetVolume(25);
+			effect->Play(0);
+			m_PlayedDeathSound = true;
+		}
 		DoDying(elapsedSec);
 		break;
 	}
@@ -102,7 +150,7 @@ bool Fly::IsDead() const
 
 Circlef Fly::GetHitBox() const
 {
-	return Circlef{ m_CenterPosition, m_MovementHeight / 2.0f};
+	return Circlef{ m_CenterPosition, m_MovementHeight / 2.0f };
 }
 
 void Fly::TakeDamage(float damage)
@@ -178,7 +226,7 @@ void Fly::DoEnemyCollisions(const std::vector<Enemy*>& enemies, int currentEnemy
 								m_Velocity.y -= 2;
 						}
 					}
-					
+
 				}
 			}
 
@@ -192,6 +240,6 @@ void Fly::DoDying(float elapsedSec)
 	if (m_DyingAccuSec >= m_DyingMaxSec)
 		m_State = FlyState::dead;
 	else
-	m_pDyingSprite->Update(elapsedSec);
+		m_pDyingSprite->Update(elapsedSec);
 
 }

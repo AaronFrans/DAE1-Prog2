@@ -87,13 +87,13 @@ namespace utils
 
 
 #pragma region RandomFunctionallity
-	int GetRand(int min, int max);
+	int GetRand(const int& min, const int& max);
 
-	float GetRand(float min, float max, int precision);
+	float GetRand(const float& min, const float& max, const int& precision);
 #pragma endregion
-
 
 #pragma region CompareFunctionality
-	bool IsEqual(float a, float b, float epsilon);
+	bool IsEqual(const float& a, const float& b, const float& epsilon);
 #pragma endregion
+
 }

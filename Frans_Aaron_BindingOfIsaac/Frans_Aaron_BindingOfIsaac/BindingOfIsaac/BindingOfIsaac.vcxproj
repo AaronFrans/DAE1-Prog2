@@ -157,7 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="BossHealtBar.cpp" />
+    <ClCompile Include="BossHealthBar.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Costume.cpp" />
@@ -176,6 +176,7 @@
     <ClCompile Include="ItemPedestal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix2x3.cpp" />
+    <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="Monstro.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -188,6 +189,7 @@
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
+    <ClCompile Include="SoundEffectManager.cpp" />
     <ClCompile Include="SoundStream.cpp" />
     <ClCompile Include="SmallSpider.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -198,12 +200,13 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UiRoom.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
-    <ClInclude Include="BossHealtBar.h" />
+    <ClInclude Include="BossHealthBar.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Costume.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="ItemPedestal.h" />
     <ClInclude Include="Matrix2x3.h" />
+    <ClInclude Include="Minimap.h" />
     <ClInclude Include="Monstro.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Poop.h" />
@@ -229,6 +233,7 @@
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="SoundEffect.h" />
+    <ClInclude Include="SoundEffectManager.h" />
     <ClInclude Include="SoundStream.h" />
     <ClInclude Include="SmallSpider.h" />
     <ClInclude Include="Sprite.h" />
@@ -239,6 +244,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UiRoom.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Vector2f.h" />
   </ItemGroup>

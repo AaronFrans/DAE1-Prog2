@@ -12,7 +12,7 @@ public:
 		count,
 	};
 
-	EnemyManager(const TextureManager& textureManager);
+	EnemyManager(const TextureManager& textureManager, SoundEffectManager* soundEffectManager);
 
 	EnemyManager(const EnemyManager& rhs) = default;
 	EnemyManager(EnemyManager && rhs) = default;
@@ -23,10 +23,14 @@ public:
 
 
 	Enemy* GetRandomEnemy(Floor floor) const;
+	Enemy* GetRandomBoss(Floor floor) const;
 
 private:
 
 	std::vector<std::vector<Enemy*>> m_pFloorEnemies;
-	void AddBasementEnemies(const TextureManager& textureManager);
+	std::vector<std::vector<Enemy*>> m_pBosses;
+
+	void AddBasementEnemies(const TextureManager& textureManager, SoundEffectManager* soundEffectManager);
+	void AddBasementBosses(const TextureManager& textureManager, SoundEffectManager* soundEffectManager);
 };
 

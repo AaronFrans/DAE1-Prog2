@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TextureManager.h"
-#include"Texture.h"
+#include "Texture.h"
 
 TextureManager::TextureManager()
 {
@@ -20,15 +20,15 @@ TextureManager::~TextureManager()
 
 }
 
-Texture* TextureManager::GetTexture(TextureLookup lookup) const
+Texture* TextureManager::GetTexture(TextureLookup textureName) const
 {
 
-	if ((int)lookup > m_pTextures.size() - 1)
+	if ((int)textureName > m_pTextures.size() - 1)
 	{
 		return nullptr;
 	}
 
-	return m_pTextures[(int)lookup];
+	return m_pTextures[(int)textureName];
 
 }
 
@@ -43,6 +43,7 @@ void TextureManager::InitTextures()
 	InitEnemyTextures();
 	InitBossTextures();
 	InitItemTextures();
+	InitSharedTextures();
 }
 
 void TextureManager::InitIsaacTextures()
@@ -61,6 +62,7 @@ void TextureManager::InitTearTextures()
 
 	m_pTextures.push_back(new Texture{ "Resources/Images/Tears/Isaac-Tear-Hit.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Tears/Isaac-Tear.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Tears/Enemy-Tear.png" });
 
 }
 
@@ -94,6 +96,11 @@ void TextureManager::InitUi()
 {
 
 	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui_Hearts.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Boss-Health-Bar.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Minimap.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Minimap-Rooms.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Minimap-Room-Item.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Minimap-Room-Boss.png" });
 
 }
 
@@ -111,6 +118,7 @@ void TextureManager::InitEnemyTextures()
 void TextureManager::InitBossTextures()
 {
 	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Bosses/Boss-Monstro.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Rooms/Enemies/Bosses/Boss-Death-Blood.png" });
 }
 
 void TextureManager::InitItemTextures()
@@ -120,4 +128,9 @@ void TextureManager::InitItemTextures()
 	m_pTextures.push_back(new Texture{ "Resources/Images/Items/Costume-Heart-LR.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Items/Collectibles-Bluecap.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Items/Costume-Bluecap.png" });
+}
+
+void TextureManager::InitSharedTextures()
+{
+	m_pTextures.push_back(new Texture{ "Resources/Images/Shared/Shadow.png" });
 }

@@ -25,6 +25,7 @@ public:
 
 	void SetActFrame(int actFrame);
 	void SetAccuSec(float accuSec);
+	void SetFrameSec(float frameSec);
 
 	float GetTotalLoopTime();
 

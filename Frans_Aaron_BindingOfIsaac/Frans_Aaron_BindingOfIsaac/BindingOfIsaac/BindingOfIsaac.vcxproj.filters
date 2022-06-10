@@ -22,9 +22,6 @@
     <Filter Include="Game Files\Game Basic Files">
       <UniqueIdentifier>{cc7fadd5-6ed0-45b1-b943-aa3ac5b72858}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Files\Isaac\UI">
-      <UniqueIdentifier>{c41d0495-7c19-49c9-b3ae-51d1aa0b0910}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Files\Floor">
       <UniqueIdentifier>{5e7a4705-6576-4b37-9a8e-66f242845a15}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="Game Files\Floor\Room\Enemies\Bosses">
       <UniqueIdentifier>{3a9b61bf-5c17-467a-af6f-72669ab1ca83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Files\UI">
+      <UniqueIdentifier>{c41d0495-7c19-49c9-b3ae-51d1aa0b0910}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -118,10 +118,10 @@
       <Filter>Game Files\Floor\Room\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Hearth.h">
-      <Filter>Game Files\Isaac\UI</Filter>
+      <Filter>Game Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="IsaacHealthBar.h">
-      <Filter>Game Files\Isaac\UI</Filter>
+      <Filter>Game Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="UIManager.h">
       <Filter>Game Files\Managers</Filter>
@@ -159,8 +159,17 @@
     <ClInclude Include="Monstro.h">
       <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="BossHealtBar.h">
-      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    <ClInclude Include="BossHealthBar.h">
+      <Filter>Game Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UiRoom.h">
+      <Filter>Game Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Minimap.h">
+      <Filter>Game Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffectManager.h">
+      <Filter>Game Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -237,10 +246,10 @@
       <Filter>Game Files\Floor\Room\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Hearth.cpp">
-      <Filter>Game Files\Isaac\UI</Filter>
+      <Filter>Game Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="IsaacHealthBar.cpp">
-      <Filter>Game Files\Isaac\UI</Filter>
+      <Filter>Game Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
       <Filter>Game Files\Managers</Filter>
@@ -278,8 +287,17 @@
     <ClCompile Include="Monstro.cpp">
       <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="BossHealtBar.cpp">
-      <Filter>Game Files\Floor\Room\Enemies\Bosses</Filter>
+    <ClCompile Include="BossHealthBar.cpp">
+      <Filter>Game Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UiRoom.cpp">
+      <Filter>Game Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Minimap.cpp">
+      <Filter>Game Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEffectManager.cpp">
+      <Filter>Game Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

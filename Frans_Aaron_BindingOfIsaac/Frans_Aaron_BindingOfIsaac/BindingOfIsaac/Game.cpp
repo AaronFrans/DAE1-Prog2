@@ -10,11 +10,14 @@
 #include "Floor.h"
 #include "ItemManager.h"
 #include "Monstro.h"
+#include "Minimap.h"
+#include "SoundStream.h"
+#include "SoundEffectManager.h"
+#include "EnemyManager.h"
 
 Game::Game(const Window& window)
 	: m_Window{ window }
 	, m_TextureManager{}
-	, m_EnemyManager{ m_TextureManager }
 	, m_Camera{ m_Window.width, m_Window.height }
 	, m_CurrentRoom{ RoomManager::RoomLookup::startRoom }
 {
@@ -29,27 +32,31 @@ Game::~Game()
 
 void Game::Initialize()
 {
-
-
-	IsaacHealthBar* isaacHealthBar = new IsaacHealthBar(m_TextureManager.GetTexture(TextureManager::TextureLookup::hearths),
-		3, Point2f{ 0, m_Window.height - 20 });
+	m_pSoundEffectManager = new SoundEffectManager{};
+	m_pEnemyManager = new EnemyManager{ m_TextureManager, m_pSoundEffectManager };
+	IsaacHealthBar* isaacHealthBar = new IsaacHealthBar(m_TextureManager.GetTexture(TextureManager::TextureLookup::uiHearths),
+		3, Point2f{ m_Window.width / 2.0f, m_Window.height / 2.0f });
 	InitPlayer(isaacHealthBar);
 	InitTearManager();
-	InitUIManager(isaacHealthBar);
-	isaacHealthBar = nullptr;
-	m_pRoomManager = new RoomManager{ m_TextureManager, m_EnemyManager };
+	m_pRoomManager = new RoomManager{ m_TextureManager, m_pSoundEffectManager};
 	m_pItemManager = new ItemManager{ m_TextureManager };
 	InitFloor(m_pRoomManager);
-	temp = new Monstro{ m_TextureManager.GetTexture(TextureManager::TextureLookup::bossMonstro),
-		Point2f{m_Window.width / 2.0f, m_Window.height / 2.0f}, 1, 100, 250, };
+	InitUIManager(isaacHealthBar);
+	isaacHealthBar = nullptr;
 	m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
+
+
+	SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::basementTrack) };
+	track->SetVolume(15);
+	track->Play(true);
 }
 
 void Game::Cleanup()
 {
 	delete m_pRoomManager;
 	delete m_pItemManager;
-	delete temp;
+	delete m_pSoundEffectManager;
+	delete m_pEnemyManager;
 	DeleteTearManager();
 	DeletePlayer();
 	DeleteUIManager();
@@ -58,24 +65,36 @@ void Game::Cleanup()
 
 void Game::Update(float elapsedSec)
 {
-
-	time += elapsedSec;
-	if (time > 5)
-	{
-		time -= 5;
-		PrintFloor();
-	}
 	if (!m_pFloor->IsTransitioning())
 	{
 		UpdateTearManager(elapsedSec);
 		UpdatePlayer(elapsedSec);
-		m_pFloor->Update(elapsedSec, m_pPlayer);
+		m_pFloor->Update(elapsedSec, m_pPlayer, m_pTearManager, m_TextureManager);
 
-		temp->Update(elapsedSec, m_pFloor->GetCurrentRoom(), m_pPlayer, 0);
 	}
 	else
 	{
 		m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
+		Room* currentRoom{ m_pFloor->GetCurrentRoom() };
+		if (m_pFloor->GetCurrentRoom()->GetType() == Room::RoomType::boss)
+		{
+			m_pUIManager->SetBossHealthBar(currentRoom->GetBossHealthBar());
+			SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::bossFight) };
+			track->SetVolume(15);
+			track->Play(true);
+		}
+		else
+		{
+			m_pUIManager->SetBossHealthBar(nullptr);
+			SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::basementTrack) };
+			if (!track->IsPlaying())
+			{
+				track->SetVolume(15);
+				track->Play(true);
+			}
+		}
+		m_pTearManager->ClearTears();
+		m_pUIManager->UpdateMinimap(m_pFloor->GetCurrentIndexes());
 		m_pFloor->DoneTransitioning();
 	}
 
@@ -89,7 +108,6 @@ void Game::Draw() const
 	glPushMatrix();
 	m_Camera.Transform(m_pPlayer->GetCenter());
 	DrawFloor();
-	temp->Draw();
 	m_pTearManager->DrawBackTears();
 	DrawPlayer();
 	m_pTearManager->DrawFrontTears();
@@ -163,7 +181,7 @@ void Game::ClearBackground() const
 
 void Game::InitPlayer(IsaacHealthBar* isaacHealthBar)
 {
-	m_pPlayer = new Isaac(m_TextureManager, isaacHealthBar, Point2f{ 100, 100 });
+	m_pPlayer = new Isaac(m_TextureManager, m_pSoundEffectManager, isaacHealthBar, Point2f{ 100, 100 });
 }
 
 void Game::DrawPlayer() const
@@ -184,13 +202,12 @@ void Game::DeletePlayer()
 
 void Game::InitTearManager()
 {
-	m_pTearManager = new TearManager{};
+	m_pTearManager = new TearManager{ };
 }
 
 void Game::UpdateTearManager(float elapsedSec)
 {
-	m_pTearManager->UpdateTears(elapsedSec, m_pFloor->GetCurrentRoom()->GetGameObjects(),
-		m_pFloor->GetCurrentRoom()->GetEnemies(), m_pFloor->GetCurrentRoom()->GetPedestals());
+	m_pTearManager->UpdateTears(elapsedSec, m_pFloor->GetCurrentRoom(), m_pPlayer);
 }
 
 void Game::DeleteTearManager()
@@ -201,7 +218,11 @@ void Game::DeleteTearManager()
 
 void Game::InitUIManager(IsaacHealthBar* isaacHealthBar)
 {
-	m_pUIManager = new UIManager(isaacHealthBar);
+
+	Minimap* pMinimap{ new Minimap{m_TextureManager,m_pFloor->GetLayout(), m_pFloor->GetCurrentIndexes(), m_pFloor->GetMaxRows(), m_pFloor->GetMaxCols()} };
+
+	m_pUIManager = new UIManager(isaacHealthBar, pMinimap);
+	pMinimap = nullptr;
 }
 
 void Game::DrawUIManager() const
@@ -219,7 +240,7 @@ void Game::InitFloor(RoomManager* roomManager)
 	m_pFloor = new Floor{};
 	m_pFloor->GenerateFloor(roomManager, m_TextureManager, m_pItemManager);
 	m_pFloor->ActivateDoors();
-	m_pFloor->InitEnemies(m_EnemyManager);
+	m_pFloor->InitEnemies(m_pEnemyManager);
 }
 
 void Game::DrawFloor() const
@@ -230,22 +251,4 @@ void Game::DrawFloor() const
 void Game::DeleteFloor()
 {
 	delete m_pFloor;
-}
-
-void Game::PrintFloor()
-{
-	testAlgo = m_pFloor->GetLayout();
-	std::cout << '\n';
-	std::cout << '\n';
-	for (int i = 8; i >= 0; i--)
-	{
-
-		for (int j = 0; j < 9; j++)
-		{
-			std::cout << testAlgo[i * 9 + j];
-		}
-		std::cout << '\n';
-	}
-	std::cout << '\n';
-	std::cout << '\n';
 }

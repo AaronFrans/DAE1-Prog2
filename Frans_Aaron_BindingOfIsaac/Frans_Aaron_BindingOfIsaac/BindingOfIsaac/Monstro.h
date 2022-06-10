@@ -2,6 +2,7 @@
 #include "Boss.h"
 
 class Texture;
+class Sprite;
 class Monstro final : public Boss
 {
 public:
@@ -23,12 +24,25 @@ public:
 		dead,
 	};
 
-	Monstro(Texture* spriteSheet, Point2f centerPoint, float damage, float speed, float health);
+	enum class Direction
+	{
+		left,
+		right
+	};
 
+	Monstro(Texture* spriteSheet, Texture* shadow, Texture* healthBarTexture,
+		Texture* deathBloodSheet, Point2f centerPoint, SoundEffectManager* soundEffectManager);
+
+	Monstro(const Monstro& rhs);
+	Monstro(Monstro&& rhs) = default;
+	Monstro& operator=(const Monstro& rhs);
+	Monstro& operator=(Monstro&& rhs) = default;
+	~Monstro();
 
 
 	virtual void Draw() const override;
-	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
+	virtual void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+		const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
 
 
 	virtual void TakeDamage(float damage) override;
@@ -42,48 +56,78 @@ public:
 private:
 
 	MonstroState m_State;
+	Direction m_Direction;
 
-	Texture* m_SpriteSheet;
+	Texture* m_pSpriteSheet;
+	Texture* m_pShadow;
+	Sprite* m_pDeathBlood;
 
 	float m_SrcWidth;
 	float m_SrcHeight;
-
-	float m_Height;
+	float m_ShapeRadius;
 
 	float m_IdleAccuTime;
-	const float m_IdleMinTime;
+	float m_IdleMinTime;
 
 	float m_SpitChargeAccuTime;
-	const float m_SpitChargeMinTime;
+	float m_SpitChargeMinTime;
 
 	float m_SpitAttackAccuTime;
-	const float m_SpitAttackDurTime;
+	float m_SpitAttackDurTime;
 
 	float m_JumpAttackHighChargeAccuTime;
-	const float m_JumpAttackHighChargeDurTime;
+	float m_JumpAttackHighChargeDurTime;
 
 	float m_JumpAttackHighFloatAccuTime;
-	const float m_JumpAttackHighFloatMinTime;
+	float m_JumpAttackHighFloatMinTime;
 
 	float m_JumpAttackHighLandAccuTime;
-	const float m_JumpAttackHighLandDurTime;
+	float m_JumpAttackHighLandDurTime;
 
 	float m_JumpAttackLowChargeAccuTime;
-	const float m_JumpAttackLowChargeDurTime;
+	float m_JumpAttackLowChargeDurTime;
 
 	float m_JumpAttackLowLandAccuTime;
-	const float m_JumpAttackLowLandDurTime;
+	float m_JumpAttackLowLandDurTime;
 
-	const float m_JumpHighSpeed;
+	float m_NewDeathSplatterSfxAccuTime;
+	float m_NewDeathSplatterSfxMinTime;
 
-	const float m_JumpSmallSpeed;
-	const float m_JumpSmallMaxHeight;
+	float m_DyingAccuTime;
+	float m_DyingDurTime;
+
+	float m_JumpHighSpeed;
+
+	float m_JumpSmallSpeed;
+	float m_JumpSmallMaxHeight;
+
+	Point2f m_SmallJumpTarget;
+	float m_SpitNrShots;
+
+	float m_MinShotSpeed;
+	float m_MaxShotSpeed;
+
+	int m_MinTearHeight;
+	int m_MaxTearHeight;
+
+	float m_TearRange;
 
 	bool m_OfScreen;
+	bool m_HasShotTears;
+
+	bool m_PlayedCurrentStateSfx;
 
 	void ChangeState(float elapsedSec);
 
+	void UpdatePos(float elapsedSec, Isaac* isaac);
+	void UpdateDirection(Isaac* isaac);
+
 	virtual void DoEnemyCollisions(const std::vector<Enemy*>& roomEnemies, int currentEnemyIndex) override;
 
+	void ShootBullets(Isaac* isaac, TearManager* tearManager, const TextureManager& textureManager);
+
+	void Shoot(TearManager* tearManager, const TextureManager& textureManager, Vector2f tearVelocity);
+
+	void DoIsaacCollisionCheck(Isaac* isaac);
 };
 

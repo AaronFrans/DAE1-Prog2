@@ -17,7 +17,7 @@ public:
 	};
 
 
-	Fly(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint);
+	Fly(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint, SoundEffectManager* soundEffectManager);
 
 	Fly(const Fly& rhs);
 	Fly(Fly&& rhs) = default;
@@ -26,7 +26,8 @@ public:
 	~Fly();
 
 	virtual void Draw() const override;
-	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
+	virtual void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+		const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
 
 	virtual bool IsDead() const override;
 	virtual Circlef GetHitBox() const override;
@@ -48,6 +49,11 @@ private:
 
 	float m_DyingAccuSec;
 	float m_DyingMaxSec;
+
+	bool m_FlyingSoundPlaying;
+
+	float m_FlyingSoundDur;
+	float m_FlyingSoundAccuSec;
 
 	FlyState m_State;
 

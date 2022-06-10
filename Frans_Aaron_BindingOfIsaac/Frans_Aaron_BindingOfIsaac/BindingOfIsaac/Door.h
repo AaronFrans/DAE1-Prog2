@@ -47,6 +47,7 @@ public:
 	void Activate();
 
 	DoorDirection GetDirection();
+	DoorState GetState();
 
 	Rectf GetShape() const;
 	bool IsActive() const;

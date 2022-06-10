@@ -7,6 +7,10 @@ class Texture;
 class GameObject;
 class Enemy;
 class ItemPedestal;
+class Isaac;
+class Room;
+class SoundEffect;
+
 class Tear final
 {
 
@@ -18,17 +22,24 @@ public:
 		inactive
 	};
 
+	enum class Shooter
+	{
+		unshot,
+		isaac,
+		enemy,
+	};
+
 	Tear();
 
 	Tear(const Tear& rhs) = default;
-	Tear(Tear && rhs) = default;
-	Tear& operator=(const Tear & rhs) = default;
-	Tear& operator=(Tear && rhs) = default;
+	Tear(Tear&& rhs) = default;
+	Tear& operator=(const Tear& rhs) = default;
+	Tear& operator=(Tear&& rhs) = default;
 	~Tear();
 
 
 	void Draw() const;
-	void Update(float elapsedSec, std::vector<GameObject*> gameObjects, std::vector<Enemy*> enemies, std::vector<ItemPedestal*> pedestals);
+	void Update(float elapsedSec, Room* currentRoom, Isaac* isaac);
 
 	TearState GetState() const;
 	bool GetIsFront() const;
@@ -42,15 +53,25 @@ public:
 	void SetRange(float range);
 	void SetIsFront(bool isFront);
 	void SetDamage(float damage);
+	void SetShooter(Shooter shooter);
+	void SetLandSoundEffect(SoundEffect* soundEffect);
+
+
+	void ClearTear();
 
 private:
 
 	Texture* m_pTearTexture;
 	Sprite* m_pTearHitSprite;
+
+	SoundEffect* m_pLandSoundEffect;
+
 	Point2f m_Center;
 	float m_TearRadius;
 	Vector2f m_Velocity;
+
 	TearState m_State;
+	Shooter m_Shooter;
 
 	Point2f mTearSpriteLeftBottom;
 
@@ -66,6 +87,10 @@ private:
 
 	Rectf m_TearRange;
 
-	void ClearTear();
+	void CheckEnemiesCollisions(const Circlef& shape, std::vector<Enemy*> enemies, Isaac* isaac);
+	void CheckGameObjectCollisions(const Circlef& shape, std::vector<GameObject*> objects);
+	void CheckPedestalCollisions(const Circlef& shape, std::vector<ItemPedestal*> pedestals);
+	void CheckWallCollisons(const Circlef& shape, Room* room);
+
 };
 

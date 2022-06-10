@@ -40,7 +40,7 @@ void Floor::Draw() const
 	DrawCurrentRoom();
 }
 
-void Floor::Update(float elapsedSec, Isaac* isaac)
+void Floor::Update(float elapsedSec, Isaac* isaac, TearManager* tearManager, const TextureManager& textureManager)
 {
 	for (Door* door : GetCurrentRoom()->GetDoors())
 	{
@@ -50,7 +50,13 @@ void Floor::Update(float elapsedSec, Isaac* isaac)
 			MoveToNextRoom(door->GetDirection(), isaac);
 		}
 	}
-	GetCurrentRoom()->Update(elapsedSec, isaac);
+
+	GetCurrentRoom()->Update(elapsedSec, isaac, tearManager, textureManager);
+
+	if (!GetCurrentRoom()->AreDoorsOpen() && GetCurrentRoom()->IsCleared())
+	{
+		GetCurrentRoom()->OpenDoors();
+	}
 }
 
 void Floor::TranslateCurrentRoomOrigin()
@@ -69,6 +75,21 @@ void Floor::DoneTransitioning()
 	m_IsTransitioning = false;
 }
 
+std::pair<int, int> Floor::GetCurrentIndexes()
+{
+	return std::pair<int, int>(m_CurrentRowIndex, m_CurrentColIndex);
+}
+
+int Floor::GetMaxRows()
+{
+	return m_RoomsRows;
+}
+
+int Floor::GetMaxCols()
+{
+	return m_RoomsCols;
+}
+
 Room* Floor::GetCurrentRoom()
 {
 	return m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex];
@@ -83,17 +104,15 @@ std::vector<int> Floor::GetLayout()
 		for (int j = 0; j < m_RoomsCols; j++)
 		{
 			if (m_pRooms[i * m_RoomsCols + j] == nullptr)
-				layout.push_back(0);
+				layout.push_back(9);
 			else
 			{
-				if (i * m_RoomsCols + j == m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex)
-					layout.push_back(9);
-				else if (m_pRooms[i * m_RoomsCols + j]->GetType() == Room::RoomType::item)
-					layout.push_back(2);
-				else if (m_pRooms[i * m_RoomsCols + j]->GetType() == Room::RoomType::boss)
-					layout.push_back(8);
-				else
+				if (m_pRooms[i * m_RoomsCols + j]->GetType() == Room::RoomType::item)
 					layout.push_back(1);
+				else if (m_pRooms[i * m_RoomsCols + j]->GetType() == Room::RoomType::boss)
+					layout.push_back(2);
+				else
+					layout.push_back(0);
 			}
 		}
 
@@ -148,19 +167,23 @@ void Floor::MoveToNextRoom(Door::DoorDirection direction, Isaac* isaac)
 		break;
 	}
 
+	if (!m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->IsCleared())
+		m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->CloseDoors();
+
 }
 
 void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textureManager, ItemManager* itemManager)
 {
-
-	/*m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
+	//Leave for debugging purposes
+	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
 	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex + 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
-	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };*/
+	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
+	std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs{ GetAvailableRooms() };
+	PlaceSpecialRooms(roomManager, textureManager, indexAndDirectionPairs, itemManager);
 
 
 
-
-	int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
+	/*int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
 	while (nrRooms < minRooms)
 	{
 
@@ -190,10 +213,10 @@ void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textur
 			}
 			indexAndDirectionPairs.clear();
 		}
-	}
+	}*/
 }
 
-void Floor::InitEnemies(const EnemyManager& enemyManager)
+void Floor::InitEnemies( EnemyManager* enemyManager)
 {
 	for (Room* room : m_pRooms)
 	{
@@ -226,9 +249,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 			directionCurrentDepth = 0;
 			if (utils::GetRand(0, 10) % 2 == 0)
 			{
-				std::cout << "Left: " << '\n'
-					<< "Row: " << std::to_string(currentRowIndex) << '\n'
-					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 				if (currentColIndex - 1 != -1 &&
 					m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex - 1] == nullptr)
 					PlaceRoom(currentColIndex - 1, currentRowIndex, NrRooms,
@@ -237,9 +258,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 			directionCurrentDepth = 0;
 			if (utils::GetRand(0, 10) % 2 == 0)
 			{
-				std::cout << "Right: " << '\n'
-					<< "Row: " << std::to_string(currentRowIndex) << '\n'
-					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 				if (currentColIndex + 1 != m_RoomsCols &&
 					m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex + 1] == nullptr)
 					PlaceRoom(currentColIndex + 1, currentRowIndex, NrRooms,
@@ -248,9 +267,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 			directionCurrentDepth = 0;
 			if (utils::GetRand(0, 10) % 2 == 0)
 			{
-				std::cout << "Down: " << '\n'
-					<< "Row: " << std::to_string(currentRowIndex) << '\n'
-					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 				if (currentRowIndex - 1 != -1 &&
 					m_pRooms[(currentRowIndex - 1) * m_RoomsCols + currentColIndex] == nullptr)
 					PlaceRoom(currentColIndex, currentRowIndex - 1, NrRooms,
@@ -259,9 +276,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 			directionCurrentDepth = 0;
 			if (utils::GetRand(0, 10) % 2 == 0)
 			{
-				std::cout << "Up: " << '\n'
-					<< "Row: " << std::to_string(currentRowIndex) << '\n'
-					<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 				if (currentRowIndex + 1 != m_RoomsRows &&
 					m_pRooms[(currentRowIndex + 1) * m_RoomsCols + currentColIndex] == nullptr)
 					PlaceRoom(currentColIndex, currentRowIndex + 1, NrRooms,
@@ -275,9 +290,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 
 		if (utils::GetRand(0, 10) % 2 == 0)
 		{
-			std::cout << "Left: " << '\n'
-				<< "Row: " << std::to_string(currentRowIndex) << '\n'
-				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 			if (currentColIndex - 1 != -1 &&
 				m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex - 1] == nullptr)
 				PlaceRoom(currentColIndex - 1, currentRowIndex, NrRooms,
@@ -285,9 +298,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 		}
 		if (utils::GetRand(0, 10) % 2 == 0)
 		{
-			std::cout << "Right: " << '\n'
-				<< "Row: " << std::to_string(currentRowIndex) << '\n'
-				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 			if (currentColIndex + 1 != m_RoomsCols &&
 				m_pRooms[currentRowIndex * m_RoomsCols + currentColIndex + 1] == nullptr)
 				PlaceRoom(currentColIndex + 1, currentRowIndex, NrRooms,
@@ -295,9 +306,7 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 		}
 		if (utils::GetRand(0, 10) % 2 == 0)
 		{
-			std::cout << "Down: " << '\n'
-				<< "Row: " << std::to_string(currentRowIndex) << '\n'
-				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
+
 			if (currentRowIndex - 1 != -1 &&
 				m_pRooms[(currentRowIndex - 1) * m_RoomsCols + currentColIndex] == nullptr)
 				PlaceRoom(currentColIndex, currentRowIndex - 1, NrRooms,
@@ -305,9 +314,6 @@ void Floor::PlaceRoom(int currentColIndex, int currentRowIndex, int& NrRooms,
 		}
 		if (utils::GetRand(0, 10) % 2 == 0)
 		{
-			std::cout << "Up: " << '\n'
-				<< "Row: " << std::to_string(currentRowIndex) << '\n'
-				<< "Col: " << std::to_string(currentColIndex) << '\n' << '\n';
 			if (currentRowIndex + 1 != m_RoomsRows &&
 				m_pRooms[(currentRowIndex + 1) * m_RoomsCols + currentColIndex] == nullptr)
 				PlaceRoom(currentColIndex, currentRowIndex + 1, NrRooms,
@@ -356,8 +362,6 @@ void Floor::PlaceSpecialRooms(RoomManager* roomManager, const TextureManager& te
 
 	delete m_pRooms[specialIndex];
 	m_pRooms[specialIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::itemRoom) };
-
-
 
 	m_pRooms[specialIndex]->AddPedestal(itemManager->GetRandomItem(),
 		textureManager.GetTexture(TextureManager::TextureLookup::itemPedestal));

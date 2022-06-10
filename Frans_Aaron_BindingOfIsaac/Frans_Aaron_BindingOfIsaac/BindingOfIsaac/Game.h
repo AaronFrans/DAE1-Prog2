@@ -3,7 +3,6 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "RoomManager.h"
-#include "EnemyManager.h"
 
 class Isaac;
 class TearManager;
@@ -12,6 +11,8 @@ class IsaacHealthBar;
 class Floor;
 class ItemManager;
 class Monstro;
+class SoundEffectManager;
+class EnemyManager;
 class Game final
 {
 public:
@@ -37,18 +38,17 @@ private:
 	const Window m_Window;
 	Camera m_Camera;
 	TextureManager m_TextureManager;
-	EnemyManager m_EnemyManager;
+	EnemyManager* m_pEnemyManager;
 	RoomManager* m_pRoomManager;
 	TearManager* m_pTearManager;
 	UIManager* m_pUIManager;
 	ItemManager* m_pItemManager;
+	SoundEffectManager* m_pSoundEffectManager;
 
 	Floor* m_pFloor;
 
 	Isaac* m_pPlayer;
 	RoomManager::RoomLookup m_CurrentRoom;
-
-	Monstro* temp;
 
 	std::vector<int> testAlgo;
 
@@ -77,6 +77,4 @@ private:
 	void DeleteFloor();
 
 
-	
-	void PrintFloor() ;
 };

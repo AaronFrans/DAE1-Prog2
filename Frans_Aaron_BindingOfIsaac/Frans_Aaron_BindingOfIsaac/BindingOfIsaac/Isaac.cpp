@@ -12,11 +12,13 @@
 #include "Item.h"
 #include "ItemManager.h"
 #include "Costume.h"
-
+#include "SoundEffectManager.h"
+#include "SoundEffect.h"
 #include <iostream>
 
 
-Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition)
+Isaac::Isaac(const TextureManager& textureManager, SoundEffectManager* soundEffectManager,
+	IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition)
 	: m_CenterPosition{ centerPosition }
 	, m_BodyDirection{ Isaac::Direction::down }
 	, m_HeadDirection{ Isaac::Direction::down }
@@ -35,6 +37,8 @@ Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBa
 	, m_DamageState{ DamageState::undamaged }
 	, m_Damage{ 3.5 }
 	, m_DeathRotationAngle{ 0 }
+	, m_EvenShot{ true }
+	, m_pSoundEffectManager{ soundEffectManager }
 {
 	m_pHeadSprite = new Sprite{ textureManager.GetTexture(TextureManager::TextureLookup::isaacHead),
 		8, 1, m_TearFireRate / 2.0f, 1, 2 };
@@ -58,6 +62,8 @@ Isaac::Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBa
 	m_DyingHeight = m_pDyingSprite->GetFrameHeight();;
 
 	m_TearHeight = m_MovementHeight / 2.0f + m_pHeadSprite->GetFrameHeight() / 2.0f;
+
+	m_Shadow = textureManager.GetTexture(TextureManager::TextureLookup::shadow);
 }
 
 Isaac::~Isaac()
@@ -76,6 +82,7 @@ Isaac::~Isaac()
 
 void Isaac::Draw() const
 {
+	m_Shadow->Draw(Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f, m_CenterPosition.y - m_MovementWidth / 2.0f, m_MovementWidth, m_MovementWidth });
 	switch (m_DamageState)
 	{
 	case Isaac::DamageState::undamaged:
@@ -89,6 +96,7 @@ void Isaac::Draw() const
 		DrawDead();
 		break;
 	}
+
 }
 
 void Isaac::Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager, Room* currentRoom, ItemManager* itemManager)
@@ -123,11 +131,26 @@ void Isaac::TakeDamage(float damage)
 		switch (m_pHealth->IsDead())
 		{
 		case true:
+		{
 			m_DamageState = DamageState::dead;
-			break;
+
+			SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect(SoundEffectManager::SoundEffectLookup::isaacDies) };
+			effect->SetVolume(20);
+			effect->Play(false);
+		}
+		break;
 		case false:
+		{
 			m_DamageState = DamageState::hurt;
+
+			int soundEffect{ utils::GetRand((int)SoundEffectManager::SoundEffectLookup::hurt1,
+				(int)SoundEffectManager::SoundEffectLookup::hurt3) };
+
+			SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect((SoundEffectManager::SoundEffectLookup)soundEffect) };
+			effect->SetVolume(20);
+			effect->Play(false);
 			break;
+		}
 		}
 	}
 }
@@ -160,6 +183,7 @@ void Isaac::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
 		m_pHeadSprite->SetAccuSec(0);
 		m_HeadState = HeadState::idle;
 		m_TearFireAccuSec = 0;
+		m_EvenShot = true;
 		break;
 	}
 
@@ -531,6 +555,13 @@ void Isaac::Shoot(TearManager* tearManager, const TextureManager& textureManager
 {
 	if (CanShoot())
 	{
+		int soundEffect{ utils::GetRand((int)SoundEffectManager::SoundEffectLookup::tearShot1,
+				(int)SoundEffectManager::SoundEffectLookup::tearShot2) };
+
+		SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect((SoundEffectManager::SoundEffectLookup)soundEffect) };
+		effect->SetVolume(20);
+		effect->Play(false);
+
 		m_TearFireAccuSec = 0;
 		Tear* pShotTear = tearManager->ShootTear();
 		Point2f tearCenterPos;
@@ -538,14 +569,23 @@ void Isaac::Shoot(TearManager* tearManager, const TextureManager& textureManager
 		switch (m_HeadDirection)
 		{
 		case Direction::up:
-			tearCenterPos = Point2f{
-					m_CenterPosition.x,
-					m_CenterPosition.y - m_MovementHeight / 2.0f };
+			tearCenterPos = m_EvenShot ?
+				Point2f{
+					m_CenterPosition.x + 7,
+					m_CenterPosition.y - m_MovementHeight / 2.0f }
+					: Point2f{
+						m_CenterPosition.x - +7,
+						m_CenterPosition.y - m_MovementHeight / 2.0f };
 			break;
 		case Direction::down:
-			tearCenterPos = Point2f{
-					m_CenterPosition.x,
-					m_CenterPosition.y - m_MovementHeight / 2.0f };
+
+			tearCenterPos = m_EvenShot ?
+				Point2f{
+					m_CenterPosition.x + 7,
+					m_CenterPosition.y - m_MovementHeight / 2.0f - 10 }
+					: Point2f{
+						m_CenterPosition.x - +7,
+						m_CenterPosition.y - m_MovementHeight / 2.0f - 10 };
 
 			isFront = true;
 			break;
@@ -553,13 +593,13 @@ void Isaac::Shoot(TearManager* tearManager, const TextureManager& textureManager
 			tearCenterPos = Point2f{
 					m_CenterPosition.x - m_pHeadSprite->GetFrameWidth() / 2.0f,
 					m_CenterPosition.y - m_MovementHeight / 2.0f };
-			isFront = true;
+			isFront = m_EvenShot;
 			break;
 		case Direction::right:
 			tearCenterPos = Point2f{
 					m_CenterPosition.x + m_pHeadSprite->GetFrameWidth() / 2.0f,
 					m_CenterPosition.y - m_MovementHeight / 2.0f };
-			isFront = true;
+			isFront = m_EvenShot;
 			break;
 		default:
 			break;
@@ -573,6 +613,9 @@ void Isaac::Shoot(TearManager* tearManager, const TextureManager& textureManager
 		pShotTear->SetRange(m_TearRange);
 		pShotTear->SetIsFront(isFront);
 		pShotTear->SetDamage(m_Damage);
+		pShotTear->SetShooter(Tear::Shooter::isaac);
+		pShotTear->SetLandSoundEffect(m_pSoundEffectManager->GetSoundEffect(SoundEffectManager::SoundEffectLookup::tearDestroyed));
+		m_EvenShot = !m_EvenShot;
 	}
 }
 
@@ -665,6 +708,9 @@ void Isaac::PickUpItem(Item* item, ItemManager* itemManager)
 			break;
 		case  Item::StatChanges::tearFireRate:
 			m_TearFireRate += statChange.second;
+			m_pHeadSprite->SetFrameSec(m_TearFireRate / 2.0f);
+			m_pHeadSprite->SetActFrame(0);
+			m_pHeadSprite->SetAccuSec(0);
 			break;
 		case  Item::StatChanges::healthCointainer:
 			m_pHealth->AddHealth(statChange.second);

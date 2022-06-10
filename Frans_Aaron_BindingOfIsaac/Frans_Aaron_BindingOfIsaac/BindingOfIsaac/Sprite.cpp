@@ -123,6 +123,11 @@ void Sprite::SetAccuSec(float accuSec)
 	m_AccuSec = accuSec;
 }
 
+void Sprite::SetFrameSec(float frameSec)
+{
+	m_FrameSec = frameSec;
+}
+
 float Sprite::GetTotalLoopTime()
 {
 	return m_FrameSec * m_Frames;

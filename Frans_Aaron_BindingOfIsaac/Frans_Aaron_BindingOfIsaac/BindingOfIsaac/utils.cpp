@@ -675,19 +675,22 @@ std::vector<Point2f> utils::GetVertices(const Rectf& a)
 
 
 #pragma region RandomFunctionallity
-int  utils::GetRand(int min, int max)
+int  utils::GetRand(const int& min, const int& max)
 {
 	return min + (std::rand() % (max - min + 1));
 }
 
-float  utils::GetRand(float min, float max, int precision)
+float  utils::GetRand(const float& min, const float& max, const int& precision)
 {
 	int minInt{ int(min * pow(10, precision)) }, maxInt{ int(max * pow(10, precision)) };
 	int result = minInt + std::rand() % (maxInt - minInt + 1);
 
 	return float(result / pow(10.0f, precision));
 }
-bool utils::IsEqual(float a, float b, float epsilon)
+#pragma endregion
+
+#pragma region CompareFunctionality
+bool utils::IsEqual(const float& a, const float& b, const float& epsilon)
 {
 	return fabs(a - b) < epsilon;
 }

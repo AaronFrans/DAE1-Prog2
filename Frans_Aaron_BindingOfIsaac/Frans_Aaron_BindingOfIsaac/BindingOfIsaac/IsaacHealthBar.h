@@ -17,7 +17,7 @@ public:
 	~IsaacHealthBar();
 
 
-	void DrawHealtBar(const Rectf& Camera) const;
+	void DrawHealtBar(const Rectf& Camera, float offsetWidth) const;
 	void TakeDamage(float damage);
 
 	bool IsDead();

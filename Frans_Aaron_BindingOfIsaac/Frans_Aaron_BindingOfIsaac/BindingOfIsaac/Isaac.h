@@ -3,6 +3,7 @@
 #include "utils.h"
 #include <vector>
 
+class Texture;
 class Sprite;
 class TextureManager;
 class TearManager;
@@ -13,6 +14,8 @@ class ItemPedestal;
 class Costume;
 class ItemManager;
 class Item;
+class SoundEffectManager;
+
 class Isaac final
 {
 
@@ -45,7 +48,8 @@ class Isaac final
 
 public:
 
-	Isaac(const TextureManager& textureManager, IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition);
+	Isaac(const TextureManager& textureManager, SoundEffectManager* soundEffectManager,
+		IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition);
 
 	Isaac(const Isaac& rhs) = default;
 	Isaac(Isaac&& rhs) = default;
@@ -69,11 +73,14 @@ private:
 
 	const float m_MaxIdleTime{ 1 };
 
+	SoundEffectManager* m_pSoundEffectManager;
+
 	Sprite* m_pHeadSprite;
 	Sprite* m_pWalkSpriteUD;
 	Sprite* m_pWalkSpriteLR;
 	Sprite* m_pHurtSprite;
 	Sprite* m_pDyingSprite;
+	Texture* m_Shadow;
 
 	Point2f m_CenterPosition;
 	float m_MovementWidth;
@@ -103,6 +110,9 @@ private:
 	float m_DeathRotationAngle;
 
 	std::vector<Costume*> m_pCostumes;
+
+	bool m_EvenShot;
+
 
 	//Character Changeable Stats
 	float m_WalkSpeed;
@@ -140,6 +150,5 @@ private:
 	bool IsInvis();
 
 	void PickUpItem(Item* item, ItemManager* itemManager);
-
 };
 

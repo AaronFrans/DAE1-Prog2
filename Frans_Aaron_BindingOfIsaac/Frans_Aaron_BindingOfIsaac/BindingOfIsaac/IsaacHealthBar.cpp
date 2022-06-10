@@ -29,13 +29,13 @@ IsaacHealthBar::~IsaacHealthBar()
 	delete m_pEmptyHeart;
 }
 
-void IsaacHealthBar::DrawHealtBar(const Rectf& Camera) const
+void IsaacHealthBar::DrawHealtBar(const Rectf& Camera, float offsetWidth) const
 {
 	for (int i = 0; i < m_pHearts.size(); i++)
 	{
 		m_pHearts[i]->Draw(Point2f{
-			Camera.left + m_HeartSize / 2.0f + m_HeartSize * i,
-			(Camera.bottom + Camera.height) - m_HeartSize / 2.0f });
+			Camera.left + offsetWidth + m_HeartSize / 2.0f + m_HeartSize * i,
+			(Camera.bottom + Camera.height - 20) - m_HeartSize / 2.0f });
 	}
 }
 

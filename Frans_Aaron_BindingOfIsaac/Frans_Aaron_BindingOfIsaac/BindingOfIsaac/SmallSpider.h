@@ -18,18 +18,19 @@ public:
 		dead
 	};
 
-	SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint);
+	SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint, SoundEffectManager* soundEffectManager);
 
 	SmallSpider(const SmallSpider& rhs);
-	SmallSpider(SmallSpider && rhs) = default;
-	SmallSpider& operator=(const SmallSpider & rhs);
-	SmallSpider& operator=(SmallSpider && rhs) = default;
+	SmallSpider(SmallSpider&& rhs) = default;
+	SmallSpider& operator=(const SmallSpider& rhs);
+	SmallSpider& operator=(SmallSpider&& rhs) = default;
 	~SmallSpider();
 
 
 
 	virtual void Draw() const override;
-	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
+	virtual void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+		const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) override;
 
 	virtual bool IsDead() const override;
 	virtual Circlef GetHitBox() const override;
@@ -39,6 +40,7 @@ public:
 	virtual Enemy* Clone() const override;
 
 private:
+
 	Sprite* m_pMovementSprite;
 	Sprite* m_pDyingSprite;
 
@@ -55,6 +57,8 @@ private:
 
 	float m_IdleAccuSec;
 	float m_IdleMinSec;
+
+
 
 	SmallSpiderState m_State;
 

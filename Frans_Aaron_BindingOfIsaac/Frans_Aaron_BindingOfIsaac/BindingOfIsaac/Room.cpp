@@ -5,18 +5,22 @@
 #include "GameObject.h"
 #include "Item.h"
 #include "ItemPedestal.h"
+#include "TearManager.h"
+#include "Boss.h"
+#include "SoundEffect.h"
 
 
-Room::Room(Texture* background, Rectf shape, std::vector<GameObject*> objects,
+Room::Room(Texture* background, SoundEffect* doorOpenSound, SoundEffect* doorCloseSound, Rectf shape, std::vector<GameObject*> objects,
 	std::vector<std::vector<Point2f>> enemyGroupPositions, std::vector<Point2f> walkableAreaVertices,
-	RoomType type, bool isCleared)
+	RoomType type)
 	: m_pBackground{ background }
 	, m_Shape{ shape }
 	, m_pObjects{ objects }
 	, m_WalkableAreaVertices{ walkableAreaVertices }
 	, m_EnemyGroupPositions{ enemyGroupPositions }
 	, m_Type{ type }
-	, m_IsCleared{ isCleared }
+	, m_pDoorOpenSound{ doorOpenSound }
+	, m_pDoorCloseSound{ doorCloseSound }
 {
 }
 
@@ -25,8 +29,9 @@ Room::Room(const Room& rhs)
 	, m_Shape{ rhs.m_Shape }
 	, m_WalkableAreaVertices{ rhs.m_WalkableAreaVertices }
 	, m_Type{ rhs.m_Type }
-	, m_IsCleared{ rhs.m_IsCleared }
 	, m_EnemyGroupPositions{ rhs.m_EnemyGroupPositions }
+	, m_pDoorOpenSound{ rhs.m_pDoorOpenSound }
+	, m_pDoorCloseSound{ rhs.m_pDoorCloseSound }
 {
 	for (Enemy* enemy : rhs.m_pEnemies)
 	{
@@ -52,7 +57,8 @@ Room& Room::operator=(const Room& rhs)
 	m_Shape = rhs.m_Shape;
 	m_WalkableAreaVertices = rhs.m_WalkableAreaVertices;
 	m_Type = rhs.m_Type;
-	m_IsCleared = rhs.m_IsCleared;
+	m_pDoorOpenSound = rhs.m_pDoorOpenSound;
+	m_pDoorCloseSound = rhs.m_pDoorCloseSound;
 
 	m_EnemyGroupPositions = rhs.m_EnemyGroupPositions;
 
@@ -122,21 +128,12 @@ void Room::Draw() const
 
 }
 
-void Room::Update(float elapsedSec, Isaac* isaac)
+void Room::Update(float elapsedSec, Isaac* isaac, TearManager* tearManager, const TextureManager& textureManager)
 {
-	m_IsCleared = true;
+
 	for (size_t i = 0; i < m_pEnemies.size(); i++)
 	{
-		m_pEnemies[i]->Update(elapsedSec, this, isaac, (int)i);
-		if (!m_pEnemies[i]->IsDead())
-		{
-			m_IsCleared = false;
-		}
-
-	}
-	if (m_IsCleared)
-	{
-		OpenDoors();
+		m_pEnemies[i]->Update(elapsedSec, tearManager, textureManager, this, isaac, (int)i);
 	}
 	for (Door* door : m_pDoors)
 	{
@@ -193,7 +190,7 @@ void Room::PlaceDoor(const TextureManager& textureManager, const Point2f& doorCe
 
 	m_pDoors.push_back(new Door(textureManager, doorCenter, Door::DoorState::closed, direction, shape, roomType));
 
-	m_IsCleared ? m_pDoors[m_pDoors.size() - 1]->SetState(Door::DoorState::open) : m_pDoors[m_pDoors.size() - 1]->SetState(Door::DoorState::closed);
+	IsCleared() ? m_pDoors[m_pDoors.size() - 1]->SetState(Door::DoorState::open) : m_pDoors[m_pDoors.size() - 1]->SetState(Door::DoorState::closed);
 
 }
 
@@ -208,24 +205,41 @@ void Room::ActivateDoor(Door::DoorDirection direction)
 	}
 }
 
-void Room::InitEnemies(const EnemyManager& enemyManager)
+void Room::InitEnemies( EnemyManager* enemyManager)
 {
 	Enemy* pRandomEnemy = nullptr;
 	Enemy* pEnemy = pRandomEnemy;
 	Circlef enemyShape = Circlef{};
-
-	for (std::vector<Point2f> group : m_EnemyGroupPositions)
+	if (m_Type == RoomType::normal)
 	{
-		pRandomEnemy = enemyManager.GetRandomEnemy(EnemyManager::Floor::basement);
-		pEnemy = pRandomEnemy;
-		enemyShape = pEnemy->GetHitBox();
-
-		for (Point2f enemyPos : group)
+		for (std::vector<Point2f> group : m_EnemyGroupPositions)
 		{
-			pEnemy->SetPosition(enemyPos);
-			m_pEnemies.push_back(pEnemy->Clone());
+			pRandomEnemy = enemyManager->GetRandomEnemy(EnemyManager::Floor::basement);
+			pEnemy = pRandomEnemy;
+
+			for (Point2f enemyPos : group)
+			{
+				pEnemy->SetPosition(enemyPos);
+				m_pEnemies.push_back(pEnemy->Clone());
+			}
 		}
 	}
+	else if (m_Type == RoomType::boss)
+	{
+		for (std::vector<Point2f> group : m_EnemyGroupPositions)
+		{
+			pRandomEnemy = enemyManager->GetRandomBoss(EnemyManager::Floor::basement);
+			pEnemy = pRandomEnemy;
+
+			for (Point2f enemyPos : group)
+			{
+				pEnemy->SetPosition(enemyPos);
+				m_pEnemies.push_back(pEnemy->Clone());
+			}
+		}
+	}
+
+
 
 }
 
@@ -270,7 +284,29 @@ Rectf Room::GetDoorShape(Door::DoorDirection direction)
 
 bool Room::IsCleared() const
 {
-	return m_IsCleared;
+	bool isCleared{ true };
+	for (size_t i = 0; i < m_pEnemies.size(); i++)
+	{
+		if (!m_pEnemies[i]->IsDead())
+		{
+			isCleared = false;
+		}
+
+	}
+	return isCleared;
+}
+
+bool Room::AreDoorsOpen() const
+{
+	bool areDoorsOpen{ false };
+	for (Door* door : m_pDoors)
+	{
+		if (areDoorsOpen == false && door->GetState() == Door::DoorState::open)
+		{
+			areDoorsOpen = true;
+		}
+	}
+	return areDoorsOpen;
 }
 
 Room::RoomType Room::GetType() const
@@ -283,9 +319,21 @@ std::vector<ItemPedestal*> Room::GetPedestals()
 	return m_pPedestals;
 }
 
+BossHealthBar* Room::GetBossHealthBar()
+{
+	if (m_Type == RoomType::boss)
+	{
+		Boss* boss{ static_cast<Boss*> (m_pEnemies[0]) };
+		return boss->GetHealthBar();
+	}
+	return nullptr;
+}
+
 
 void Room::OpenDoors()
 {
+	m_pDoorOpenSound->SetVolume(20);
+	m_pDoorOpenSound->Play(false);
 	for (Door* door : m_pDoors)
 	{
 		door->SetState(Door::DoorState::open);
@@ -294,6 +342,8 @@ void Room::OpenDoors()
 
 void Room::CloseDoors()
 {
+	m_pDoorCloseSound->SetVolume(20);
+	m_pDoorCloseSound->Play(false);
 	for (Door* door : m_pDoors)
 	{
 		door->SetState(Door::DoorState::closed);

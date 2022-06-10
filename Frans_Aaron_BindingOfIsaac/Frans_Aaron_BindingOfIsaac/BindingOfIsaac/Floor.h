@@ -1,6 +1,7 @@
 #pragma once
 #include "Door.h"
 #include "EnemyManager.h"
+#include "TextureManager.h"
 #include <vector>
 #include <map>
 #include <utility>
@@ -23,20 +24,23 @@ public:
 
 
 	void Draw() const;
-	void Update(float elapsedSec, Isaac* isaac);
+	void Update(float elapsedSec, Isaac* isaac, TearManager* tearManager, const TextureManager& textureManager);
 
 	void TranslateCurrentRoomOrigin();
 
 	bool IsTransitioning();
 	void DoneTransitioning();
 
+	std::pair<int, int> GetCurrentIndexes();
+	int GetMaxRows();
+	int GetMaxCols();
 
 	void ActivateDoors();
 
 	Room* GetCurrentRoom();
 
 	void GenerateFloor(RoomManager* roomManager, const TextureManager& textureManager, ItemManager* itemManager);
-	void InitEnemies(const EnemyManager& enemyManager);
+	void InitEnemies(EnemyManager* enemyManager);
 
 	std::vector<int> GetLayout();
 

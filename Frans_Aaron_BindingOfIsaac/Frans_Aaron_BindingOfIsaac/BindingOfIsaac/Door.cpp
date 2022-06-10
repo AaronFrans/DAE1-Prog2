@@ -168,6 +168,11 @@ Door::DoorDirection Door::GetDirection()
 	return m_Direction;
 }
 
+Door::DoorState Door::GetState()
+{
+	return m_State;
+}
+
 Rectf Door::GetShape() const
 {
 	return m_Shape;

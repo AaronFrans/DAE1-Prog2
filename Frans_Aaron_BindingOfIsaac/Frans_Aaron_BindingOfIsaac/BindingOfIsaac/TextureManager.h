@@ -18,7 +18,8 @@ public:
 		isaacDying,
 		//Tear Textures
 		isaacTearHit,
-		isaacTear ,
+		isaacTear,
+		enemyTear,
 		//GameObject Textures
 		poop,
 		rock,
@@ -36,7 +37,12 @@ public:
 		bossDoorLeft,
 		bossDoorRight,
 		//Ui Textures
-		hearths,
+		uiHearths,
+		uiBossHealthBar,
+		uiMinimap,
+		uiMinimapRooms,
+		uiMinimapRoomItem,
+		uiMinimapRoomBoss,
 		//Enemy Textures
 		smallSpiderMovement,
 		smallSpiderDying,
@@ -44,12 +50,15 @@ public:
 		flyDying,
 		//Boss Textures
 		bossMonstro,
+		bossDeathBlood,
 		//Items
 		collectibleHeart,
 		costumeHeartUD,
 		costumeHeartLR,
 		collectiblesBluecap,
 		costumeBluecap,
+		//Shared
+		shadow,
 
 	};
 
@@ -62,7 +71,7 @@ public:
 	TextureManager& operator=(TextureManager && rhs) = default;
 	~TextureManager();
 
-	Texture* GetTexture(TextureLookup lookup) const;
+	Texture* GetTexture(TextureLookup textureName) const;
 
 private:
 
@@ -77,6 +86,7 @@ private:
 	void InitEnemyTextures();
 	void InitBossTextures();
 	void InitItemTextures();
+	void InitSharedTextures();
 
 };
 

@@ -5,9 +5,13 @@
 #include "GameObject.h"
 #include "utils.h"
 #include "Isaac.h"
+#include "TearManager.h"
+#include "Texture.h"
+#include "SoundEffectManager.h"
+#include "SoundEffect.h"
 
-SmallSpider::SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint)
-	: Enemy{ centerPoint, 0.5f, 150, 6.5 }
+SmallSpider::SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet, Point2f centerPoint, SoundEffectManager* soundEffectManger)
+	: Enemy{ centerPoint, 0.5f, 150, 6.5, soundEffectManger }
 	, m_State{ SmallSpiderState::idle }
 	, m_MovementAccuSec{ 0 }
 	, m_IdleAccuSec{ 0 }
@@ -25,10 +29,12 @@ SmallSpider::SmallSpider(Texture* movementSpriteSheet, Texture* DyingSpriteSheet
 	m_DyingWidth = m_pDyingSprite->GetFrameWidth();
 	m_DyingHeight = m_pDyingSprite->GetFrameHeight();
 	m_DyingMaxSec = m_pDyingSprite->GetTotalLoopTime();
+
+	m_Height = 5;
 }
 
 SmallSpider::SmallSpider(const SmallSpider& rhs)
-	: Enemy{ rhs.m_CenterPosition , 0.5f, 150,  6.5 }
+	: Enemy{ rhs.m_CenterPosition , 0.5f, 150,  6.5, rhs.m_pSoundEffectManager }
 	, m_State{ rhs.m_State }
 	, m_MovementAccuSec{ 0 }
 	, m_IdleAccuSec{ 0 }
@@ -46,20 +52,24 @@ SmallSpider::SmallSpider(const SmallSpider& rhs)
 	m_DyingWidth = rhs.m_DyingWidth;
 	m_DyingHeight = rhs.m_DyingHeight;
 	m_DyingMaxSec = rhs.m_DyingMaxSec;
+
+	m_Height = rhs.m_Height;
 }
 
 SmallSpider& SmallSpider::operator=(const SmallSpider& rhs)
 {
-	rhs.m_CenterPosition;
-	0.5f;
-	150;
-	6.5;
+	m_CenterPosition = rhs.m_CenterPosition;
+	m_Damage = rhs.m_Damage;
+	m_Speed = rhs.m_Speed;
+	m_Health = rhs.m_Health;
+	m_pMovementSprite = new Sprite{ *rhs.m_pMovementSprite };
+	m_pSoundEffectManager = rhs.m_pSoundEffectManager;
+
 	m_State = rhs.m_State;
 	m_MovementAccuSec = 0;
 	m_IdleAccuSec = 0;
-	m_IdleMinSec = 0.5;
+	m_IdleMinSec = rhs.m_IdleMinSec;
 	m_DyingAccuSec = 0;
-	m_pMovementSprite = new Sprite{ *rhs.m_pMovementSprite };
 	m_MovementWidth = rhs.m_MovementWidth;
 	m_MovementHeight = rhs.m_MovementHeight;
 
@@ -70,6 +80,8 @@ SmallSpider& SmallSpider::operator=(const SmallSpider& rhs)
 	m_DyingWidth = rhs.m_DyingWidth;
 	m_DyingHeight = rhs.m_DyingHeight;
 	m_DyingMaxSec = rhs.m_DyingMaxSec;
+
+	m_Height = rhs.m_Height;
 	return *this;
 }
 
@@ -87,13 +99,19 @@ void SmallSpider::Draw() const
 	switch (m_State)
 	{
 	case SmallSpiderState::idle:
+	{
+
 		m_pMovementSprite->Draw(Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f,
 			m_MovementWidth, m_MovementHeight });
 		break;
+	}
 	case SmallSpiderState::moving:
+	{
+
 		m_pMovementSprite->Draw(Rectf{ m_CenterPosition.x - m_MovementWidth / 2.0f,m_CenterPosition.y - m_MovementHeight / 2.0f,
 			m_MovementWidth, m_MovementHeight });
 		break;
+	}
 	case SmallSpiderState::dying:
 		m_pDyingSprite->Draw(Rectf{ m_CenterPosition.x - m_DyingWidth / 2.0f,m_CenterPosition.y - m_DyingHeight / 2.0f,
 			m_DyingWidth, m_DyingHeight });
@@ -104,7 +122,8 @@ void SmallSpider::Draw() const
 
 }
 
-void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex)
+void SmallSpider::Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+	const Room* currentRoom, Isaac* isaac, int currentEnemyIndex)
 {
 	switch (m_State)
 	{
@@ -127,6 +146,16 @@ void SmallSpider::Update(float elapsedSec, const Room* currentRoom, Isaac* isaac
 		DoEnemyCollisions(currentRoom->GetEnemies(), currentEnemyIndex);
 		break;
 	case SmallSpiderState::dying:
+		if (!m_PlayedDeathSound)
+		{
+
+			int soundEffect{ utils::GetRand((int)SoundEffectManager::SoundEffectLookup::animalDeathSound1,
+				(int)SoundEffectManager::SoundEffectLookup::animalDeathSound3) };
+			SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect((SoundEffectManager::SoundEffectLookup)soundEffect) };
+			effect->SetVolume(25);
+			effect->Play(0);
+			m_PlayedDeathSound = true;
+		}
 		DoDying(elapsedSec);
 		break;
 	default:

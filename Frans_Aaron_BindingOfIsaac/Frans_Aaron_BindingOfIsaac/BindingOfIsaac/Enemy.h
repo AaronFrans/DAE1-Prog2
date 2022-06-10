@@ -1,16 +1,17 @@
 #pragma once
 #include "Vector2f.h"
+#include "TextureManager.h"
 #include <vector>
 
 class Room;
 class Isaac;
-
-
+class TearManager;
+class SoundEffectManager;
 class Enemy
 {
 public:
 
-	Enemy(Point2f centerPoint, float damage, float speed, float health);
+	Enemy(Point2f centerPoint, float damage, float speed, float health, SoundEffectManager* soundEffectManager);
 
 	Enemy(const Enemy&) = default;
 	Enemy(Enemy&&) = default;
@@ -20,7 +21,8 @@ public:
 
 
 	virtual void Draw() const = 0;
-	virtual void Update(float elapsedSec, const Room* currentRoom, Isaac* isaac, int currentEnemyIndex) = 0;
+	virtual void Update(float elapsedSec, TearManager* tearManager, const TextureManager& textureManager,
+		const Room* currentRoom, Isaac* isaac, int currentEnemyIndex)  = 0;
 
 
 	virtual void TakeDamage(float damage) = 0;
@@ -35,6 +37,7 @@ public:
 
 protected:
 
+	SoundEffectManager* m_pSoundEffectManager;
 	bool m_HasDied;
 
 	Point2f m_CenterPosition;
@@ -45,7 +48,11 @@ protected:
 	float m_Speed;
 	Vector2f m_Velocity;
 
-	virtual void DoEnemyCollisions(const std::vector<Enemy*>& roomEnemies, int currentEnemyIndex) = 0;
+	bool m_PlayedDeathSound;
+
+	float m_Height;
+
+	virtual void DoEnemyCollisions(const std::vector<Enemy*>& enemies, int currentEnemyIndex) = 0;
 
 	void DoRoomCollision(const Room* currentRoom);
 };
