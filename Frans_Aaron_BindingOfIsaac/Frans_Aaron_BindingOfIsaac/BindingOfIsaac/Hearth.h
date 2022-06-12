@@ -13,9 +13,9 @@ public:
 	Hearth(Texture* heartSheet, HearthState state, float dstHeartSize);
 
 	Hearth(const Hearth& rhs);
-	Hearth(Hearth && rhs) = default;
-	Hearth& operator=(const Hearth & rhs);
-	Hearth& operator=(Hearth && rhs) = default;
+	Hearth(Hearth&& rhs) = default;
+	Hearth& operator=(const Hearth& rhs);
+	Hearth& operator=(Hearth&& rhs) = default;
 	virtual ~Hearth() = default;
 
 
@@ -23,6 +23,7 @@ public:
 	HearthState GetState() const;
 
 	void TakeDamage(float damage);
+	float Heal(float healAmount);
 
 private:
 	Texture* m_pHeartSheet;

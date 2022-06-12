@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Room.h"
+#include "utils.h"
 #include "Texture.h"
 #include "Enemy.h"
 #include "GameObject.h"
@@ -21,6 +22,7 @@ Room::Room(Texture* background, SoundEffect* doorOpenSound, SoundEffect* doorClo
 	, m_Type{ type }
 	, m_pDoorOpenSound{ doorOpenSound }
 	, m_pDoorCloseSound{ doorCloseSound }
+	, m_HasDroppedPickUp{ false }
 {
 }
 
@@ -32,6 +34,7 @@ Room::Room(const Room& rhs)
 	, m_EnemyGroupPositions{ rhs.m_EnemyGroupPositions }
 	, m_pDoorOpenSound{ rhs.m_pDoorOpenSound }
 	, m_pDoorCloseSound{ rhs.m_pDoorCloseSound }
+	, m_HasDroppedPickUp{ rhs.m_HasDroppedPickUp }
 {
 	for (Enemy* enemy : rhs.m_pEnemies)
 	{
@@ -59,6 +62,7 @@ Room& Room::operator=(const Room& rhs)
 	m_Type = rhs.m_Type;
 	m_pDoorOpenSound = rhs.m_pDoorOpenSound;
 	m_pDoorCloseSound = rhs.m_pDoorCloseSound;
+	m_HasDroppedPickUp = rhs.m_HasDroppedPickUp;
 
 	m_EnemyGroupPositions = rhs.m_EnemyGroupPositions;
 
@@ -205,7 +209,7 @@ void Room::ActivateDoor(Door::DoorDirection direction)
 	}
 }
 
-void Room::InitEnemies( EnemyManager* enemyManager)
+void Room::InitEnemies(EnemyManager* enemyManager)
 {
 	Enemy* pRandomEnemy = nullptr;
 	Enemy* pEnemy = pRandomEnemy;
@@ -319,6 +323,34 @@ std::vector<ItemPedestal*> Room::GetPedestals()
 	return m_pPedestals;
 }
 
+Point2f Room::GetFreeSpot()
+{
+	Point2f freeSpot{
+		m_Shape.left + m_Shape.width / 2.0f ,
+		m_Shape.bottom + m_Shape.height / 2.0f
+	};
+	bool isOccupied{ false };
+	bool isEvenLoop{ false };
+	do
+	{
+		isOccupied = false;
+		for (GameObject* object : m_pObjects)
+		{
+			Circlef objectShape{ object->GetShape() };
+			if (!isOccupied && object->IsNotDestroyed() && utils::IsPointInCircle(freeSpot, objectShape))
+			{
+				isEvenLoop ?
+					freeSpot.x += objectShape.radius + 10 :
+					freeSpot.y += objectShape.radius + 10;
+				isOccupied = true;
+				isEvenLoop = !isEvenLoop;
+			}
+		}
+
+	} while (isOccupied);
+	return freeSpot;
+}
+
 BossHealthBar* Room::GetBossHealthBar()
 {
 	if (m_Type == RoomType::boss)
@@ -327,6 +359,16 @@ BossHealthBar* Room::GetBossHealthBar()
 		return boss->GetHealthBar();
 	}
 	return nullptr;
+}
+
+bool Room::IsBossDead()
+{
+	if (m_Type == RoomType::boss)
+	{
+		Boss* boss{ static_cast<Boss*> (m_pEnemies[0]) };
+		return boss->GetDeathState() == Boss::DeathState::death;
+	}
+	return false;
 }
 
 
@@ -348,4 +390,14 @@ void Room::CloseDoors()
 	{
 		door->SetState(Door::DoorState::closed);
 	}
+}
+
+bool Room::HasDroppedPickUp()
+{
+	return m_HasDroppedPickUp;
+}
+
+void Room::DropPickUp()
+{
+	m_HasDroppedPickUp = true;
 }

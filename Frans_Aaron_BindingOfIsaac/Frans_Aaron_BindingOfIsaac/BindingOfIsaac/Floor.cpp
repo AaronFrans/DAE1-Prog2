@@ -175,15 +175,15 @@ void Floor::MoveToNextRoom(Door::DoorDirection direction, Isaac* isaac)
 void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textureManager, ItemManager* itemManager)
 {
 	//Leave for debugging purposes
-	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
-	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex + 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
-	m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
-	std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs{ GetAvailableRooms() };
-	PlaceSpecialRooms(roomManager, textureManager, indexAndDirectionPairs, itemManager);
+	//m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::startRoom) };
+	//m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex + 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
+	//m_pRooms[m_CurrentRowIndex * m_RoomsCols + m_CurrentColIndex - 1] = new Room{ *roomManager->GetRoom(RoomManager::RoomLookup::smallRoom1) };
+	//std::map<int, std::pair<int, Door::DoorDirection>> indexAndDirectionPairs{ GetAvailableRooms() };
+	//PlaceSpecialRooms(roomManager, textureManager, indexAndDirectionPairs, itemManager);
 
 
 
-	/*int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
+	int depth{ 0 }, directionDepth{ 0 }, nrRooms{ 0 }, minRooms{ 7 };
 	while (nrRooms < minRooms)
 	{
 
@@ -213,7 +213,7 @@ void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textur
 			}
 			indexAndDirectionPairs.clear();
 		}
-	}*/
+	}
 }
 
 void Floor::InitEnemies( EnemyManager* enemyManager)

@@ -176,6 +176,7 @@
     <ClCompile Include="ItemPedestal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix2x3.cpp" />
+    <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="Monstro.cpp" />
     <ClCompile Include="pch.cpp">
@@ -184,6 +185,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PickUp.cpp" />
+    <ClCompile Include="PickUpManager.cpp" />
     <ClCompile Include="Poop.cpp" />
     <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Room.cpp" />
@@ -224,9 +227,12 @@
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="ItemPedestal.h" />
     <ClInclude Include="Matrix2x3.h" />
+    <ClInclude Include="MenuScreen.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="Monstro.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PickUp.h" />
+    <ClInclude Include="PickUpManager.h" />
     <ClInclude Include="Poop.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Rock.h" />

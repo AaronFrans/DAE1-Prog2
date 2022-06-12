@@ -7,6 +7,12 @@ class Boss : public Enemy
 
 public:
 
+	enum class DeathState
+	{
+		alive,
+		death
+	};
+
 	Boss(Point2f centerPoint, float damage, float speed, float health, Texture* healthBarTexture, SoundEffectManager* soundEffectManager);
 	Boss(Point2f centerPoint, float damage, float speed, float health, BossHealthBar* healthBar, SoundEffectManager* soundEffectManager);
 
@@ -28,12 +34,15 @@ public:
 	virtual Circlef GetHitBox() const override = 0;
 
 	BossHealthBar* GetHealthBar();
+	DeathState GetDeathState();
 
 	virtual Enemy* Clone() const override = 0;
 
 protected:
 
 	BossHealthBar* m_pHealthBar;
+
+	DeathState m_DeathState;
 
 };
 

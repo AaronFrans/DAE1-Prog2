@@ -43,6 +43,9 @@
     <Filter Include="Game Files\UI">
       <UniqueIdentifier>{c41d0495-7c19-49c9-b3ae-51d1aa0b0910}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\PickUps">
+      <UniqueIdentifier>{9ddeb3b0-e057-494a-a166-2f9523f180ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -171,6 +174,15 @@
     <ClInclude Include="SoundEffectManager.h">
       <Filter>Game Files\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="MenuScreen.h">
+      <Filter>Game Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PickUp.h">
+      <Filter>Game Files\PickUps</Filter>
+    </ClInclude>
+    <ClInclude Include="PickUpManager.h">
+      <Filter>Game Files\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -297,6 +309,15 @@
       <Filter>Game Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="SoundEffectManager.cpp">
+      <Filter>Game Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuScreen.cpp">
+      <Filter>Game Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PickUp.cpp">
+      <Filter>Game Files\PickUps</Filter>
+    </ClCompile>
+    <ClCompile Include="PickUpManager.cpp">
       <Filter>Game Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>

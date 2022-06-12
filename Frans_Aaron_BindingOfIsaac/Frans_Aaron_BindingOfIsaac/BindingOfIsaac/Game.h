@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include "TextureManager.h"
 #include "Sprite.h"
 #include "Camera.h"
@@ -13,6 +14,8 @@ class ItemManager;
 class Monstro;
 class SoundEffectManager;
 class EnemyManager;
+class MenuScreen;
+class PickUpManager;
 class Game final
 {
 public:
@@ -34,6 +37,15 @@ public:
 	void ProcessMouseUpEvent(const SDL_MouseButtonEvent& e);
 
 private:
+
+	enum class GameState
+	{
+		startMenu,
+		playing,
+		death,
+		victory
+	};
+
 	// DATA MEMBERS
 	const Window m_Window;
 	Camera m_Camera;
@@ -45,14 +57,24 @@ private:
 	ItemManager* m_pItemManager;
 	SoundEffectManager* m_pSoundEffectManager;
 
+	MenuScreen* m_pStartScreen;
+	MenuScreen* m_pDeathScreen;
+	MenuScreen* m_pVictoryScreen;
 	Floor* m_pFloor;
-
 	Isaac* m_pPlayer;
-	RoomManager::RoomLookup m_CurrentRoom;
 
-	std::vector<int> testAlgo;
 
-	float time{ 0 };
+	PickUpManager* test;
+
+
+	bool m_IsDeathScreenSfxPlaying;
+	float m_DeathScreenSfxAccuTime;
+	float m_DeathScreenSfxMaxTime;
+
+
+	GameState m_State;
+
+
 	// FUNCTIONS
 	void Initialize();
 	void Cleanup();
@@ -75,6 +97,8 @@ private:
 	void InitFloor(RoomManager* roomManager);
 	void DrawFloor() const;
 	void DeleteFloor();
+
+	void PrintInfo();
 
 
 };

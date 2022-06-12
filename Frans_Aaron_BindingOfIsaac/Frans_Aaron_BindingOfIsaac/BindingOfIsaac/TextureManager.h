@@ -43,6 +43,10 @@ public:
 		uiMinimapRooms,
 		uiMinimapRoomItem,
 		uiMinimapRoomBoss,
+		//Menus
+		startMenu,
+		deathScreen,
+		victoryScreen,
 		//Enemy Textures
 		smallSpiderMovement,
 		smallSpiderDying,
@@ -59,6 +63,9 @@ public:
 		costumeBluecap,
 		//Shared
 		shadow,
+		//PickUps
+		pickupFullHeart,
+		pickupHalfHeart,
 
 	};
 
@@ -82,11 +89,13 @@ private:
 	void InitTearTextures();
 	void InitGameObjectTextures();
 	void InitRoomTextures();
-	void InitUi();
+	void InitUiTextures();
+	void InitMenuTextures();
 	void InitEnemyTextures();
 	void InitBossTextures();
 	void InitItemTextures();
 	void InitSharedTextures();
+	void InitPickUpTextures();
 
 };
 

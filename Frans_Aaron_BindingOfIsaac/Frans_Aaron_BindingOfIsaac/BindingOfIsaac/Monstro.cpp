@@ -146,7 +146,7 @@ Monstro& Monstro::operator=(const Monstro& rhs)
 	m_pHealthBar = rhs.m_pHealthBar;
 	m_PlayedCurrentStateSfx = rhs.m_PlayedCurrentStateSfx;
 	m_NewDeathSplatterSfxAccuTime = rhs.m_NewDeathSplatterSfxAccuTime;
-	m_NewDeathSplatterSfxMinTime = rhs.m_NewDeathSplatterSfxMinTime; 
+	m_NewDeathSplatterSfxMinTime = rhs.m_NewDeathSplatterSfxMinTime;
 
 
 	return *this;
@@ -550,7 +550,7 @@ void Monstro::Update(float elapsedSec, TearManager* tearManager, const TextureMa
 			m_PlayedCurrentStateSfx = true;
 		}
 
-		
+
 
 		m_pDeathBlood->Update(elapsedSec);
 		m_DyingAccuTime += elapsedSec;
@@ -722,6 +722,7 @@ void Monstro::ChangeState(float elapsedSec)
 		{
 			m_PlayedCurrentStateSfx = false;
 			m_State = MonstroState::dead;
+			m_DeathState = Boss::DeathState::death;
 		}
 
 		break;
@@ -863,7 +864,7 @@ void Monstro::Shoot(TearManager* tearManager, const TextureManager& textureManag
 
 	SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect((SoundEffectManager::SoundEffectLookup)soundEffect) };
 	pShotTear->SetLandSoundEffect(effect);
-	
+
 
 
 }

@@ -21,14 +21,17 @@ public:
 	void TakeDamage(float damage);
 
 	bool IsDead();
+	bool IsFull();
 
 	void AddHealth(float amount);
+	void Heal(float healAmount);
 
 private:
 
 	std::vector<Hearth*> m_pHearts;
 	Hearth* m_pEmptyHeart;
 	float m_Health;
+	float m_MaxHealth;
 	float m_HeartSize;
 
 };

@@ -64,3 +64,37 @@ void Hearth::TakeDamage(float damage)
 		std::cout << "Damage value is not compatible";
 	}
 }
+
+float Hearth::Heal(float healAmount)
+{
+	if (utils::IsEqual(healAmount, 0.5f, 0.000001f))
+	{
+		if (m_State == HearthState::empty)
+		{
+			m_State = HearthState::half;
+		}
+		else if (m_State == HearthState::half)
+		{
+			m_State = HearthState::full;
+		}
+	}
+	else if (utils::IsEqual(healAmount, 1.0f, 0.000001f))
+	{
+		if (m_State == HearthState::half)
+		{
+			m_State = HearthState::full;
+			return 0.5f;
+		}
+		else if (m_State == HearthState::empty)
+		{
+			m_State = HearthState::full;
+			return 0;
+		}
+
+	}
+	else
+	{
+		std::cout << "Heal value is not compatible";
+	}
+	return 0.f;
+}

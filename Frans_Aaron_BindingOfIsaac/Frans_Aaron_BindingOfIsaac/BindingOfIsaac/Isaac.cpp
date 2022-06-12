@@ -92,8 +92,8 @@ void Isaac::Draw() const
 	case Isaac::DamageState::hurt:
 		DrawHurt();
 		break;
-	case Isaac::DamageState::dead:
-		DrawDead();
+	case Isaac::DamageState::dying:
+		DrawDying();
 		break;
 	}
 
@@ -117,8 +117,8 @@ void Isaac::Update(float elapsedSec, TearManager* tearManager, const TextureMana
 		UpdateHurt(elapsedSec);
 		UpdatePos(elapsedSec, currentRoom, itemManager);
 		break;
-	case Isaac::DamageState::dead:
-		UpdateDead(elapsedSec);
+	case Isaac::DamageState::dying:
+		UpdateDying(elapsedSec);
 		break;
 	}
 }
@@ -132,7 +132,7 @@ void Isaac::TakeDamage(float damage)
 		{
 		case true:
 		{
-			m_DamageState = DamageState::dead;
+			m_DamageState = DamageState::dying;
 
 			SoundEffect* effect{ m_pSoundEffectManager->GetSoundEffect(SoundEffectManager::SoundEffectLookup::isaacDies) };
 			effect->SetVolume(20);
@@ -206,6 +206,21 @@ void Isaac::SetCenter(const Point2f& center)
 Circlef Isaac::GetHitBox() const
 {
 	return Circlef{ m_CenterPosition, m_MovementWidth / 2.0f };
+}
+
+Isaac::DamageState Isaac::GetDamageState()
+{
+	return m_DamageState;
+}
+
+bool Isaac::IsFullHealth()
+{
+	return m_pHealth->IsFull();
+}
+
+void Isaac::Heal(float healAmount)
+{
+	m_pHealth->Heal(healAmount);
 }
 
 void Isaac::DrawBody() const
@@ -512,8 +527,7 @@ void Isaac::UpdateHead(float elapsedSec, TearManager* tearManager, const Texture
 		m_pHeadSprite->Update(elapsedSec);
 		tearVelocity.x = -m_TearSpeed;
 	}
-
-	if (pStates[SDL_SCANCODE_UP])
+	else if (pStates[SDL_SCANCODE_UP])
 	{
 		m_TearFireAccuSec += elapsedSec;
 		m_HeadDirection = Direction::up;
@@ -638,7 +652,7 @@ void Isaac::UpdateHurt(float elapsedSec)
 	}
 }
 
-void Isaac::DrawDead() const
+void Isaac::DrawDying() const
 {
 	glPushMatrix();
 	glTranslatef(m_CenterPosition.x, m_CenterPosition.y - m_MovementHeight / 2.0f, 0);
@@ -652,10 +666,14 @@ void Isaac::DrawDead() const
 	glPopMatrix();
 }
 
-void Isaac::UpdateDead(float elapsedSec)
+void Isaac::UpdateDying(float elapsedSec)
 {
 	if (m_DeathRotationAngle < 90)
 		m_DeathRotationAngle += 270 * elapsedSec;
+	else
+	{
+		m_DamageState = DamageState::dead;
+	}
 }
 
 bool Isaac::CanShoot()

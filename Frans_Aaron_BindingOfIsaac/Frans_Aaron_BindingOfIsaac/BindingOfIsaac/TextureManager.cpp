@@ -39,11 +39,13 @@ void TextureManager::InitTextures()
 	InitTearTextures();
 	InitGameObjectTextures();
 	InitRoomTextures();
-	InitUi();
+	InitUiTextures();
+	InitMenuTextures();
 	InitEnemyTextures();
 	InitBossTextures();
 	InitItemTextures();
 	InitSharedTextures();
+	InitPickUpTextures();
 }
 
 void TextureManager::InitIsaacTextures()
@@ -92,7 +94,7 @@ void TextureManager::InitRoomTextures()
 
 }
 
-void TextureManager::InitUi()
+void TextureManager::InitUiTextures()
 {
 
 	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui_Hearts.png" });
@@ -102,6 +104,13 @@ void TextureManager::InitUi()
 	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Minimap-Room-Item.png" });
 	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Ui-Minimap-Room-Boss.png" });
 
+}
+
+void TextureManager::InitMenuTextures()
+{
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Menu-Images/Start-Menu.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Menu-Images/Death-Screen.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/Ui/Menu-Images/Victory-Screen.png" });
 }
 
 void TextureManager::InitEnemyTextures()
@@ -133,4 +142,10 @@ void TextureManager::InitItemTextures()
 void TextureManager::InitSharedTextures()
 {
 	m_pTextures.push_back(new Texture{ "Resources/Images/Shared/Shadow.png" });
+}
+
+void TextureManager::InitPickUpTextures()
+{
+	m_pTextures.push_back(new Texture{ "Resources/Images/PickUps/Pickup-Heart-Full.png" });
+	m_pTextures.push_back(new Texture{ "Resources/Images/PickUps/Pickup-Heart-Half.png" });
 }

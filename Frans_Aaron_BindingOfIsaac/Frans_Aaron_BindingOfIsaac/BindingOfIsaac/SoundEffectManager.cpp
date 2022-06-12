@@ -117,4 +117,6 @@ void SoundEffectManager::InitMusicTracks()
 	m_pMusicTracks.push_back(new SoundStream("Resources/Music/Music-Tracks/Basement-Track.ogg"));
 	m_pMusicTracks.push_back(new SoundStream("Resources/Music/Music-Tracks/Boss-Fight.ogg"));
 	m_pMusicTracks.push_back(new SoundStream("Resources/Music/Music-Tracks/Title-Screen.ogg"));
+	m_pMusicTracks.push_back(new SoundStream("Resources/Music/Music-Tracks/Death-Screen.ogg"));
+	m_pMusicTracks.push_back(new SoundStream("Resources/Music/Music-Tracks/Victory-Screen.ogg"));
 }

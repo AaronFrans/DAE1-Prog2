@@ -2,10 +2,12 @@
 #include "IsaacHealthBar.h"
 #include "Texture.h"
 #include "Hearth.h"
+#include "utils.h"
 
 IsaacHealthBar::IsaacHealthBar(Texture* heartSheet, float health, Point2f bottomLeft)
 	: m_Health{ health }
 	, m_HeartSize{ 20 }
+	, m_MaxHealth{ health }
 {
 	m_pEmptyHeart = new Hearth{ heartSheet,
 		Hearth::HearthState::empty,
@@ -56,11 +58,41 @@ bool IsaacHealthBar::IsDead()
 	return m_Health <= 0;
 }
 
+bool IsaacHealthBar::IsFull()
+{
+	return m_Health == m_MaxHealth;
+}
+
 void IsaacHealthBar::AddHealth(float amount)
 {
 	for (int i = 0; i < amount; i++)
 	{
 		m_pHearts.push_back(new Hearth{ *m_pEmptyHeart });
+		m_Health += 1;
+	}
+}
+
+void IsaacHealthBar::Heal(float healAmount)
+{
+	size_t index{ 0 };
+	while (m_pHearts[index]->GetState() == Hearth::HearthState::full)
+	{
+		index++;
+	}
+	float rest{ m_pHearts[index]->Heal(healAmount) };
+	if (utils::IsEqual(0.5f, rest, 0.0000001f))
+	{
+		index++;
+		if (index < m_pHearts.size())
+		{
+			m_pHearts[index]->Heal(rest);
+		}
+
+	}
+	m_Health += healAmount;
+	if (m_Health > m_MaxHealth)
+	{
+		m_Health = m_MaxHealth;
 	}
 }
 

@@ -33,9 +33,9 @@ public:
 		RoomType type);
 
 	Room(const Room& rhs);
-	Room(Room && rhs) = default;
-	Room& operator=(const Room & rhs);
-	Room& operator=(Room && rhs) = default;
+	Room(Room&& rhs) = default;
+	Room& operator=(const Room& rhs);
+	Room& operator=(Room&& rhs) = default;
 	~Room();
 
 	void Draw() const;
@@ -54,7 +54,10 @@ public:
 	RoomType GetType() const;
 	std::vector<ItemPedestal*> GetPedestals();
 
+	Point2f GetFreeSpot();
+
 	BossHealthBar* GetBossHealthBar();
+	bool IsBossDead();
 
 	void SetOrigin(Point2f origin);
 
@@ -69,6 +72,9 @@ public:
 
 	void OpenDoors();
 	void CloseDoors();
+
+	bool HasDroppedPickUp();
+	void DropPickUp();
 
 private:
 
@@ -87,5 +93,8 @@ private:
 
 	std::vector<Door*> m_pDoors;
 	std::vector<std::vector<Point2f>> m_EnemyGroupPositions;
+
+
+	bool m_HasDroppedPickUp;
 };
 

@@ -39,14 +39,17 @@ class Isaac final
 		walking = 2
 	};
 
+
+
+public:
+
 	enum class DamageState
 	{
 		undamaged,
 		hurt,
+		dying,
 		dead
 	};
-
-public:
 
 	Isaac(const TextureManager& textureManager, SoundEffectManager* soundEffectManager,
 		IsaacHealthBar* isaacHealthBar, const Point2f& centerPosition);
@@ -68,6 +71,11 @@ public:
 	void SetCenter(const Point2f& center);
 
 	Circlef GetHitBox() const;
+
+	DamageState GetDamageState();
+	bool IsFullHealth();
+
+	void Heal(float healAmount);
 
 private:
 
@@ -143,8 +151,8 @@ private:
 	void DrawHurt() const;
 	void UpdateHurt(float elapsedSec);
 
-	void DrawDead() const;
-	void UpdateDead(float elapsedSec);
+	void DrawDying() const;
+	void UpdateDying(float elapsedSec);
 
 	bool CanShoot();
 	bool IsInvis();

@@ -57,6 +57,8 @@ public:
 		basementTrack,
 		bossFight,
 		titleScreen,
+		deathScreen,
+		victoryScreen,
 	};
 
 	SoundEffectManager();
