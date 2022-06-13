@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Camera.h"
 #include "utils.h"
+
 Camera::Camera(float width, float height)
 	: m_Width{ width }
 	, m_Height{ height }
@@ -18,6 +19,27 @@ void Camera::Transform(const Point2f& targetCenter) const
 	Point2f center = targetCenter;
 	Clamp(center);
 	glTranslatef(-(center.x - m_Width / 2.0f), -(center.y - m_Height / 2.0f), 0);
+}
+
+void Camera::Transition(const float transitionedDistance, Floor::TransitionDirection direction)
+{
+	switch (direction)
+	{
+	case Floor::TransitionDirection::up:
+		m_LevelBoundaries.bottom += transitionedDistance;
+		break;
+	case Floor::TransitionDirection::down:
+		m_LevelBoundaries.bottom -= transitionedDistance;
+		break;
+	case Floor::TransitionDirection::left:
+		m_LevelBoundaries.left -= transitionedDistance;
+		break;
+	case Floor::TransitionDirection::right:
+		m_LevelBoundaries.left += transitionedDistance;
+		break;
+	default:
+		break;
+	}
 }
 
 Rectf Camera::GetCameraView(const Point2f& targetCenter) const

@@ -1,4 +1,6 @@
 #pragma once
+#include "Floor.h"
+
 class Camera final
 {
 public:
@@ -7,6 +9,8 @@ public:
 
 	void SetLevelBoundaries(const Rectf& levelBoundaries);
 	void Transform(const Point2f& targetCenter) const;
+
+	void Transition(const float transitionedDistance, Floor::TransitionDirection direction);
 
 	Rectf GetCameraView(const Point2f& targetCenter) const;
 private:

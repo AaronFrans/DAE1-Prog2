@@ -10,6 +10,11 @@ const int Floor::m_RoomsRows = 9;
 
 Floor::Floor()
 	: m_IsTransitioning{ false }
+	, m_IsDoneTransitioning{ false }
+	, m_TransitionSpeed{ 500 }
+	, m_TransitionedDistance{ 0 }
+	, m_AccuTransitionDistance{ 0 }
+	, m_MaxTransitionDistance{ 500 }
 {
 	m_pRooms = std::vector<Room*>{};
 
@@ -37,26 +42,55 @@ Floor::~Floor()
 
 void Floor::Draw() const
 {
-	DrawCurrentRoom();
+	if (!m_IsTransitioning)
+	{
+		DrawCurrentRoom();
+	}
+	else
+	{
+		DrawCurrentRoom();
+		DrawTransitioningRoom();
+	}
 }
 
 void Floor::Update(float elapsedSec, Isaac* isaac, TearManager* tearManager, const TextureManager& textureManager)
 {
-	for (Door* door : GetCurrentRoom()->GetDoors())
+	if (!m_IsTransitioning)
 	{
-		if (door->IsActive() && GetCurrentRoom()->IsCleared() && utils::IsOverlapping(door->GetShape(), isaac->GetHitBox()))
+		for (Door* door : GetCurrentRoom()->GetDoors())
 		{
-			m_IsTransitioning = true;
-			MoveToNextRoom(door->GetDirection(), isaac);
+			if (door->IsActive() && GetCurrentRoom()->IsCleared() && utils::IsOverlapping(door->GetShape(), isaac->GetHitBox()))
+			{
+				std::cout << "Isaac Trough Door\n";
+				StarTransition(door->GetDirection());
+			}
+		}
+		if (!m_IsTransitioning)
+		{
+			GetCurrentRoom()->Update(elapsedSec, isaac, tearManager, textureManager);
+
+			if (!GetCurrentRoom()->AreDoorsOpen() && GetCurrentRoom()->IsCleared())
+			{
+				GetCurrentRoom()->OpenDoors();
+			}
+		}
+
+	}
+	else
+	{
+		m_TransitionedDistance = m_TransitionSpeed * elapsedSec;
+		m_AccuTransitionDistance += m_TransitionedDistance;
+		if (m_MaxTransitionDistance <= m_AccuTransitionDistance)
+		{
+
+			std::cout << "At next room\n";
+			m_IsDoneTransitioning = true;
+			MoveToNextRoom(isaac);
+			m_TransitionedDistance = 0;
+			m_AccuTransitionDistance = 0;
 		}
 	}
 
-	GetCurrentRoom()->Update(elapsedSec, isaac, tearManager, textureManager);
-
-	if (!GetCurrentRoom()->AreDoorsOpen() && GetCurrentRoom()->IsCleared())
-	{
-		GetCurrentRoom()->OpenDoors();
-	}
 }
 
 void Floor::TranslateCurrentRoomOrigin()
@@ -70,9 +104,25 @@ bool Floor::IsTransitioning()
 	return m_IsTransitioning;
 }
 
+bool Floor::IsDoneTransitioning()
+{
+	return m_IsDoneTransitioning;
+}
+
 void Floor::DoneTransitioning()
 {
 	m_IsTransitioning = false;
+	m_IsDoneTransitioning = false;
+}
+
+Floor::TransitionDirection Floor::GetTransitionDirection()
+{
+	return m_TransitionDirection;
+}
+
+float Floor::GetTransitionedDistance()
+{
+	return m_TransitionedDistance;
 }
 
 std::pair<int, int> Floor::GetCurrentIndexes()
@@ -123,49 +173,197 @@ std::vector<int> Floor::GetLayout()
 
 void Floor::DrawCurrentRoom() const
 {
-	m_pRooms[(m_CurrentRowIndex)*m_RoomsRows + m_CurrentColIndex]->Draw();
+	m_pRooms[(m_CurrentRowIndex)*m_RoomsRows + m_CurrentColIndex]->Draw(!m_IsTransitioning);
 }
 
-void Floor::MoveToNextRoom(Door::DoorDirection direction, Isaac* isaac)
+void Floor::DrawTransitioningRoom() const
 {
-	Rectf doorShape{ };
-	Circlef isaacShape{};
-	Point2f newPos{};
+	switch (m_TransitionDirection)
+	{
+	case Floor::TransitionDirection::up:
+	{
+
+		Room* nextRoom{ m_pRooms[(m_CurrentRowIndex + 1) * m_RoomsRows + m_CurrentColIndex] };
+
+		nextRoom->Draw(false);
+	}
+	break;
+	case Floor::TransitionDirection::down:
+	{
+		Room* nextRoom{ m_pRooms[(m_CurrentRowIndex - 1) * m_RoomsRows + m_CurrentColIndex] };
+
+		nextRoom->Draw(false);
+	}
+	break;
+	case Floor::TransitionDirection::left:
+	{
+		Room* nextRoom{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex - 1] };
+
+		nextRoom->Draw(false);
+	}
+	break;
+	case Floor::TransitionDirection::right:
+	{
+		Room* nextRoom{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex + 1] };
+
+		nextRoom->Draw(false);
+	}
+	break;
+	}
+}
+
+void Floor::StarTransition(Door::DoorDirection direction)
+{
+	std::cout << "Start the Trans\n";
 	switch (direction)
 	{
 	case Door::DoorDirection::up:
+	{
+		Room* nextRoom{ m_pRooms[(m_CurrentRowIndex + 1) * m_RoomsRows + m_CurrentColIndex] };
+
+		m_TransitionDirection = TransitionDirection::up;
+
+		float change{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]
+			->GetBoundaries()
+			.height };
+		m_MaxTransitionDistance = change;
+		m_TransitionSpeed = change;
+
+		Point2f tempNewOrigin{ 0, change };
+
+
+		nextRoom->SetOrigin(tempNewOrigin);
+	}
+	break;
+	case Door::DoorDirection::down:
+	{
+		Room* nextRoom{ m_pRooms[(m_CurrentRowIndex - 1) * m_RoomsRows + m_CurrentColIndex] };
+
+		m_TransitionDirection = TransitionDirection::down;
+
+		float change{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]
+			->GetBoundaries()
+			.height };
+
+		m_MaxTransitionDistance = change;
+		m_TransitionSpeed = change;
+
+		Point2f tempNewOrigin{ 0, -change };
+
+
+		nextRoom->SetOrigin(tempNewOrigin);
+	}
+	break;
+	case Door::DoorDirection::left:
+	{
+		Room* nextRoom{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex - 1] };
+
+		m_TransitionDirection = TransitionDirection::left;
+
+		float change{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]
+			->GetBoundaries()
+			.width };
+
+		m_MaxTransitionDistance = change;
+		m_TransitionSpeed = change / 2.0f;
+
+		Point2f tempNewOrigin{ -change, 0 };
+
+
+		nextRoom->SetOrigin(tempNewOrigin);
+	}
+	break;
+	case Door::DoorDirection::right:
+	{
+
+		Room* nextRoom{ m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex + 1] };
+
+		m_TransitionDirection = TransitionDirection::right;
+
+		float change{ m_pRooms[(m_CurrentRowIndex)*m_RoomsRows + m_CurrentColIndex]
+			->GetBoundaries()
+			.width };
+
+		m_MaxTransitionDistance = change;
+		m_TransitionSpeed = change;
+
+		Point2f tempNewOrigin{ change, 0 };
+
+
+		nextRoom->SetOrigin(tempNewOrigin);
+	}
+	break;
+	}
+
+	m_IsTransitioning = true;
+
+}
+
+void Floor::MoveToNextRoom(Isaac* isaac)
+{
+
+	Rectf doorShape{ };
+	Circlef isaacShape{};
+	Point2f newPos{};
+	switch (m_TransitionDirection)
+	{
+	case Floor::TransitionDirection::up:
 		m_CurrentRowIndex += 1;
+
+		m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->SetOrigin(Point2f{ 0, -m_MaxTransitionDistance });
+
 		doorShape = m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->GetDoorShape(Door::DoorDirection::down);
+
 		isaacShape = isaac->GetHitBox();
+
 		newPos = Point2f{ doorShape.left + doorShape.width / 2.0f,
 			doorShape.bottom + doorShape.height + (isaacShape.radius + 2) };
+
 		isaac->SetCenter(newPos);
 		break;
-	case Door::DoorDirection::down:
+	case Floor::TransitionDirection::down:
 		m_CurrentRowIndex -= 1;
+
+		m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->SetOrigin(Point2f{ 0,m_MaxTransitionDistance });
+
 		doorShape = m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->GetDoorShape(Door::DoorDirection::up);
 		isaacShape = isaac->GetHitBox();
+
 		newPos = Point2f{ doorShape.left + doorShape.width / 2.0f,
 			doorShape.bottom - (isaacShape.radius + 2) };
+
 		isaac->SetCenter(newPos);
 		break;
-	case Door::DoorDirection::left:
+	case Floor::TransitionDirection::left:
 		m_CurrentColIndex -= 1;
+
+		m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->SetOrigin(Point2f{ m_MaxTransitionDistance,0 });
+
 		doorShape = m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->GetDoorShape(Door::DoorDirection::right);
+
 		isaacShape = isaac->GetHitBox();
+
 		newPos = Point2f{ doorShape.left - (isaacShape.radius + 2),
 			doorShape.bottom + doorShape.height / 2.0f };
+
 		isaac->SetCenter(newPos);
 		break;
-	case Door::DoorDirection::right:
+	case Floor::TransitionDirection::right:
 		m_CurrentColIndex += 1;
+
+		m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->SetOrigin(Point2f{ -m_MaxTransitionDistance,0 });
+
 		doorShape = m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->GetDoorShape(Door::DoorDirection::left);
+
 		isaacShape = isaac->GetHitBox();
+
 		newPos = Point2f{ doorShape.left + doorShape.width + (isaacShape.radius + 2),
 			doorShape.bottom + doorShape.height / 2.0f };
+
 		isaac->SetCenter(newPos);
 		break;
 	}
+
 
 	if (!m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->IsCleared())
 		m_pRooms[m_CurrentRowIndex * m_RoomsRows + m_CurrentColIndex]->CloseDoors();
@@ -216,7 +414,7 @@ void Floor::GenerateFloor(RoomManager* roomManager, const TextureManager& textur
 	}
 }
 
-void Floor::InitEnemies( EnemyManager* enemyManager)
+void Floor::InitEnemies(EnemyManager* enemyManager)
 {
 	for (Room* room : m_pRooms)
 	{

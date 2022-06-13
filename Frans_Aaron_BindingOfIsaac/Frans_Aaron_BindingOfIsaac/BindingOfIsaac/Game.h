@@ -56,6 +56,7 @@ private:
 	UIManager* m_pUIManager;
 	ItemManager* m_pItemManager;
 	SoundEffectManager* m_pSoundEffectManager;
+	PickUpManager* m_pPickUpManager;
 
 	MenuScreen* m_pStartScreen;
 	MenuScreen* m_pDeathScreen;
@@ -64,7 +65,6 @@ private:
 	Isaac* m_pPlayer;
 
 
-	PickUpManager* test;
 
 
 	bool m_IsDeathScreenSfxPlaying;

@@ -200,6 +200,9 @@ Point2f Isaac::GetCenter() const
 
 void Isaac::SetCenter(const Point2f& center)
 {
+	std::cout << "Isaac new pos:\n"
+		<< "- X: " << center.x << "\n"
+		<< "- Y: " << center.y << "\n";
 	m_CenterPosition = center;
 }
 

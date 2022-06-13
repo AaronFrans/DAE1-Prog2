@@ -11,6 +11,13 @@ class PickUpManager
 public:
 	PickUpManager();
 
+	PickUpManager(const PickUpManager& rhs) = default;
+	PickUpManager(PickUpManager && rhs) = default;
+	PickUpManager& operator=(const PickUpManager & rhs) = default;
+	PickUpManager& operator=(PickUpManager && rhs) = default;
+	~PickUpManager();
+
+
 
 	void DrawPickups(Room* currentRoom) const;
 

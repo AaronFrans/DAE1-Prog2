@@ -8,6 +8,18 @@ PickUpManager::PickUpManager()
 {
 }
 
+PickUpManager::~PickUpManager()
+{
+	for (std::pair<Room*, std::vector<PickUp*>> roomWithPickUps : m_pPickupsPerRoom)
+	{
+		for (PickUp* pickUp : roomWithPickUps.second)
+		{
+			delete pickUp;
+		}
+
+	}
+}
+
 void PickUpManager::DrawPickups(Room* currentRoom) const
 {
 	for (std::pair<Room*, std::vector<PickUp*>> roomWithPickUps : m_pPickupsPerRoom)
@@ -53,14 +65,14 @@ void PickUpManager::AddPickUp(Room* currentRoom, const TextureManager& textureMa
 	switch (randomType)
 	{
 	case PickUp::Type::fullHeart:
-		m_pPickupsPerRoom[currentRoom].push_back(new PickUp{ 
+		m_pPickupsPerRoom[currentRoom].push_back(new PickUp{
 			textureManager.GetTexture(TextureManager::TextureLookup::pickupFullHeart),
 			randomType,
 			center
 			});
 		break;
 	case PickUp::Type::halfHeart:
-		m_pPickupsPerRoom[currentRoom].push_back(new PickUp{ 
+		m_pPickupsPerRoom[currentRoom].push_back(new PickUp{
 			textureManager.GetTexture(TextureManager::TextureLookup::pickupHalfHeart),
 			randomType,
 			center

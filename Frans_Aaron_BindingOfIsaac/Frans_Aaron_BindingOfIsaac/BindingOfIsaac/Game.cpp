@@ -79,7 +79,7 @@ void Game::Initialize()
 	track->SetVolume(15);
 	track->Play(true);
 
-	test = new PickUpManager{};
+	m_pPickUpManager = new PickUpManager{};
 
 	std::cout << "Press I for the controlls.\n";
 }
@@ -93,6 +93,7 @@ void Game::Cleanup()
 	delete m_pStartScreen;
 	delete m_pDeathScreen;
 	delete m_pVictoryScreen;
+	delete m_pPickUpManager;
 	DeleteTearManager();
 	DeletePlayer();
 	DeleteUIManager();
@@ -130,7 +131,7 @@ void Game::Update(float elapsedSec)
 			{
 
 				pCurrentRoom->DropPickUp();
-				test->AddPickUp(pCurrentRoom, m_TextureManager);
+				m_pPickUpManager->AddPickUp(pCurrentRoom, m_TextureManager);
 			}
 			if (pCurrentRoom->IsBossDead())
 			{
@@ -140,32 +141,44 @@ void Game::Update(float elapsedSec)
 				track->Play(true);
 				m_State = GameState::victory;
 			}
-			test->Update(pCurrentRoom, m_pPlayer);
+			m_pPickUpManager->Update(pCurrentRoom, m_pPlayer);
 		}
 		else
 		{
-			m_Camera.SetLevelBoundaries(m_pFloor->GetCurrentRoom()->GetBoundaries());
-			Room* pCurrentRoom{ m_pFloor->GetCurrentRoom() };
-			if (m_pFloor->GetCurrentRoom()->GetType() == Room::RoomType::boss)
+			if (!m_pFloor->IsDoneTransitioning())
 			{
-				m_pUIManager->SetBossHealthBar(pCurrentRoom->GetBossHealthBar());
-				SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::bossFight) };
-				track->SetVolume(15);
-				track->Play(true);
+				m_pFloor->Update(elapsedSec, m_pPlayer, m_pTearManager, m_TextureManager);
+				m_Camera.Transition(m_pFloor->GetTransitionedDistance(), m_pFloor->GetTransitionDirection());
+
 			}
-			else
+			if (m_pFloor->IsDoneTransitioning())
 			{
-				m_pUIManager->SetBossHealthBar(nullptr);
-				SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::basementTrack) };
-				if (!track->IsPlaying())
+
+				std::cout << "Trans Done\n";
+				Room* pCurrentRoom{ m_pFloor->GetCurrentRoom() };
+				m_Camera.SetLevelBoundaries(pCurrentRoom->GetBoundaries());
+				if (m_pFloor->GetCurrentRoom()->GetType() == Room::RoomType::boss)
 				{
+					m_pUIManager->SetBossHealthBar(pCurrentRoom->GetBossHealthBar());
+					SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::bossFight) };
 					track->SetVolume(15);
 					track->Play(true);
 				}
+				else
+				{
+					m_pUIManager->SetBossHealthBar(nullptr);
+					SoundStream* track{ m_pSoundEffectManager->GetMusicTrackEffect(SoundEffectManager::MusicTrackLookup::basementTrack) };
+					if (!track->IsPlaying())
+					{
+						track->SetVolume(15);
+						track->Play(true);
+					}
+				}
+				m_pTearManager->ClearTears();
+				m_pUIManager->UpdateMinimap(m_pFloor->GetCurrentIndexes());
+				m_pFloor->DoneTransitioning();
 			}
-			m_pTearManager->ClearTears();
-			m_pUIManager->UpdateMinimap(m_pFloor->GetCurrentIndexes());
-			m_pFloor->DoneTransitioning();
+
 		}
 		break;
 	case Game::GameState::death:
@@ -205,13 +218,22 @@ void Game::Draw() const
 		break;
 	case Game::GameState::playing:
 		glPushMatrix();
-		m_Camera.Transform(m_pPlayer->GetCenter());
-		DrawFloor();
-		test->DrawPickups(m_pFloor->GetCurrentRoom());
-		m_pTearManager->DrawBackTears();
-		DrawPlayer();
-		m_pTearManager->DrawFrontTears();
-		DrawUIManager();
+		if (!m_pFloor->IsTransitioning())
+		{
+			m_Camera.Transform(m_pPlayer->GetCenter());
+			DrawFloor();
+			m_pPickUpManager->DrawPickups(m_pFloor->GetCurrentRoom());
+			m_pTearManager->DrawBackTears();
+			DrawPlayer();
+			m_pTearManager->DrawFrontTears();
+			DrawUIManager();
+		}
+		else
+		{
+			Rectf shape{ m_pFloor->GetCurrentRoom()->GetBoundaries() };
+			m_Camera.Transform(Point2f{ shape.left + shape.width / 2.0f, shape.bottom + shape.height / 2.0f });
+			DrawFloor();
+		}
 		glPopMatrix();
 		break;
 	case Game::GameState::death:

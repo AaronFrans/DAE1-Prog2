@@ -108,7 +108,7 @@ Room::~Room()
 
 }
 
-void Room::Draw() const
+void Room::Draw(bool drawEnemiesAndObjects) const
 {
 	m_pBackground->Draw(m_Shape);
 
@@ -117,17 +117,21 @@ void Room::Draw() const
 		door->Draw();
 	}
 
-	for (GameObject* object : m_pObjects)
+	if (drawEnemiesAndObjects)
 	{
-		object->Draw();
-	}
-	for (Enemy* enemy : m_pEnemies)
-	{
-		enemy->Draw();
-	}
-	for (ItemPedestal* itemPedestal : m_pPedestals)
-	{
-		itemPedestal->Draw();;
+
+		for (GameObject* object : m_pObjects)
+		{
+			object->Draw();
+		}
+		for (Enemy* enemy : m_pEnemies)
+		{
+			enemy->Draw();
+		}
+		for (ItemPedestal* itemPedestal : m_pPedestals)
+		{
+			itemPedestal->Draw();;
+		}
 	}
 
 }
@@ -173,8 +177,13 @@ std::vector<Point2f> Room::GetWalkableAreaVertices() const
 
 void Room::SetOrigin(Point2f origin)
 {
-	m_Shape.left = origin.x;
-	m_Shape.bottom = origin.y;
+
+	std::cout << "Room new ori:\n"
+		<< "- X: " << origin.x << "\n"
+		<< "- Y: " << origin.y << "\n";
+
+	m_Shape.left += origin.x;
+	m_Shape.bottom += origin.y;
 
 	for (Door* door : m_pDoors)
 	{

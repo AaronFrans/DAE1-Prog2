@@ -38,7 +38,7 @@ public:
 	Room& operator=(Room&& rhs) = default;
 	~Room();
 
-	void Draw() const;
+	void Draw(bool drawEnemiesAndObjects = true) const;
 	void Update(float elapsedSec, Isaac* isaac, TearManager* tearManager, const TextureManager& textureManager);
 
 
